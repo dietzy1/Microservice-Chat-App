@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package authgateway.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1;authgatewayv1";
+
+
+import "google/api/annotations.proto";
+
+service AuthGatewayService {
+rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+        post: "/v1/auth/login",
+        body: "*",
+        };
+    }
+
+rpc Register (RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+        post: "/v1/auth/register",
+        body: "*",
+        };
+    }  
+}
+
+message LoginRequest {
+string username = 1;
+string password = 2;
+}
+
+message LoginResponse {
+int32 status = 1;
+string error = 2;
+}
+
+message RegisterRequest {
+string username = 1;
+string password = 2;
+}
+        
+message RegisterResponse {
+string session = 1;
+int32 status = 2;
+string error = 3;
+}
+    
+message LogoutRequest {
+}
+    
+message LogoutResponse {
+int32 status = 1;
+string error = 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
