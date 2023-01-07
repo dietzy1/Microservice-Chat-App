@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +20,7 @@ import (
 //logic stays contained in websocket package and should not need to be exposed to the main package
 
 type ConnectionManager struct {
-	clients    map[*ws]bool //this part should be changed to a redis database
+	clients    map[*ws]bool
 	broadcast  chan Message //Before this was []byte
 	register   chan *ws
 	unregister chan *ws
@@ -50,8 +51,12 @@ func NewConnectionManger() *ConnectionManager {
 	}
 }
 
+type ChannelID struct {
+	id string `json:"id"`
+}
+
 // Might need to somehow take in which chatroom the client is in
-func serveWs( /* cm *ConnectionManager, */ w http.ResponseWriter, r *http.Request) {
+func serveWs(w http.ResponseWriter, r *http.Request) {
 	opts := &websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -60,40 +65,28 @@ func serveWs( /* cm *ConnectionManager, */ w http.ResponseWriter, r *http.Reques
 		},
 	}
 
+	var ch ChannelID
+	//read the channel id from the request
+	err := json.NewDecoder(r.Body).Decode(&ch)
+
 	conn, err := opts.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	//vars := chi.URLParam(r, "guildID")
-
 	cm := make(map[string]*ConnectionManager)
-	if _, ok := cm[vars]; !ok {
-		cm[vars] = New()
-		go cm[vars].Run()
+	if _, ok := cm[ch.id]; !ok {
+		cm[ch.id] = NewConnectionManger()
+		go cm[ch.id].Run()
 	}
 
-	ws := &ws{hub: cm[vars], conn: conn, send: make(chan Message, 256)}
+	ws := &ws{hub: cm[ch.id], conn: conn, send: make(chan Message, 256)}
 	ws.hub.register <- ws
-
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-
-	//this is the entry point for the map that  returns the connection manager
 
 	go ws.writePump()
 	go ws.readPump()
 }
-
-//Usually communication would happen through interfaces
-//But in this case all communication is done through channels
-
-//Hub is the central point of the websocket server
-//Is in charge of registering, unregistering and broadcasting messages to all clients
-//Should send messages to the application layer to request that data is stored in the database
-
-//Should perhabs call on the application layer to perform verification of the user/data
 
 func (cm *ConnectionManager) Run() {
 	for {

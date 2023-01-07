@@ -41,9 +41,8 @@ func (ws *ws) readPump() {
 			break
 		}
 		//The issue is the convertion to the message object
-		log.Println(string(message))
+
 		msg := Decode(message)
-		log.Println(msg.Message)
 
 		ws.hub.broadcast <- msg
 	}

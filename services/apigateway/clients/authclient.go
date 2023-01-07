@@ -21,7 +21,6 @@ type AuthClient struct {
 func NewAuthClient() *AuthClient {
 	conn, err := grpc.DialContext(
 		context.Background(),
-		/* "dns:///0.0.0.0:8080", */
 		"dns:///0.0.0.0"+os.Getenv("AUTH"),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -34,5 +33,3 @@ func NewAuthClient() *AuthClient {
 
 	return &AuthClient{C: client}
 }
-
-//The issue might be that its trying to create a connection before the apigateway has been set up correctly

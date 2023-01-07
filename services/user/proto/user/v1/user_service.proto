@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/user/proto/user/v1;userv1";
+
+
+
+
+service AuthService {
+
+}
+
+
+/* type User struct {
+	Icon        Icon //A link to the users icon
+	Name        string
+	Uuid        string
+	Discription string
+	JoinDate    string
+	Roles       []string
+	ChatServers []string
+	Reports     int
+}
+ */
+
+
+
+
+
+
+
+
+
+

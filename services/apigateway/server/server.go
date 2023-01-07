@@ -23,8 +23,10 @@ import (
 
 type server struct {
 	authv1.UnimplementedAuthGatewayServiceServer
-	cache      Cache
-	authClient client.AuthClient
+	cache         Cache
+	authClient    client.AuthClient
+	messageClient client.MessageClient
+	userClient    client.UserClient
 }
 
 /* type server struct {
@@ -35,8 +37,8 @@ type server struct {
 */
 
 // Create a new server object and inject the cache
-func newServer(cache Cache, authClient client.AuthClient) *server {
-	return &server{cache: cache, authClient: authClient}
+func newServer(cache Cache, authClient client.AuthClient, messageClient client.MessageClient, userClient client.UserClient) *server {
+	return &server{cache: cache, authClient: authClient, messageClient: messageClient, userClient: userClient}
 }
 
 //authv1.AuthGatewayServiceServer
@@ -105,11 +107,14 @@ func Start() {
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
-	//initiate dependencies for the server -- cache
+	//initiate dependencies for the server
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
+	messageClient := client.NewMessageClient()
+	userClient := client.NewUserClient()
+
 	//NewClients(authClient)
-	dependencies := newServer(&lruCache, *authClient)
+	dependencies := newServer(&lruCache, *authClient, *messageClient, *userClient)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
