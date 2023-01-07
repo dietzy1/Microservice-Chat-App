@@ -48,6 +48,12 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 	//implement whatever logic needs to be implemented
 	log.Println("Register called")
 
+	register, err := s.authClient.C.Register(ctx, req)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(register)
+
 	return &authv1.RegisterResponse{
 		Status: 200,
 		Error:  "no error",
@@ -58,7 +64,30 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	//implement whatever logic needs to be implemented
 	log.Println("Logout called")
 
+	logout, err := s.authClient.C.Logout(ctx, req)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(logout)
+
 	return &authv1.LogoutResponse{
+		Status: 200,
+		Error:  "no error",
+	}, nil
+}
+
+func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
+	//implement whatever logic needs to be implemented
+	log.Println("Authenticate called")
+
+	authenticate, err := s.authClient.C.Authenticate(ctx, req)
+	if err != nil {
+		log.Println(err)
+
+	}
+	log.Println(authenticate)
+
+	return &authv1.AuthenticateResponse{
 		Status: 200,
 		Error:  "no error",
 	}, nil

@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "clients/authclient/v1/auth_service.proto",
+    "title": "clients/messageclient/v1/message_service.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "AuthService"
+      "name": "MessageService"
     }
   ],
   "consumes": [
@@ -44,59 +44,38 @@
         }
       }
     },
-    "v1AuthenticateResponse": {
+    "v1CreateMessageResponse": {
       "type": "object",
       "properties": {
-        "session": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
         "error": {
           "type": "string"
         }
       }
     },
-    "v1LoginResponse": {
+    "v1EditMessageResponse": {
       "type": "object",
       "properties": {
-        "session": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
         "error": {
           "type": "string"
         }
       }
     },
-    "v1LogoutResponse": {
+    "v1GetMessageResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "error": {
-          "type": "string"
-        }
-      }
-    },
-    "v1RegisterResponse": {
-      "type": "object",
-      "properties": {
-        "session": {
+        "author": {
           "type": "string"
         },
-        "status": {
-          "type": "integer",
-          "format": "int32"
+        "content": {
+          "type": "string"
         },
-        "error": {
+        "authorUuid": {
+          "type": "string"
+        },
+        "chatRoomUuid": {
+          "type": "string"
+        },
+        "timestamp": {
           "type": "string"
         }
       }

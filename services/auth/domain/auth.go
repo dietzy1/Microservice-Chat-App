@@ -13,6 +13,12 @@ type Auth interface {
 	UpdateToken(ctx context.Context, username string, token string) error
 }
 
+type Auth interface {
+	Login()
+	Logout()
+	Authenticate()
+}
+
 type Cache interface {
 	Get(key string) (string, error)
 	Set(key string, value string) error
@@ -28,7 +34,7 @@ func New(auth Auth, cache Cache) *domain {
 }
 
 // If someone is trying to login to the application the session token should be returned
-func (d *domain) Login(ctx context.Context) (string, error) {
+func (d domain) Login(ctx context.Context) (string, error) {
 	//recieve data from GRPC
 	username := "grpc username"
 	inputPassword := "grpc password"

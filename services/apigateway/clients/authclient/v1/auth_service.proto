@@ -8,6 +8,7 @@ service AuthService {
     rpc Login (LoginRequest) returns (LoginResponse) {}
     rpc Register (RegisterRequest) returns (RegisterResponse) {}
     rpc Logout (LogoutRequest) returns (LogoutResponse) {}
+    rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {}
 }
     
 message LoginRequest {
@@ -40,8 +41,22 @@ message LogoutResponse {
 int32 status = 1;
 string error = 2;
 }
+    
+message AuthenticateRequest {
+string session = 1;
+}
+    
+message AuthenticateResponse {
+string session = 1;
+int32 status = 2;
+string error = 3;
+}
 
 
+    
+   
+    
+  
 
 
 

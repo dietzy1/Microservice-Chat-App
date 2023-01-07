@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/dietzy1/chatapp/services/auth/core"
-	"github.com/google/uuid"
 )
 
+//I need to add a create user function which is called from the auth service when a user registers
+
 type Account interface {
-	Register(ctx context.Context, creds core.Credentials) error
+	CreateUser(ctx context.Context) error
+
 	Delete(ctx context.Context, creds core.Credentials) error
 	ChangeUsername(ctx context.Context, creds core.Credentials) error
 	ChangePassword(ctx context.Context, creds core.Credentials) error
@@ -23,7 +25,7 @@ type Account interface {
 	Token    string
 } */
 
-func (a Domain) Register(ctx context.Context) {
+/* func (a Domain) Register(ctx context.Context) {
 	//recieve password and and username from grpc
 	username := "username"
 	password := "password"
@@ -47,7 +49,7 @@ func (a Domain) Register(ctx context.Context) {
 	//Should do a call to the database to create a new user
 	// needs to be passed down username and uuid
 
-}
+} */
 
 func (a Domain) Delete(ctx context.Context) {
 	creds := core.Credentials{

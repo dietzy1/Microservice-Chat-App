@@ -6,6 +6,19 @@ option go_package = "github.com/dietzy1/chatapp/services/apigateway/authgateway/
 
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// These annotations are used when generating the OpenAPI file.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {version: "1.0"};
+    external_docs: {
+      url: "https://github.com/dietzy1/Microservice-Chat-App";
+      description: "Backend GRPC chatapp microservice";
+    }
+    schemes: HTTPS;
+};
+
+
 
 service AuthGatewayService {
 rpc Login (LoginRequest) returns (LoginResponse) {
@@ -13,6 +26,11 @@ rpc Login (LoginRequest) returns (LoginResponse) {
         post: "/v1/auth/login",
         body: "*",
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Login a user"
+            description: "GRPC gateway call to login a user."
+            tags: "Authentication"
+          };
     }
 
 rpc Register (RegisterRequest) returns (RegisterResponse) {
@@ -20,7 +38,36 @@ rpc Register (RegisterRequest) returns (RegisterResponse) {
         post: "/v1/auth/register",
         body: "*",
         };
-    }  
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Register a user"
+            description: "GRPC gateway call to register a user."
+            tags: "Authentication"
+          };
+    }
+
+rpc Logout (LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+        post: "/v1/auth/logout",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Logout a user"
+            description: "GRPC gateway call to logout a user."
+            tags: "Authentication"
+        };
+    }
+    
+rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {
+    option (google.api.http) = {
+        post: "/v1/auth/authenticate",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Authenticate a user"
+            description: "GRPC gateway call to authenticate a user."
+            tags: "Authentication"
+          };
+    }
 }
 
 message LoginRequest {
@@ -45,9 +92,19 @@ string error = 3;
 }
     
 message LogoutRequest {
+string uuid = 1;
 }
     
 message LogoutResponse {
+int32 status = 1;
+string error = 2;
+}
+
+message AuthenticateRequest {
+string uuid = 1;
+}
+
+message AuthenticateResponse {
 int32 status = 1;
 string error = 2;
 }

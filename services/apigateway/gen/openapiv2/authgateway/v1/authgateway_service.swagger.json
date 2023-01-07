@@ -2,12 +2,15 @@
   "swagger": "2.0",
   "info": {
     "title": "authgateway/v1/authgateway_service.proto",
-    "version": "version not set"
+    "version": "1.0"
   },
   "tags": [
     {
       "name": "AuthGatewayService"
     }
+  ],
+  "schemes": [
+    "https"
   ],
   "consumes": [
     "application/json"
@@ -16,8 +19,44 @@
     "application/json"
   ],
   "paths": {
+    "/v1/auth/authenticate": {
+      "post": {
+        "summary": "Authenticate a user",
+        "description": "GRPC gateway call to authenticate a user.",
+        "operationId": "AuthGatewayService_Authenticate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AuthenticateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AuthenticateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
+        "summary": "Login a user",
+        "description": "GRPC gateway call to login a user.",
         "operationId": "AuthGatewayService_Login",
         "responses": {
           "200": {
@@ -44,12 +83,48 @@
           }
         ],
         "tags": [
-          "AuthGatewayService"
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "summary": "Logout a user",
+        "description": "GRPC gateway call to logout a user.",
+        "operationId": "AuthGatewayService_Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LogoutRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
         ]
       }
     },
     "/v1/auth/register": {
       "post": {
+        "summary": "Register a user",
+        "description": "GRPC gateway call to register a user.",
         "operationId": "AuthGatewayService_Register",
         "responses": {
           "200": {
@@ -76,7 +151,7 @@
           }
         ],
         "tags": [
-          "AuthGatewayService"
+          "Authentication"
         ]
       }
     }
@@ -109,6 +184,26 @@
         }
       }
     },
+    "v1AuthenticateRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AuthenticateResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
     "v1LoginRequest": {
       "type": "object",
       "properties": {
@@ -121,6 +216,26 @@
       }
     },
     "v1LoginResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LogoutRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LogoutResponse": {
       "type": "object",
       "properties": {
         "status": {
@@ -158,5 +273,9 @@
         }
       }
     }
+  },
+  "externalDocs": {
+    "description": "Backend GRPC chatapp microservice",
+    "url": "https://github.com/dietzy1/Microservice-Chat-App"
   }
 }
