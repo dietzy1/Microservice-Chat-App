@@ -1,0 +1,338 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "chatroomgateway/v1/chatroomgateway_service.proto",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "ChatroomGatewayService"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/chatroom/createroom": {
+      "post": {
+        "summary": "Create a chatroom",
+        "description": "GRPC gateway call to create a chatroom.",
+        "operationId": "ChatroomGatewayService_CreateRoom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateRoomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateRoomRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    },
+    "/v1/chatroom/deleteroom": {
+      "post": {
+        "summary": "Delete a chatroom",
+        "description": "GRPC gateway call to delete a chatroom.",
+        "operationId": "ChatroomGatewayService_DeleteRoom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteRoomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteRoomRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    },
+    "/v1/chatroom/getroom/{chatroomUuid}": {
+      "get": {
+        "summary": "Get a chatroom",
+        "description": "GRPC gateway call to get a chatroom.",
+        "operationId": "ChatroomGatewayService_GetRoom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetRoomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chatroomUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    },
+    "/v1/chatroom/joinroom": {
+      "post": {
+        "summary": "Join a chatroom",
+        "description": "GRPC gateway call to join a chatroom.",
+        "operationId": "ChatroomGatewayService_JoinRoom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1JoinRoomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1JoinRoomRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    },
+    "/v1/chatroom/leaveroom": {
+      "post": {
+        "summary": "Leave a chatroom",
+        "description": "GRPC gateway call to leave a chatroom.",
+        "operationId": "ChatroomGatewayService_LeaveRoom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1LeaveRoomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1LeaveRoomRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateRoomRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateRoomResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "chatroomUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteRoomRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteRoomResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetRoomResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1JoinRoomRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "userUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1JoinRoomResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LeaveRoomRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "userUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LeaveRoomResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Backend GRPC chatapp microservice",
+    "url": "https://github.com/dietzy1/Microservice-Chat-App"
+  }
+}

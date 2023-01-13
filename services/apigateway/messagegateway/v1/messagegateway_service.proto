@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package messagegateway.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1;messagegatewayv1";
+
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// These annotations are used when generating the OpenAPI file.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {version: "1.0"};
+    external_docs: {
+      url: "https://github.com/dietzy1/Microservice-Chat-App";
+      description: "Backend GRPC chatapp microservice";
+    }
+    schemes: HTTPS;
+};
+
+//this is a complete fcking shitshow someone needs to clean this up
+service MessageGatewayService {
+rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse) {
+        option (google.api.http) = {
+            get: "/v1/message/getmessages",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "get messages from a chatroom"
+                description: "GRPC gateway call to retrieve a set amount of messages from a chatroom."
+                tags: "Message"
+              };
+        }
+
+
+rpc EditMessage (EditMessageRequest) returns (EditMessageResponse) {
+    option (google.api.http) = {
+        post: "/v1/message/editmessage",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Edit a message in a chatroom"
+            description: "GRPC gateway call to edit an existing message in a chatroom."
+            tags: "Message"
+        };
+    }
+    
+rpc DeleteMessage (DeleteMessageRequest) returns (DeleteMessageResponse) {
+    option (google.api.http) = {
+        post: "/v1/message/deletemessage",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Delete a message in a chatroom"
+            description: "GRPC gateway call to delete an existing message in a chatroom."
+            tags: "Message"
+          };
+    }
+}
+
+message GetMessagesRequest {
+string chat_room_uuid = 1;
+}
+    
+message GetMessagesResponse {
+repeated Messages messages = 1;
+}
+
+message EditMessageRequest {
+string author = 1;
+string content = 2;
+string author_uuid = 3;
+string chat_room_uuid = 4;
+string timestamp = 5;
+}
+    
+message EditMessageResponse {
+string status = 1;
+string error = 2;
+}
+    
+message DeleteMessageRequest {
+string author = 1;
+string content = 2;
+string author_uuid = 3;
+string chat_room_uuid = 4;
+string timestamp = 5;
+}
+    
+message DeleteMessageResponse {
+string status = 1;
+string error = 2;
+}
+    
+message Messages {
+string author = 1;
+string content = 2;
+string author_uuid = 3;
+string chat_room_uuid = 4;
+string timestamp = 5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

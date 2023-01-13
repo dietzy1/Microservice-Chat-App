@@ -7,7 +7,7 @@ option go_package = "github.com/dietzy1/chatapp/services/user/proto/user/v1;user
 
 
 
-service AuthService {
+service UserService {
 
 }
 

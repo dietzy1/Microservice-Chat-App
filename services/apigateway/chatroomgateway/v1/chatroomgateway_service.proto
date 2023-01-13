@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package chatroomgateway.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1;chatroomgatewayv1";
+
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// These annotations are used when generating the OpenAPI file.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {version: "1.0"};
+    external_docs: {
+      url: "https://github.com/dietzy1/Microservice-Chat-App";
+      description: "Backend GRPC chatapp microservice";
+    }
+    schemes: HTTPS;
+};
+
+service ChatroomGatewayService {
+rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
+    option (google.api.http) = {
+        post: "/v1/chatroom/createroom",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Create a chatroom"
+            description: "GRPC gateway call to create a chatroom."
+            tags: "Chatroom"
+          };
+    }
+
+rpc DeleteRoom (DeleteRoomRequest) returns (DeleteRoomResponse) {
+    option (google.api.http) = {
+        post: "/v1/chatroom/deleteroom",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Delete a chatroom"
+            description: "GRPC gateway call to delete a chatroom."
+            tags: "Chatroom"
+          };
+    }
+
+rpc JoinRoom (JoinRoomRequest) returns (JoinRoomResponse) {
+    option (google.api.http) = {
+        post: "/v1/chatroom/joinroom",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Join a chatroom"
+            description: "GRPC gateway call to join a chatroom."
+            tags: "Chatroom"
+          };
+    }
+
+rpc LeaveRoom (LeaveRoomRequest) returns (LeaveRoomResponse) {
+    option (google.api.http) = {
+        post: "/v1/chatroom/leaveroom",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Leave a chatroom"
+            description: "GRPC gateway call to leave a chatroom."
+            tags: "Chatroom"
+          };
+    }
+
+rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
+    option (google.api.http) = {
+        get: "/v1/chatroom/getroom/{chatroom_uuid}",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Get a chatroom"
+            description: "GRPC gateway call to get a chatroom."
+            tags: "Chatroom"
+          };
+    }
+}
+
+message CreateRoomRequest {
+string name = 1;
+string owner_uuid = 2;
+}
+
+message CreateRoomResponse {
+string status = 1;
+string error = 2;
+string chatroom_uuid = 3;
+}
+
+message DeleteRoomRequest {
+string chatroom_uuid = 1;
+string owner_uuid = 2;
+}
+
+message DeleteRoomResponse {
+string status = 1;
+string error = 2;
+}
+
+message JoinRoomRequest {
+string chatroom_uuid = 1;
+string user_uuid = 2;
+}
+
+message JoinRoomResponse {
+string status = 1;
+string error = 2;
+}
+
+message LeaveRoomRequest {
+string chatroom_uuid = 1;
+string user_uuid = 2;
+}
+
+message LeaveRoomResponse {
+string status = 1;
+string error = 2;
+}
+
+message GetRoomRequest {
+string chatroom_uuid = 1;
+}
+
+message GetRoomResponse {
+string status = 1;
+string error = 2;
+string name = 3;
+string owner_uuid = 4;
+repeated string users = 5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

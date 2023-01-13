@@ -12,6 +12,10 @@ import (
 	//authv1 "github.com/dietzy1/chatapp/services/apigateway/gen/go/auth/v1"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
+	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
+	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
+
 	"github.com/dietzy1/chatapp/services/apigateway/cache"
 	client "github.com/dietzy1/chatapp/services/apigateway/clients"
 
@@ -23,31 +27,22 @@ import (
 
 type server struct {
 	authv1.UnimplementedAuthGatewayServiceServer
-	cache         Cache
-	authClient    client.AuthClient
-	messageClient client.MessageClient
-	userClient    client.UserClient
+	messagev1.UnimplementedMessageGatewayServiceServer
+	userv1.UnimplementedUserGatewayServiceServer
+	chatroomv1.UnimplementedChatroomGatewayServiceServer
+
+	cache Cache
+
+	authClient     client.AuthClient
+	messageClient  client.MessageClient
+	userClient     client.UserClient
+	chatroomClient client.ChatRoomClient
 }
 
-/* type server struct {
-	authv1.UnimplementedAuthGatewayServiceServer
-	cache      Cache
-	authClient *client.AuthClient
+// Create a new server object and inject the cache and clients
+func newServer(cache Cache, authClient client.AuthClient, messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient) *server {
+	return &server{cache: cache, authClient: authClient, messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient}
 }
-*/
-
-// Create a new server object and inject the cache
-func newServer(cache Cache, authClient client.AuthClient, messageClient client.MessageClient, userClient client.UserClient) *server {
-	return &server{cache: cache, authClient: authClient, messageClient: messageClient, userClient: userClient}
-}
-
-//authv1.AuthGatewayServiceServer
-
-/* func NewClients(authClient *client.AuthClient) *server {
-	return &server{authClient: authClient}
-} */
-
-// Define Cache interface where it is being used
 
 // run the generated GRPC gateway server
 func runGateway() error {
@@ -68,10 +63,8 @@ func runGateway() error {
 
 	//intercepts the response and reads the cookie
 	incomingHeader := incomingHeaderMatcherWrapper()
-
 	//intercepts the response and sets the cookie
 	forwardResponse := withForwardResponseOptionWrapper()
-
 	//intercepts the request and sets the cookie
 	withMetaData := withMetaDataWrapper()
 
@@ -112,9 +105,9 @@ func Start() {
 	authClient := client.NewAuthClient()
 	messageClient := client.NewMessageClient()
 	userClient := client.NewUserClient()
+	chatRoomClient := client.NewChatRoomClient()
 
-	//NewClients(authClient)
-	dependencies := newServer(&lruCache, *authClient, *messageClient, *userClient)
+	dependencies := newServer(&lruCache, *authClient, *messageClient, *userClient, *chatRoomClient)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
@@ -125,7 +118,6 @@ func Start() {
 	go func() {
 		log.Fatal(s.Serve(lis))
 	}()
-
 	//Run the GRPC gateway server
 	err = runGateway()
 	log.Fatalln(err)

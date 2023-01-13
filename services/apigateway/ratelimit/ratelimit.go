@@ -7,3 +7,5 @@ package ratelimit
 
 type RateLimiter interface {
 }
+
+//I need to create a new rate limiter that can be used to limit the number of requests that can be made to the server

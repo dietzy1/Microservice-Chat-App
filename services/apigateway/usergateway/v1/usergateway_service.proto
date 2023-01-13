@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package usergateway.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1;usergatewayv1";
+
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// These annotations are used when generating the OpenAPI file.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {version: "1.0"};
+    external_docs: {
+      url: "https://github.com/dietzy1/Microservice-Chat-App";
+      description: "Backend GRPC chatapp microservice";
+    }
+    schemes: HTTPS;
+};
+
+service UserGatewayService {
+rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {
+    option (google.api.http) = {
+        post: "/v1/user/changeavatar",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Change the avatar of a user"
+            description: "GRPC gateway call to change the avatar of a user."
+            tags: "User"
+        };
+    }
+
+rpc ChangeUsername (ChangeUsernameRequest) returns (ChangeUsernameResponse) {
+    option (google.api.http) = {
+        post: "/v1/user/changeusername",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Change the username of a user"
+            description: "GRPC gateway call to change the username of a user."
+                        tags: "User"
+        };
+    }
+rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+    option (google.api.http) = {
+        post: "/v1/user/changepassword",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Change the password of a user"
+            description: "GRPC gateway call to change the password of a user."
+                        tags: "User"
+        };
+    }    
+}
+
+
+
+message ChangeAvatarRequest {
+    string user_id = 1;
+    string avatar = 2;
+}
+
+message ChangeAvatarResponse {
+    string status = 1;
+    string error = 2;;
+    string avatarlink = 3;
+}
+
+message ChangeUsernameRequest {
+    string user_id = 1;
+    string username = 2;
+}
+
+message ChangeUsernameResponse {
+    string status = 1;
+    string error = 2;
+    string username = 3;
+}
+
+message ChangePasswordRequest {
+    string user_id = 1;
+    string password = 2;
+}
+
+message ChangePasswordResponse {
+    string status = 1;
+    string error = 2;
+}
