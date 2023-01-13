@@ -13,6 +13,7 @@ import (
 
 type server struct {
 	authv1.UnimplementedAuthServiceServer
+	auth Auth
 }
 
 func newServer() *server {

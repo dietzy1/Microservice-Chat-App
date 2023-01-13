@@ -30,6 +30,7 @@ func newCache() (*cache, error) {
 	}, nil
 }
 
+// Key is user_uuid and value is the token
 func (c *cache) Get(key string) (string, error) {
 	val, err := c.client.Get(context.Background(), key).Result()
 	if err != nil {
@@ -38,6 +39,7 @@ func (c *cache) Get(key string) (string, error) {
 	return val, nil
 }
 
+// Key is user_uuid and value is the token
 func (c *cache) Set(key string, value string) error {
 	return c.client.Set(context.Background(), key, value, 0).Err()
 }

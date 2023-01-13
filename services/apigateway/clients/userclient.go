@@ -25,7 +25,7 @@ func NewUserClient() *UserClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := userv1.NewAuthGatewayServiceClient(conn)
+	client := userv1.NewUserGatewayServiceClient(conn)
 
 	return &UserClient{C: client}
 }

@@ -27,7 +27,7 @@ func (m *mongoMock) createMockData() core.Credentials {
 		Username: "test",
 		Password: "test",
 		Uuid:     "test",
-		Token:    "test",
+		Session:  "test",
 	}
 	//Add the mock data to the database
 	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
@@ -68,7 +68,7 @@ func TestAuthenticate(t *testing.T) {
 	mockData := mongoMock.createMockData()
 
 	//I need to verify that the username returned is the same as the username in the mock data based on the input token
-	username, err := mongoMock.client.Authenticate(context.Background(), mockData.Token)
+	username, err := mongoMock.client.Authenticate(context.Background(), mockData.Session)
 	if err != nil {
 		t.Errorf("Error unable to retrieve username: %v", err)
 	}
@@ -89,8 +89,8 @@ func TestLogout(t *testing.T) {
 		t.Errorf("Error unable to logout: %v", err)
 	}
 
-	if err := mongoMock.getToken(mockData.Token); err == nil {
-		t.Errorf("Error token is not empty: %v, expected token to be %s", err, mockData.Token)
+	if err := mongoMock.getToken(mockData.Session); err == nil {
+		t.Errorf("Error token is not empty: %v, expected token to be %s", err, mockData.Session)
 	}
 
 	// delete the mock data from the database

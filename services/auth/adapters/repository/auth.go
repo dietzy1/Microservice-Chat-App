@@ -12,8 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// this interface needs to be moved to where it is implemented(application layer)
-
 type auth struct {
 	client *mongo.Client
 }
@@ -46,32 +44,33 @@ func (a *auth) Login(ctx context.Context, username string) (string, error) {
 }
 
 // if logout is called, the token is invalidated and the user is logged out
-func (a *auth) Logout(ctx context.Context, username string) error {
+func (a *auth) Logout(ctx context.Context, userUuid string) error {
 	// perform update to the session token in the database
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
 	// take in username and use that to update the token to empty
-	_, err := collection.UpdateOne(ctx, bson.M{"username ": username}, bson.M{"$set": bson.M{"token": ""}})
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"session": ""}})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *auth) Authenticate(ctx context.Context, token string) (string, error) {
+func (a *auth) Authenticate(ctx context.Context, userUuid string) (string, error) {
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
 	var cred core.Credentials
-	err := collection.FindOne(ctx, bson.M{"token": token}).Decode(&cred)
+	err := collection.FindOne(ctx, bson.M{"uuid": userUuid}).Decode(&cred)
 	if err != nil {
-		return cred.Username, err
+		//maybe I need to return uuid instead here?
+		return cred.Session, err
 	}
 	return cred.Username, nil
 }
 
-func (a *auth) UpdateToken(ctx context.Context, username string, token string) error {
+func (a *auth) UpdateToken(ctx context.Context, userUuid string, session string) error {
 
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
 	// take in username and use that to update the token to empty
-	_, err := collection.UpdateOne(ctx, bson.M{"username ": username}, bson.M{"$set": bson.M{"token": token}})
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"session": session}})
 	if err != nil {
 		return err
 	}
