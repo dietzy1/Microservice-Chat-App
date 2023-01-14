@@ -27,7 +27,7 @@ type domain struct {
 }
 
 func New(auth Auth, cache Cache) *domain {
-	return &domain{auth, cache}
+	return &domain{auth: auth, cache: cache}
 }
 
 // If someone is trying to login to the application the session token should be returned

@@ -16,11 +16,11 @@ type server struct {
 	auth Auth
 }
 
-func newServer() *server {
-	return &server{}
+func newServer(auth Auth) *server {
+	return &server{auth: auth}
 }
 
-func Start() {
+func Start(auth Auth) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
@@ -35,7 +35,7 @@ func Start() {
 	//Inject dependencies into the server
 	s := grpc.NewServer()
 
-	dependencies := newServer()
+	dependencies := newServer(auth)
 
 	authv1.RegisterAuthServiceServer(s, dependencies)
 

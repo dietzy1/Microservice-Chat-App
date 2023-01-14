@@ -15,10 +15,8 @@ func main() {
 
 	domain := domain.New(repo.Auth, repo.Caching)
 
-	_ = domain
-
 	//I prolly need to inject the domain into the GRPC server here
 
 	//start the GRPC server
-	server.Start()
+	server.Start(domain)
 }

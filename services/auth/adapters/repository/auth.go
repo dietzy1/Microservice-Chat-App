@@ -43,6 +43,15 @@ func (a *auth) Login(ctx context.Context, username string) (string, error) {
 	return cred.Password, nil
 }
 
+func (a *auth) Register(ctx context.Context, cred core.Credentials) (string, error) {
+	collection := a.client.Database("Credential-Database").Collection("Credentials")
+	_, err := collection.InsertOne(ctx, cred)
+	if err != nil {
+		return "", err
+	}
+	return cred.Session, nil
+}
+
 // if logout is called, the token is invalidated and the user is logged out
 func (a *auth) Logout(ctx context.Context, userUuid string) error {
 	// perform update to the session token in the database
@@ -67,7 +76,6 @@ func (a *auth) Authenticate(ctx context.Context, userUuid string) (string, error
 }
 
 func (a *auth) UpdateToken(ctx context.Context, userUuid string, session string) error {
-
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
 	// take in username and use that to update the token to empty
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"session": session}})

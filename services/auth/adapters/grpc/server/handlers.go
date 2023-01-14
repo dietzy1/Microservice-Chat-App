@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
+	"github.com/dietzy1/chatapp/services/auth/core"
 	authv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
-	"github.com/dietzy1/chatapp/services/user/core"
 )
 
 //It needs a domain interface it can use to call the domain functions
