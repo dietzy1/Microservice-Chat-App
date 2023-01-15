@@ -13,11 +13,12 @@ import (
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	client "github.com/dietzy1/chatapp/services/apigateway/clients"
+	authclient "github.com/dietzy1/chatapp/services/apigateway/clients/auth/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
 
 	"github.com/dietzy1/chatapp/services/apigateway/cache"
-	client "github.com/dietzy1/chatapp/services/apigateway/clients"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -33,15 +34,18 @@ type server struct {
 
 	cache Cache
 
-	authClient     client.AuthClient
-	messageClient  client.MessageClient
-	userClient     client.UserClient
-	chatroomClient client.ChatRoomClient
+	authClient authclient.AuthServiceClient
+
+	/*
+		 	messageClient  client.MessageClient
+			userClient     client.UserClient
+			chatroomClient client.ChatRoomClient
+	*/
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(cache Cache, authClient client.AuthClient, messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient) *server {
-	return &server{cache: cache, authClient: authClient, messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient}
+func newServer(cache Cache, authClient authclient.AuthServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
+	return &server{cache: cache, authClient: authClient /* messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient */}
 }
 
 // run the generated GRPC gateway server
@@ -103,11 +107,11 @@ func Start() {
 	//initiate dependencies for the server
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
-	messageClient := client.NewMessageClient()
+	/* messageClient := client.NewMessageClient()
 	userClient := client.NewUserClient()
-	chatRoomClient := client.NewChatRoomClient()
+	chatRoomClient := client.NewChatRoomClient() */
 
-	dependencies := newServer(&lruCache, *authClient, *messageClient, *userClient, *chatRoomClient)
+	dependencies := newServer(&lruCache, *authClient /* *messageClient, *userClient, *chatRoomClient */)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()

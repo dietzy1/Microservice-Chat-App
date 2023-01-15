@@ -47,7 +47,7 @@ string timestamp = 5;
 }
 
 message EditMessageResponse {
-string status = 1;
+
 string error = 2;
 }
 
@@ -60,7 +60,6 @@ string timestamp = 5;
 }
 
 message DeleteMessageResponse {
-string status = 1;
 string error = 2;
 }
 

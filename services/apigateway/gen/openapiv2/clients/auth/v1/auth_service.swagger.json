@@ -44,15 +44,49 @@
         }
       }
     },
+    "v1AuthenticateResponse": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1InvalidateResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    },
     "v1LoginResponse": {
       "type": "object",
       "properties": {
-        "token": {
+        "session": {
           "type": "string"
         },
-        "status": {
-          "type": "string",
-          "format": "int64"
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1LogoutResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1RegisterResponse": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "type": "string"
         },
         "error": {
           "type": "string"

@@ -50,10 +50,14 @@
         "session": {
           "type": "string"
         },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "v1InvalidateResponse": {
+      "type": "object",
+      "properties": {
         "error": {
           "type": "string"
         }
@@ -65,10 +69,6 @@
         "session": {
           "type": "string"
         },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
         "error": {
           "type": "string"
         }
@@ -77,10 +77,6 @@
     "v1LogoutResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
         "error": {
           "type": "string"
         }
@@ -91,10 +87,6 @@
       "properties": {
         "session": {
           "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int32"
         },
         "error": {
           "type": "string"

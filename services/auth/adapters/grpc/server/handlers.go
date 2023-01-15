@@ -21,6 +21,7 @@ type Auth interface {
 // Pass down the paramters to the interface functions
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 	//create a credentials struct
+	log.Println("LOGIN CALLED")
 	cred := core.Credentials{
 		Username: req.Username,
 		Password: req.Password,

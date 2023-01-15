@@ -5,6 +5,7 @@ import (
 	"log"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
+	authclientv1 "github.com/dietzy1/chatapp/services/apigateway/clients/auth/v1"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -16,24 +17,16 @@ type Cache interface {
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 	//implement whatever logic needs to be implemented
 	log.Println("Login called")
-	//set a cookie and add it to the grpc response
-	/* cookie := &http.Cookie{
-		Name:  "session_token",
-		Value: "value",
-	} */
-
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		log.Println("no metadata")
-	}
-	log.Println(md.Get("session_token"))
-
-	log.Println(req.Username, req.Password)
 	//perform client side call to the authentication service
+	creds := authclientv1.LoginRequest{
+		Username: req.Username,
+		Password: req.Password,
+	}
 
-	login, err := s.authClient.C.Login(ctx, req)
+	login, err := s.authClient.Login(ctx, &creds)
 	if err != nil {
 		log.Println(err)
+		log.Println("ERROR")
 	}
 	log.Println(login)
 
@@ -48,7 +41,7 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 	//implement whatever logic needs to be implemented
 	log.Println("Register called")
 
-	register, err := s.authClient.C.Register(ctx, req)
+	register, err := s.authClient.Register(ctx, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -63,8 +56,17 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
 	//implement whatever logic needs to be implemented
 	log.Println("Logout called")
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		log.Println("no metadata")
+	}
+	log.Println(md)
+	//extract the token from the metadata
+	session := md["session_token"][0]
 
-	logout, err := s.authClient.C.Logout(ctx, req)
+	logout, err := s.authClient.Logout(ctx, &authclientv1.LogoutRequest{
+		Session: session,
+	})
 	if err != nil {
 		log.Println(err)
 	}
@@ -79,8 +81,16 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
 	//implement whatever logic needs to be implemented
 	log.Println("Authenticate called")
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		log.Println("no metadata")
+	}
+	log.Println(md)
+	//extract the token from the metadata
+	session := md["session_token"][0]
 
-	authenticate, err := s.authClient.C.Authenticate(ctx, req)
+	authenticate, err := s.authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{
+		Session: session})
 	if err != nil {
 		log.Println(err)
 

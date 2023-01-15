@@ -55,17 +55,14 @@ rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
     }    
 }
 
-
-
 message ChangeAvatarRequest {
     string user_id = 1;
     string avatar = 2;
 }
 
 message ChangeAvatarResponse {
-    string status = 1;
-    string error = 2;;
-    string avatarlink = 3;
+    string error = 1;
+    string avatarlink = 2;
 }
 
 message ChangeUsernameRequest {
@@ -74,9 +71,8 @@ message ChangeUsernameRequest {
 }
 
 message ChangeUsernameResponse {
-    string status = 1;
-    string error = 2;
-    string username = 3;
+    string error = 1;
+    string username = 2;
 }
 
 message ChangePasswordRequest {
@@ -85,6 +81,5 @@ message ChangePasswordRequest {
 }
 
 message ChangePasswordResponse {
-    string status = 1;
-    string error = 2;
+    string error = 1;
 }

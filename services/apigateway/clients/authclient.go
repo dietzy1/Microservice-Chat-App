@@ -8,20 +8,16 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
+	authclientv1 "github.com/dietzy1/chatapp/services/apigateway/clients/auth/v1"
 )
 
-//I need to generate a client somewhere around here
-//And use the client in the handlers file to call the authentication service
-
-type AuthClient struct {
-	C authv1.AuthGatewayServiceClient
-}
-
-func NewAuthClient() *AuthClient {
+// I need to generate a client somewhere around here
+// And use the client in the handlers file to call the authentication service
+func NewAuthClient() *authclientv1.AuthServiceClient {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("AUTH"),
+		//"localhost:9000",
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -29,7 +25,6 @@ func NewAuthClient() *AuthClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := authv1.NewAuthGatewayServiceClient(conn)
-
-	return &AuthClient{C: client}
+	client := authclientv1.NewAuthServiceClient(conn)
+	return &client
 }
