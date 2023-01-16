@@ -85,9 +85,8 @@ string owner_uuid = 2;
 }
 
 message CreateRoomResponse {
-string status = 1;
-string error = 2;
-string chatroom_uuid = 3;
+string error = 1;
+string chatroom_uuid = 2;
 }
 
 message DeleteRoomRequest {
@@ -96,8 +95,7 @@ string owner_uuid = 2;
 }
 
 message DeleteRoomResponse {
-string status = 1;
-string error = 2;
+string error = 1;
 }
 
 message JoinRoomRequest {
@@ -106,8 +104,7 @@ string user_uuid = 2;
 }
 
 message JoinRoomResponse {
-string status = 1;
-string error = 2;
+string error = 1;
 }
 
 message LeaveRoomRequest {
@@ -116,8 +113,7 @@ string user_uuid = 2;
 }
 
 message LeaveRoomResponse {
-string status = 1;
-string error = 2;
+string error = 1;
 }
 
 message GetRoomRequest {
@@ -125,11 +121,10 @@ string chatroom_uuid = 1;
 }
 
 message GetRoomResponse {
-string status = 1;
-string error = 2;
-string name = 3;
-string owner_uuid = 4;
-repeated string users = 5;
+string error = 1;
+string name = 2;
+string owner_uuid = 3;
+repeated string users = 4;
 }
 
 
