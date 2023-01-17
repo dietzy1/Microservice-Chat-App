@@ -230,9 +230,6 @@
     "v1CreateRoomResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         },
@@ -255,9 +252,6 @@
     "v1DeleteRoomResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         }
@@ -266,9 +260,6 @@
     "v1GetRoomResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         },
@@ -300,9 +291,6 @@
     "v1JoinRoomResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         }
@@ -322,9 +310,6 @@
     "v1LeaveRoomResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         }

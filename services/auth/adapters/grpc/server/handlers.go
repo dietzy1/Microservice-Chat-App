@@ -4,15 +4,15 @@ import (
 	"context"
 	"log"
 
-	"github.com/dietzy1/chatapp/services/auth/core"
+	"github.com/dietzy1/chatapp/services/auth/domain"
 	authv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 )
 
 //It needs a domain interface it can use to call the domain functions
 
 type Auth interface {
-	Login(ctx context.Context, cred core.Credentials) (string, error)
-	Register(ctx context.Context, cred core.Credentials) (string, error)
+	Login(ctx context.Context, cred domain.Credentials) (string, error)
+	Register(ctx context.Context, cred domain.Credentials) (string, error)
 	Logout(ctx context.Context, session string, useruuid string) error
 	Authenticate(ctx context.Context, session string, useruuid string) (string, error)
 	Invalidate(ctx context.Context, userUUid string) error
@@ -22,7 +22,7 @@ type Auth interface {
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 	//create a credentials struct
 	log.Println("LOGIN CALLED")
-	cred := core.Credentials{
+	cred := domain.Credentials{
 		Username: req.Username,
 		Password: req.Password,
 	}
@@ -51,7 +51,7 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 }
 
 func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	cred := core.Credentials{
+	cred := domain.Credentials{
 		Username: req.Username,
 		Password: req.Password,
 	}

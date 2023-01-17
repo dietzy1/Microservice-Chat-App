@@ -4,13 +4,11 @@ import (
 	"context"
 	"errors"
 	"log"
-
-	"github.com/dietzy1/chatapp/services/auth/core"
 )
 
 type Auth interface {
 	Login(ctx context.Context, username string) (string, error)
-	Register(ctx context.Context, cred core.Credentials) (string, error)
+	Register(ctx context.Context, cred Credentials) (string, error)
 	Logout(ctx context.Context, userUuid string) error
 	Authenticate(ctx context.Context, userUuid string) (string, error)
 	UpdateToken(ctx context.Context, username string, token string) error
@@ -26,12 +24,19 @@ type domain struct {
 	cache Cache
 }
 
+type Credentials struct {
+	Username string `json:"username" bson:"username"`
+	Password string `json:"password " bson:"password"`
+	Uuid     string `json:"uuid" bson:"uuid"`
+	Session  string `json:"session" bson:"session"`
+}
+
 func New(auth Auth, cache Cache) *domain {
 	return &domain{auth: auth, cache: cache}
 }
 
 // If someone is trying to login to the application the session token should be returned
-func (d domain) Login(ctx context.Context, cred core.Credentials) (string, error) {
+func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 	password, err := d.auth.Login(ctx, cred.Username)
 	if err != nil {
 		log.Println(err)
@@ -39,12 +44,12 @@ func (d domain) Login(ctx context.Context, cred core.Credentials) (string, error
 	}
 
 	//Perform bcrypt check to see if password is correct
-	if err = core.CompareHash(password, cred.Password); err != nil {
+	if err = CompareHash(password, cred.Password); err != nil {
 		log.Println(err)
 		return "", err
 	}
 	//if someone logins then the session token should be regenerated and returned
-	token := core.GenerateToken()
+	token := GenerateToken()
 	if err = d.auth.UpdateToken(ctx, cred.Username, token); err != nil {
 		log.Println(err)
 		return "", err
@@ -53,7 +58,7 @@ func (d domain) Login(ctx context.Context, cred core.Credentials) (string, error
 	return token, nil
 }
 
-func (d domain) Register(ctx context.Context, cred core.Credentials) (string, error) {
+func (d domain) Register(ctx context.Context, cred Credentials) (string, error) {
 	//check if username is in database
 	_, err := d.auth.Login(ctx, cred.Username)
 	if err == nil {
@@ -62,14 +67,14 @@ func (d domain) Register(ctx context.Context, cred core.Credentials) (string, er
 	}
 
 	//hash password
-	cred.Password, err = core.GenerateHash(cred.Password)
+	cred.Password, err = GenerateHash(cred.Password)
 	if err != nil {
 		return "", err
 	}
 
 	//add user to database
-	cred.Uuid = core.GenerateToken()
-	cred.Session = core.GenerateToken()
+	cred.Uuid = GenerateToken()
+	cred.Session = GenerateToken()
 
 	session, err := d.auth.Register(ctx, cred)
 	if err != nil {

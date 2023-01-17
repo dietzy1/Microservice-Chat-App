@@ -5,13 +5,14 @@ import (
 	"log"
 	"os"
 
-	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/client/chatroom/v1"
+	chatroomclientv1 "github.com/dietzy1/chatapp/services/apigateway/clients/chatroom/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewChatRoomClient() *chatroomroomclientv1.ChatroomGatewayServiceClient {
+// func NewChatRoomClient() *chatroomclientv1.ChatroomGatewayServiceClient {
+func NewChatRoomClient() *chatroomclient.v1 {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("CHATROOM"),
@@ -22,7 +23,7 @@ func NewChatRoomClient() *chatroomroomclientv1.ChatroomGatewayServiceClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := chatroomv1.NewChatroomGatewayServiceClient(conn)
+	client := chatroomclientv1.NewChatroomGatewayServiceClient(conn)
 
 	return &client
 }

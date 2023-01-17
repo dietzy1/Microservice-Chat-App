@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/dietzy1/chatapp/services/auth/core"
+	"github.com/dietzy1/chatapp/services/auth/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,7 +35,7 @@ func newAuth() (*auth, error) {
 // if login is called, the token is generated and the user is logged in
 func (a *auth) Login(ctx context.Context, username string) (string, error) {
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
-	var cred core.Credentials
+	var cred domain.Credentials
 	err := collection.FindOne(ctx, bson.M{"username": username}).Decode(&cred)
 	if err != nil {
 		return cred.Password, err
@@ -43,7 +43,7 @@ func (a *auth) Login(ctx context.Context, username string) (string, error) {
 	return cred.Password, nil
 }
 
-func (a *auth) Register(ctx context.Context, cred core.Credentials) (string, error) {
+func (a *auth) Register(ctx context.Context, cred domain.Credentials) (string, error) {
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
 	_, err := collection.InsertOne(ctx, cred)
 	if err != nil {
@@ -66,7 +66,7 @@ func (a *auth) Logout(ctx context.Context, userUuid string) error {
 
 func (a *auth) Authenticate(ctx context.Context, userUuid string) (string, error) {
 	collection := a.client.Database("Credential-Database").Collection("Credentials")
-	var cred core.Credentials
+	var cred domain.Credentials
 	err := collection.FindOne(ctx, bson.M{"uuid": userUuid}).Decode(&cred)
 	if err != nil {
 		//maybe I need to return uuid instead here?

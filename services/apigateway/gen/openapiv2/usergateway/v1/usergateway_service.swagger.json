@@ -164,9 +164,6 @@
     "v1ChangeAvatarResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         },
@@ -189,9 +186,6 @@
     "v1ChangePasswordResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         }
@@ -211,9 +205,6 @@
     "v1ChangeUsernameResponse": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
         "error": {
           "type": "string"
         },

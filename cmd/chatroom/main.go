@@ -1,9 +1,19 @@
 package main
 
-import "github.com/dietzy1/chatapp/config"
+import (
+	"github.com/dietzy1/chatapp/config"
+	"github.com/dietzy1/chatapp/services/chatroom/adapters/grpc/server"
+	"github.com/dietzy1/chatapp/services/chatroom/adapters/repository"
+	"github.com/dietzy1/chatapp/services/chatroom/domain"
+)
 
 func main() {
 
 	config.ReadEnvfile()
 
+	repo := repository.New()
+
+	domain := domain.New(repo)
+
+	server.Start(domain)
 }

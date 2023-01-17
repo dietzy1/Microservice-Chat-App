@@ -5,7 +5,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/dietzy1/chatapp/services/auth/core"
+	"github.com/dietzy1/chatapp/services/auth/domain"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -21,9 +21,9 @@ func newMongoMock() *mongoMock {
 	return &mongoMock{client: mongo}
 }
 
-func (m *mongoMock) createMockData() core.Credentials {
+func (m *mongoMock) createMockData() domain.Credentials {
 
-	mockData := core.Credentials{
+	mockData := domain.Credentials{
 		Username: "test",
 		Password: "test",
 		Uuid:     "test",
@@ -38,7 +38,7 @@ func (m *mongoMock) createMockData() core.Credentials {
 	return mockData
 }
 
-func (m *mongoMock) deleteMockData(mockData core.Credentials) {
+func (m *mongoMock) deleteMockData(mockData domain.Credentials) {
 	// delete the mock data from the database
 	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
 	_, err := collection.DeleteOne(context.Background(), mockData)
@@ -102,7 +102,7 @@ func (m *mongoMock) getToken(token string) error {
 	// get the token from the database
 	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
 	// take in username and use that to update the token to empty
-	var result core.Credentials
+	var result domain.Credentials
 	if err := collection.FindOne(context.Background(), bson.M{"token": token}).Decode(&result); err != nil {
 		return err
 	}

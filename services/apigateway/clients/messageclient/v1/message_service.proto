@@ -4,9 +4,6 @@ package message.v1;
 
 option go_package = "github.com/dietzy1/chatapp/services/message/proto/message/v1;messagev1";
 
-
-
-
 service MessageService {
 rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse) {}
 rpc GetMessage(GetMessageRequest) returns (GetMessageResponse) {}

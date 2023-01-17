@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -17,19 +18,19 @@ type Db struct {
 	client *mongo.Client
 }
 
-func New() (*Db, error) {
+func New() *Db {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv(("DB_URI"))))
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 	a := &Db{client: client}
-	return a, err
+	return a
 
 }
 
