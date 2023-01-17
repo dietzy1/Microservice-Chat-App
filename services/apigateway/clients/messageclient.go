@@ -5,16 +5,13 @@ import (
 	"log"
 	"os"
 
-	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 )
 
-type MessageClient struct {
-	C messagev1.MessageGatewayServiceClient
-}
-
-func NewMessageClient() *MessageClient {
+func NewMessageClient() *messageclientv1.MessageServiceClient {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("MESSAGE"),
@@ -25,7 +22,7 @@ func NewMessageClient() *MessageClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := messagev1.NewMessageGatewayServiceClient(conn)
+	client := messageclientv1.NewMessageServiceClient(conn)
 
-	return &MessageClient{C: client}
+	return &client
 }

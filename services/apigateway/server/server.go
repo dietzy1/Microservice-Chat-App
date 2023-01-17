@@ -13,10 +13,13 @@ import (
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
-	client "github.com/dietzy1/chatapp/services/apigateway/clients"
-	authclient "github.com/dietzy1/chatapp/services/apigateway/clients/auth/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
+
+	client "github.com/dietzy1/chatapp/services/apigateway/clients"
+
+	//import the generated protobuf code straight from their source
+	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 
 	"github.com/dietzy1/chatapp/services/apigateway/cache"
 
@@ -34,7 +37,8 @@ type server struct {
 
 	cache Cache
 
-	authClient authclient.AuthServiceClient
+	//authClient client.AuthServiceClient
+	authClient authclientv1.AuthServiceClient
 
 	/*
 		 	messageClient  client.MessageClient
@@ -44,7 +48,7 @@ type server struct {
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(cache Cache, authClient authclient.AuthServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
+func newServer(cache Cache, authClient authclientv1.AuthServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
 	return &server{cache: cache, authClient: authClient /* messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient */}
 }
 
@@ -107,6 +111,8 @@ func Start() {
 	//initiate dependencies for the server
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
+	//chatroomclient := client.NewChatRoomClient()
+
 	/* messageClient := client.NewMessageClient()
 	userClient := client.NewUserClient()
 	chatRoomClient := client.NewChatRoomClient() */

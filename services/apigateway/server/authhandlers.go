@@ -5,7 +5,7 @@ import (
 	"log"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
-	authclientv1 "github.com/dietzy1/chatapp/services/apigateway/clients/auth/v1"
+	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 	"google.golang.org/grpc/metadata"
 )
 
