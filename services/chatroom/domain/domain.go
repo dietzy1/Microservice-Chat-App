@@ -1,6 +1,10 @@
 package domain
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Domain struct {
 	repo chatroom
@@ -17,7 +21,6 @@ type chatroom interface {
 	DeleteChatroom(ctx context.Context, chatroomUuid string) error
 	AddUserToChatroom(ctx context.Context, chatroomUuid string, userUuid string) error
 	RemoveUserFromChatroom(ctx context.Context, chatroomUuid string, userUuid string) error
-
 	/* ChangeDescription()
 	ChangeName()
 	ChangeTags() */
@@ -40,27 +43,58 @@ type Chatroom struct {
 // Tags of the chatroom
 func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, error) {
 	//Check if chatroom name is taken
+	_, err := d.GetRoom(ctx, chatroom.Name)
+	if err != nil {
+		//return incase the name is already taken
+		return "", err
+	}
+	//perform check if tags and description are not empty
+	if chatroom.Description == "" || chatroom.Tags == nil {
+		return "", err
+	}
 
-	//Check if tags are valid
-	//Check if description is valid
-	//Check if name is valid
-	//Create chatroom
+	//The other fields are already set from the grpc call
+	chatroom.Uuid = uuid.New().String()
+	chatroom.Users = append(chatroom.Users, chatroom.Owner)
 
-	return "", nil
+	//Use the chatroom object to create a new chatroom in the database
+	err = d.repo.CreateChatroom(ctx, chatroom)
+	if err != nil {
+		return "", err
+	}
+
+	return chatroom.Uuid, nil
 	//Should prolly come up with some default values incase nothing is provided
 }
 
-func (d *Domain) DeleteRoom(ctx context.Context, chatroom Chatroom) (string, error) {
-	//Check if chatroom exists
-	//Check if owner uuid is valid
-	//Check if owner uuid is the owner of the chatroom
-	//Delete chatroom
+// This call should also delete the messages in the chatroom
+func (d *Domain) DeleteRoom(ctx context.Context, chatroom Chatroom) error {
+	//The owner uuid should be passed through the cookie so it should already be authenticated prior to this call
 
-	return "", nil
+	//Check if owner uuid is the owner of the chatroom
+	room, err := d.GetRoom(ctx, chatroom.Uuid)
+	if err != nil {
+		//Chatroom does not exist
+		return err
+	}
+	if room.Owner != chatroom.Owner {
+		//User is not the owner of the chatroom
+		return err
+	}
+
+	//Delete chatroom
+	err = d.repo.DeleteChatroom(ctx, chatroom.Uuid)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
+// For now make it so only the owner can add users to the chatroom
+// Might want to change this to an invite link later though
 func (d *Domain) JoinRoom(ctx context.Context, chatroom Chatroom) (string, error) {
 	//Check if chatroom exists
+
 	//Check if user uuid is valid
 	//Check if user is already in chatroom
 	//Add user to chatroom
@@ -69,19 +103,35 @@ func (d *Domain) JoinRoom(ctx context.Context, chatroom Chatroom) (string, error
 
 }
 
-func (d *Domain) LeaveRoom(ctx context.Context, chatroom Chatroom) (string, error) {
+func (d *Domain) LeaveRoom(ctx context.Context, chatroomUuid string, userUuid string) error {
 	//Check if chatroom exists
+
+	//the passed in user uuid should be the one from the cookie
+
+	err := d.repo.RemoveUserFromChatroom(ctx, chatroomUuid, userUuid)
+	if err != nil {
+		//unable to remove user from chatroom
+		return err
+	}
+
 	//Check if user uuid is valid
 	//Check if user is in chatroom
 	//Remove user from chatroom
 
-	return "", nil
+	return nil
 
 }
 
+// return the chatroom object from the database
 func (d *Domain) GetRoom(ctx context.Context, chatroomUuid string) (Chatroom, error) {
 
-	return Chatroom{}, nil
+	chatroom, err := d.repo.GetChatroom(ctx, chatroomUuid)
+	if err != nil {
+		//no chatroom was found
+		return Chatroom{}, err
+	}
+
+	return chatroom, nil
 }
 
 /* message CreateRoomRequest {
