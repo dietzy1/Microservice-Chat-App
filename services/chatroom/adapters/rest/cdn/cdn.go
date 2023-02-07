@@ -12,7 +12,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/dietzy1/chatapp/services/user/core"
+	"github.com/dietzy1/chatapp/services/chatroom/domain"
 	"github.com/imagekit-developer/imagekit-go"
 	"github.com/imagekit-developer/imagekit-go/api/media"
 	"github.com/imagekit-developer/imagekit-go/api/uploader"
@@ -26,8 +26,9 @@ type cdn struct {
 	client *imagekit.ImageKit
 }
 
-//Purpose of this for the user to be able to upload custom icons to their profile
+//I need to define an interface for this
 
+// Purpose of this for the user to be able to upload custom icons to their profile
 func New() *cdn {
 	client := imagekit.NewFromParams(imagekit.NewParams{
 		PrivateKey:  os.Getenv("PRIVATE_KEY"),
@@ -38,11 +39,11 @@ func New() *cdn {
 }
 
 // sends a POST http request that stores the image bytes with a path of uuid.jpg at the CDN.
-func (f *cdn) UploadFile(ctx context.Context, icon core.Icon, buf bytes.Buffer) (string, error) {
+func (f *cdn) UploadFile(ctx context.Context, icon domain.Icon, buf bytes.Buffer) (string, error) {
 	params := uploader.UploadParam{
 		FileName:          icon.Uuid + ".jpg",
 		UseUniqueFileName: newFalse(),
-		Folder:            "/user/",
+		Folder:            "/chatroom/",
 		IsPrivateFile:     newFalse(),
 		ResponseFields:    "filepath",
 	}

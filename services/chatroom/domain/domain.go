@@ -8,10 +8,11 @@ import (
 
 type Domain struct {
 	repo chatroom
+	cdn  cdn
 }
 
-func New(repo chatroom) *Domain {
-	return &Domain{repo: repo}
+func New(repo chatroom, cdn cdn) *Domain {
+	return &Domain{repo: repo, cdn: cdn}
 }
 
 // this is the repository interface
@@ -32,6 +33,7 @@ type Chatroom struct {
 	Users       []string `json:"users" bson:"users"`
 	Uuid        string   `json:"uuid" bson:"uuid"`
 	Name        string   `json:"name" bson:"name"`
+	Icon        Icon     `json:"icon" bson:"icon"`
 	Owner       string   `json:"owner" bson:"owner"`
 	Description string   `json:"description" bson:"description"`
 	Tags        []string `json:"tags" bson:"tags"`
@@ -52,6 +54,10 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 	if chatroom.Description == "" || chatroom.Tags == nil {
 		return "", err
 	}
+
+	//perform call to cdn and upload the icon
+	chatroom.Icon.Link = d.cdn.UploadIcon(ctx, chatroom.Icon)
+	chatroom.Icon.Uuid = uuid.New().String()
 
 	//The other fields are already set from the grpc call
 	chatroom.Uuid = uuid.New().String()

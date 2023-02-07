@@ -107,3 +107,5 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 		Tags:        chatroom.Tags,
 	}, nil
 }
+
+

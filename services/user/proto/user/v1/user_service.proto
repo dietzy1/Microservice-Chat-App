@@ -7,9 +7,74 @@ option go_package = "github.com/dietzy1/chatapp/services/user/proto/user/v1;user
 
 
 
+
 service UserService {
+	//internal RPC
+rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+rpc AddChatServer(AddChatServerRequest) returns (AddChatServerResponse) {}
+rpc DeleteChatServer(DeleteChatServerRequest) returns (DeleteChatServerResponse) {}
+
+
+//External RPC
+rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
+rpc ChangeName (ChangeNameRequest) returns (ChangeNameResponse) {}
+rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
+
 
 }
+
+message CreateUserRequest {
+
+}
+
+message CreateUserResponse {
+
+}
+
+message AddChatServerRequest {
+
+}
+
+message AddChatServerResponse {
+
+}
+
+message DeleteChatServerRequest{
+
+}
+
+message DeleteChatServerResponse {
+
+}
+
+
+
+
+message ChangeAvatarRequest {
+
+}
+
+message ChangeAvatarResponse {
+
+}
+
+message ChangeNameRequest {
+
+}
+
+message ChangeNameResponse {
+
+}
+
+message ChangePasswordRequest {
+
+}
+
+message ChangePasswordResponse {
+
+}
+
+
 
 
 /* type User struct {

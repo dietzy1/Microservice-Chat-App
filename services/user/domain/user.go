@@ -16,18 +16,14 @@ import (
 //User settings
 //User permissions
 
- type User struct {
+type User struct {
 	Icon        Icon //A link to the users icon
 	Name        string
 	Uuid        string
 	Discription string
 	JoinDate    string
-	Roles       []string
 	ChatServers []string
-	Reports     int
 }
-
-
 
 type user interface {
 	AddUser(ctx context.Context, user core.User) error
