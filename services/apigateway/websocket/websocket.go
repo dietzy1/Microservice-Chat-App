@@ -8,6 +8,7 @@ import (
 	"log"
 	"time"
 
+	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/gorilla/websocket"
 )
 
@@ -21,9 +22,10 @@ const (
 type ws struct {
 	hub  *ConnectionManager
 	conn *websocket.Conn
-	send chan Message //this here should prolly be changed to the message object
+	send chan messagev1.CreateMessageRequest //this here should prolly be changed to the message object
 }
 
+// I need to implement some error handling so it doesn't crash the server on incorrect proto format
 func (ws *ws) readPump() {
 	defer func() {
 		ws.hub.unregister <- ws
@@ -42,9 +44,16 @@ func (ws *ws) readPump() {
 		}
 		//The issue is the convertion to the message object
 
-		msg := Decode(message)
+		/* 	msg := Decode(message) */
 
-		ws.hub.broadcast <- msg
+		log.Println("CLIENT READ", ws.hub.clients)
+		msg, err := unmarshal(message)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Printf("SENT msg: %s", msg)
+
+		ws.hub.broadcast <- *msg
 	}
 }
 
@@ -63,19 +72,35 @@ func (ws *ws) writePump() {
 				ws.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-
-			w, err := ws.conn.NextWriter(websocket.TextMessage)
+			//This was websocket.TextMessage beforehand
+			w, err := ws.conn.NextWriter(websocket.BinaryMessage)
 			if err != nil {
 				return
 			}
-			w.Write(message.Encode(message))
-			log.Println(message)
+
+			//w.Conn.NextWriter(websocket)
+			// printf the message object
+
+			log.Println("CLIENT WRITE: ", ws.hub.clients)
+
+			log.Printf("RECIEVED msg: %+v", message)
+			msg, err := marshal(&message)
+			if err != nil {
+				log.Println(err)
+			}
+			w.Write(msg)
 
 			// Add queued chat messages to the current websocket message.
 			n := len(ws.send)
 			for i := 0; i < n; i++ {
 				ok := <-ws.send
-				w.Write(ok.Encode(<-ws.send))
+				msg, err := marshal(&ok)
+				log.Println(msg)
+				if err != nil {
+					log.Println(err)
+				}
+
+				w.Write(msg)
 				//w.Write(<-c.send)
 			}
 

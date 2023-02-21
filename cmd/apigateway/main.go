@@ -3,13 +3,16 @@ package main
 import (
 	"github.com/dietzy1/chatapp/config"
 	"github.com/dietzy1/chatapp/services/apigateway/server"
+	"github.com/dietzy1/chatapp/services/apigateway/websocket"
 )
 
 func main() {
 
 	config.ReadEnvfile()
 
-	server.Start()
+	websocket.Start()
+
+	go server.Start()
 
 	//Need to initate the websocket connection here aswell
 

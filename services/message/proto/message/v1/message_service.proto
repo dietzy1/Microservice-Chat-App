@@ -4,9 +4,6 @@ package message.v1;
 
 option go_package = "github.com/dietzy1/chatapp/services/message/proto/message/v1;messagev1";
 
-
-
-
 service MessageService {
 rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse) {}
 rpc GetMessage(GetMessageRequest) returns (GetMessageResponse) {}
@@ -15,15 +12,20 @@ rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {}
 }
 
 message CreateMessageRequest {
+    string author = 1;
+    string content = 2;
+    string author_uuid = 3;
+    string chat_room_uuid = 4;
+    string channel_uuid = 5;
+}
+
+message CreateMessageResponse {
 string author = 1;
 string content = 2;
 string author_uuid = 3;
 string chat_room_uuid = 4;
-string timestamp = 5;
-}
-
-message CreateMessageResponse {
-string error = 1;
+string channel_uuid = 5;
+string timestamp = 6;
 }
 
 message GetMessageRequest {

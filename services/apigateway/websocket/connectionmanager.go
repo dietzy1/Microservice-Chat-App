@@ -1,11 +1,11 @@
 package websocket
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 
+	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/gorilla/websocket"
 )
 
@@ -21,22 +21,29 @@ import (
 
 type ConnectionManager struct {
 	clients    map[*ws]bool
-	broadcast  chan Message //Before this was []byte
+	broadcast  chan messagev1.CreateMessageRequest //Before this was []byte
 	register   chan *ws
 	unregister chan *ws
 }
 
+// Initialize the connection manager
 func Start() {
 	connectionManager := NewConnectionManger()
+
 	go connectionManager.Run()
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Websocket connection request received")
 		serveWs(w, r)
 	})
+
 	err := http.ListenAndServe(os.Getenv("WS"), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+	log.Println("Websocket server started on port " + os.Getenv("WS"))
+
 }
 
 //It might be the solution to use a map of channels where the channel id is the key for broadcasting channel
@@ -44,19 +51,25 @@ func Start() {
 // Might need to inject some dependencies here
 func NewConnectionManger() *ConnectionManager {
 	return &ConnectionManager{
-		broadcast:  make(chan Message), //before this was []byte //Now it should actually be a slice of broadcast channels
-		register:   make(chan *ws),     //should be a slice of register channels
-		unregister: make(chan *ws),     //should be a slice of unregister channels
-		clients:    make(map[*ws]bool), //should be a slice of clients
+		broadcast:  make(chan messagev1.CreateMessageRequest), //before this was []byte //Now it should actually be a slice of broadcast channels
+		register:   make(chan *ws),                            //should be a slice of register channels
+		unregister: make(chan *ws),                            //should be a slice of unregister channels
+		clients:    make(map[*ws]bool),                        //should be a slice of clients
 	}
 }
 
 type ChannelID struct {
-	id string `json:"id"`
+	Id string `json:"id"`
+}
+
+type id struct {
+	chatroom string
+	channel  string
 }
 
 // Might need to somehow take in which chatroom the client is in
 func serveWs(w http.ResponseWriter, r *http.Request) {
+	log.Println("Websocket connection established")
 	opts := &websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -65,9 +78,14 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	var ch ChannelID
-	//read the channel id from the request
-	err := json.NewDecoder(r.Body).Decode(&ch)
+	id := &id{
+		chatroom: r.URL.Query().Get("chatroom"),
+		channel:  r.URL.Query().Get("channel"),
+	}
+
+	//var ch ChannelID
+
+	//ch.Id = r.URL.Query().Get("id")
 
 	conn, err := opts.Upgrade(w, r, nil)
 	if err != nil {
@@ -76,12 +94,12 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cm := make(map[string]*ConnectionManager)
-	if _, ok := cm[ch.id]; !ok {
-		cm[ch.id] = NewConnectionManger()
-		go cm[ch.id].Run()
+	if _, ok := cm[ch.Id]; !ok {
+		cm[ch.Id] = NewConnectionManger()
+		go cm[ch.Id].Run()
 	}
 
-	ws := &ws{hub: cm[ch.id], conn: conn, send: make(chan Message, 256)}
+	ws := &ws{hub: cm[ch.Id], conn: conn, send: make(chan messagev1.CreateMessageRequest, 256)}
 	ws.hub.register <- ws
 
 	go ws.writePump()
@@ -89,6 +107,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cm *ConnectionManager) Run() {
+	log.Println("Run function called")
 	for {
 		//if a select statement is ready to run it will
 		select {
