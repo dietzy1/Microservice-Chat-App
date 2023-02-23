@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"log"
+	"net/http"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -15,7 +17,6 @@ type Cache interface {
 }
 
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
-	//implement whatever logic needs to be implemented
 	log.Println("Login called")
 	//perform client side call to the authentication service
 	creds := authclientv1.LoginRequest{
@@ -26,9 +27,22 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 	login, err := s.authClient.Login(ctx, &creds)
 	if err != nil {
 		log.Println(err)
-		log.Println("ERROR")
+		//return error code
+		return &authv1.LoginResponse{
+			Status: http.StatusForbidden,
+			Error:  "invalid credentials",
+		}, err
 	}
+
 	log.Println(login)
+	//no error so set the session token in the cache
+
+	//add the session token to the metadata
+	md := metadata.Pairs("session_token", "123")
+
+	grpc.SendHeader(ctx, md)
+
+	//pass the metadata to the context so it can be used by the interceptor
 
 	return &authv1.LoginResponse{
 		Status: 200,

@@ -59,6 +59,7 @@ rpc DeleteMessage (DeleteMessageRequest) returns (DeleteMessageResponse) {
 
 message GetMessagesRequest {
 string chat_room_uuid = 1;
+string channel_uuid = 2;
 }
     
 message GetMessagesResponse {
@@ -96,7 +97,8 @@ string author = 1;
 string content = 2;
 string author_uuid = 3;
 string chat_room_uuid = 4;
-string timestamp = 5;
+string channel_uuid = 5;
+string timestamp = 6;
 }
 
 

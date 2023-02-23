@@ -22,7 +22,7 @@ const (
 type ws struct {
 	hub  *ConnectionManager
 	conn *websocket.Conn
-	send chan messagev1.CreateMessageRequest //this here should prolly be changed to the message object
+	send chan messagev1.CreateMessageRequest
 }
 
 // I need to implement some error handling so it doesn't crash the server on incorrect proto format

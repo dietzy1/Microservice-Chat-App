@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dietzy1/chatapp/config"
 	"github.com/dietzy1/chatapp/services/apigateway/server"
 	"github.com/dietzy1/chatapp/services/apigateway/websocket"
@@ -10,9 +12,11 @@ func main() {
 
 	config.ReadEnvfile()
 
-	websocket.Start()
+	log.Println("Starting Websocket Server")
+	go websocket.Start()
 
-	go server.Start()
+	log.Println("Starting API Gateway")
+	server.Start()
 
 	//Need to initate the websocket connection here aswell
 

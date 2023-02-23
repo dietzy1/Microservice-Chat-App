@@ -52,14 +52,10 @@ func Start() {
 func NewConnectionManger() *ConnectionManager {
 	return &ConnectionManager{
 		broadcast:  make(chan messagev1.CreateMessageRequest), //before this was []byte //Now it should actually be a slice of broadcast channels
-		register:   make(chan *ws),                            //should be a slice of register channels
-		unregister: make(chan *ws),                            //should be a slice of unregister channels
-		clients:    make(map[*ws]bool),                        //should be a slice of clients
+		register:   make(chan *ws),
+		unregister: make(chan *ws),
+		clients:    make(map[*ws]bool),
 	}
-}
-
-type ChannelID struct {
-	Id string `json:"id"`
 }
 
 type id struct {
@@ -94,12 +90,12 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cm := make(map[string]*ConnectionManager)
-	if _, ok := cm[ch.Id]; !ok {
-		cm[ch.Id] = NewConnectionManger()
-		go cm[ch.Id].Run()
+	if _, ok := cm[id.chatroom+id.channel]; !ok {
+		cm[id.chatroom+id.channel] = NewConnectionManger()
+		go cm[id.chatroom+id.channel].Run()
 	}
 
-	ws := &ws{hub: cm[ch.Id], conn: conn, send: make(chan messagev1.CreateMessageRequest, 256)}
+	ws := &ws{hub: cm[id.chatroom+id.channel], conn: conn, send: make(chan messagev1.CreateMessageRequest, 256)}
 	ws.hub.register <- ws
 
 	go ws.writePump()

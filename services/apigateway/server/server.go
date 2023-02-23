@@ -54,7 +54,7 @@ func newServer(cache Cache, authClient authclientv1.AuthServiceClient /* message
 
 // run the generated GRPC gateway server
 func runGateway() error {
-	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
+	log := grpclog.NewLoggerV2WithVerbosity(os.Stdout, io.Discard, io.Discard, 1)
 	grpclog.SetLoggerV2(log)
 
 	//The reverse proxy connects to the GRPC server
@@ -71,8 +71,10 @@ func runGateway() error {
 
 	//intercepts the response and reads the cookie
 	incomingHeader := incomingHeaderMatcherWrapper()
+
 	//intercepts the response and sets the cookie
 	forwardResponse := withForwardResponseOptionWrapper()
+
 	//intercepts the request and sets the cookie
 	withMetaData := withMetaDataWrapper()
 
@@ -86,9 +88,14 @@ func runGateway() error {
 
 	gatewayAddress := os.Getenv("GATEWAY")
 	//gatewayAddress := ":8090"
+
+	//middleware chaining
+	middleware := logger(cors(gwmux))
+
 	gwServer := &http.Server{
-		Addr:    gatewayAddress,
-		Handler: gwmux,
+		Addr: gatewayAddress,
+		//Handler: cors(gwmux),
+		Handler: middleware,
 	}
 
 	log.Info("Serving gRPC-Gateway", gatewayAddress)
