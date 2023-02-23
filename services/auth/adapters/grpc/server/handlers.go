@@ -29,6 +29,7 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 		Password: req.Password,
 	}
 
+	//Validate that the fields aren't empty
 	if req.Username == "" || req.Password == "" {
 		return &authv1.LoginResponse{
 			Session: "",
@@ -43,7 +44,7 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 		return &authv1.LoginResponse{
 			Session: "",
 			Error:   err.Error(),
-		}, err
+		}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
 	return &authv1.LoginResponse{
@@ -58,6 +59,7 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 		Password: req.Password,
 	}
 
+	//Validate that the fields aren't empty
 	if req.Username == "" || req.Password == "" {
 		return &authv1.RegisterResponse{
 			Session: "",
@@ -72,8 +74,10 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 		return &authv1.RegisterResponse{
 			Session: "",
 			Error:   err.Error(),
-		}, err
+		}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
+	log.Println(session)
+	log.Println(err)
 
 	return &authv1.RegisterResponse{
 		Session: session,

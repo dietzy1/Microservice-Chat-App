@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -37,11 +38,13 @@ func New(auth Auth, cache Cache) *domain {
 
 // If someone is trying to login to the application the session token should be returned
 func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
+	//Check password in database
 	password, err := d.auth.Login(ctx, cred.Username)
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
+	fmt.Println(cred.Password)
 
 	//Perform bcrypt check to see if password is correct
 	if err = CompareHash(password, cred.Password); err != nil {
@@ -60,10 +63,17 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 
 func (d domain) Register(ctx context.Context, cred Credentials) (string, error) {
 	//check if username is in database
+	log.Println("Register called")
 	_, err := d.auth.Login(ctx, cred.Username)
 	if err == nil {
-		log.Println(err)
-		return "", err
+		log.Printf("username %s already exists", cred.Username)
+		return "", errors.New("username already exists")
+	}
+
+	//perform check if password is of atleast 8 characters
+	if len(cred.Password) < 8 {
+		log.Println("password is too short")
+		return "", errors.New("password is too short")
 	}
 
 	//hash password
@@ -72,10 +82,9 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 		return "", err
 	}
 
-	//add user to database
 	cred.Uuid = GenerateToken()
 	cred.Session = GenerateToken()
-
+	//add user to database
 	session, err := d.auth.Register(ctx, cred)
 	if err != nil {
 		return "", err

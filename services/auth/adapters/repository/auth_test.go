@@ -9,6 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+const database = "Credential-Database"
+
+const collection = "Credentials"
+
 type mongoMock struct {
 	client *auth
 }
@@ -30,7 +34,7 @@ func (m *mongoMock) createMockData() domain.Credentials {
 		Session:  "test",
 	}
 	//Add the mock data to the database
-	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
+	collection := m.client.client.Database(database).Collection(collection)
 	_, err := collection.InsertOne(context.Background(), mockData)
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +44,7 @@ func (m *mongoMock) createMockData() domain.Credentials {
 
 func (m *mongoMock) deleteMockData(mockData domain.Credentials) {
 	// delete the mock data from the database
-	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
+	collection := m.client.client.Database(database).Collection(collection)
 	_, err := collection.DeleteOne(context.Background(), mockData)
 	if err != nil {
 		log.Fatal(err)
@@ -100,7 +104,7 @@ func TestLogout(t *testing.T) {
 // Helper mock function to test logout and test update token
 func (m *mongoMock) getToken(token string) error {
 	// get the token from the database
-	collection := m.client.client.Database("Credential-Database").Collection("Credentials")
+	collection := m.client.client.Database(database).Collection(collection)
 	// take in username and use that to update the token to empty
 	var result domain.Credentials
 	if err := collection.FindOne(context.Background(), bson.M{"token": token}).Decode(&result); err != nil {

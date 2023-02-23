@@ -66,7 +66,7 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 			Error:  "invalid credentials",
 		}, err
 	}
-	log.Println(register)
+	log.Println("Register object", register)
 
 	//Return a session token to the client so the client is authenticated and logged in
 	md := metadata.Pairs("session_token", register.Session)
