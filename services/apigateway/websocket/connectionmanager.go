@@ -21,7 +21,7 @@ import (
 
 type ConnectionManager struct {
 	clients    map[*ws]bool
-	broadcast  chan messagev1.CreateMessageRequest //Before this was []byte
+	broadcast  chan *messagev1.CreateMessageRequest //Before this was []byte
 	register   chan *ws
 	unregister chan *ws
 }
@@ -51,7 +51,7 @@ func Start() {
 // Might need to inject some dependencies here
 func NewConnectionManger() *ConnectionManager {
 	return &ConnectionManager{
-		broadcast:  make(chan messagev1.CreateMessageRequest), //before this was []byte //Now it should actually be a slice of broadcast channels
+		broadcast:  make(chan *messagev1.CreateMessageRequest), //before this was []byte //Now it should actually be a slice of broadcast channels
 		register:   make(chan *ws),
 		unregister: make(chan *ws),
 		clients:    make(map[*ws]bool),
@@ -95,7 +95,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		go cm[id.chatroom+id.channel].Run()
 	}
 
-	ws := &ws{hub: cm[id.chatroom+id.channel], conn: conn, send: make(chan messagev1.CreateMessageRequest, 256)}
+	ws := &ws{hub: cm[id.chatroom+id.channel], conn: conn, send: make(chan *messagev1.CreateMessageRequest, 256)}
 	ws.hub.register <- ws
 
 	go ws.writePump()

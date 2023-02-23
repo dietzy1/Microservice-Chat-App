@@ -8,7 +8,10 @@ import (
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 	"google.golang.org/grpc"
+
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 type Cache interface {
@@ -17,13 +20,13 @@ type Cache interface {
 }
 
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
-	log.Println("Login called")
-	//perform client side call to the authentication service
+
 	creds := authclientv1.LoginRequest{
 		Username: req.Username,
 		Password: req.Password,
 	}
 
+	//perform client side call to the authentication service
 	login, err := s.authClient.Login(ctx, &creds)
 	if err != nil {
 		log.Println(err)
@@ -33,16 +36,11 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 			Error:  "invalid credentials",
 		}, err
 	}
-
 	log.Println(login)
-	//no error so set the session token in the cache
 
 	//add the session token to the metadata
-	md := metadata.Pairs("session_token", "123")
-
+	md := metadata.Pairs("session_token", login.Session)
 	grpc.SendHeader(ctx, md)
-
-	//pass the metadata to the context so it can be used by the interceptor
 
 	return &authv1.LoginResponse{
 		Status: 200,
@@ -52,14 +50,27 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 }
 
 func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	//implement whatever logic needs to be implemented
-	log.Println("Register called")
 
-	register, err := s.authClient.Register(ctx, nil)
+	creds := authclientv1.RegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	}
+
+	//perform client side call to the authentication service
+	register, err := s.authClient.Register(ctx, &creds)
 	if err != nil {
 		log.Println(err)
+		//return error code
+		return &authv1.RegisterResponse{
+			Status: http.StatusForbidden,
+			Error:  "invalid credentials",
+		}, err
 	}
 	log.Println(register)
+
+	//Return a session token to the client so the client is authenticated and logged in
+	md := metadata.Pairs("session_token", register.Session)
+	grpc.SendHeader(ctx, md)
 
 	return &authv1.RegisterResponse{
 		Status: 200,
@@ -68,11 +79,14 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
-	//implement whatever logic needs to be implemented
-	log.Println("Logout called")
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		log.Println("no metadata")
+		return &authv1.LogoutResponse{
+			Status: http.StatusForbidden,
+			Error:  "no metadata",
+		}, status.Errorf(codes.Unauthenticated, "no metadata")
+
 	}
 	log.Println(md)
 	//extract the token from the metadata

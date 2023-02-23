@@ -22,7 +22,7 @@ const (
 type ws struct {
 	hub  *ConnectionManager
 	conn *websocket.Conn
-	send chan messagev1.CreateMessageRequest
+	send chan *messagev1.CreateMessageRequest
 }
 
 // I need to implement some error handling so it doesn't crash the server on incorrect proto format
@@ -42,9 +42,6 @@ func (ws *ws) readPump() {
 			}
 			break
 		}
-		//The issue is the convertion to the message object
-
-		/* 	msg := Decode(message) */
 
 		log.Println("CLIENT READ", ws.hub.clients)
 		msg, err := unmarshal(message)
@@ -53,7 +50,7 @@ func (ws *ws) readPump() {
 		}
 		log.Printf("SENT msg: %s", msg)
 
-		ws.hub.broadcast <- *msg
+		ws.hub.broadcast <- msg
 	}
 }
 
@@ -78,13 +75,10 @@ func (ws *ws) writePump() {
 				return
 			}
 
-			//w.Conn.NextWriter(websocket)
-			// printf the message object
-
 			log.Println("CLIENT WRITE: ", ws.hub.clients)
 
 			log.Printf("RECIEVED msg: %+v", message)
-			msg, err := marshal(&message)
+			msg, err := marshal(message)
 			if err != nil {
 				log.Println(err)
 			}
@@ -94,7 +88,7 @@ func (ws *ws) writePump() {
 			n := len(ws.send)
 			for i := 0; i < n; i++ {
 				ok := <-ws.send
-				msg, err := marshal(&ok)
+				msg, err := marshal(ok)
 				log.Println(msg)
 				if err != nil {
 					log.Println(err)

@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"log"
+	"net/http"
 
 	"github.com/dietzy1/chatapp/services/auth/domain"
 	authv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
+	"google.golang.org/grpc/status"
 )
 
 //It needs a domain interface it can use to call the domain functions
@@ -60,7 +62,7 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 		return &authv1.RegisterResponse{
 			Session: "",
 			Error:   "username or password is empty",
-		}, nil
+		}, status.Errorf(http.StatusBadRequest, "username or password is empty")
 	}
 
 	//perform client side call to the authentication service
