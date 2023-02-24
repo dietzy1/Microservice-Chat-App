@@ -107,6 +107,7 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
 	if req.Session == "" || req.UserUuid == "" {
+		log.Println("session is or user uuid is empty session: ", req.Session, "userID", req.UserUuid)
 		return &authv1.AuthenticateResponse{
 			Error: "session is or user uuid is empty",
 		}, nil

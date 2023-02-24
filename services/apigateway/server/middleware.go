@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +20,8 @@ func cors(h http.Handler) http.Handler {
 		if allowedOrigin(r.Header.Get("Origin")) {
 			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
-			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
+			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType, Origin")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
 		if r.Method == "OPTIONS" {
 			return
@@ -59,7 +61,7 @@ func logger(h http.Handler) http.Handler {
 func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 
 	ok := runtime.WithForwardResponseOption(func(ctx context.Context, w http.ResponseWriter, m proto.Message) error {
-
+		fmt.Println("withForwardResponseOptionWrapper")
 		//I need to read the cookie from the grpc context and set it as a header in the response
 		md, ok := runtime.ServerMetadataFromContext(ctx)
 		if !ok {
@@ -78,7 +80,9 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session_token",
 			Value:   token[0],
-			Expires: time.Now().Add(1 * time.Minute),
+			Expires: time.Now().Add(15 * time.Minute),
+			MaxAge:  time.Now().Minute() + 15,
+			Path:    "/",
 		})
 		log.Println("session token set")
 

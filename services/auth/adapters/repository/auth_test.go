@@ -9,10 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const database = "Credential-Database"
-
-const collection = "Credentials"
-
 type mongoMock struct {
 	client *auth
 }

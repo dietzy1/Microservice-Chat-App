@@ -130,9 +130,11 @@ func (d domain) Authenticate(ctx context.Context, session string, userUuid strin
 		if err != nil {
 			log.Println(err)
 			return "", err
-
 		}
 	}
+	fmt.Println("uuid", uuid)
+	fmt.Println("session", session)
+
 	//perform check to see if the token is the same as the one in the database
 	if uuid != session {
 		log.Println("invalid session token")
@@ -143,6 +145,7 @@ func (d domain) Authenticate(ctx context.Context, session string, userUuid strin
 		log.Println(err)
 		return "", err
 	}
+	log.Println("session token is valid")
 	return session, nil
 }
 

@@ -90,6 +90,13 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	}
 	log.Println(md)
 	//extract the token from the metadata
+	if len(md["session_token"]) == 0 {
+		log.Println("no session token")
+		return &authv1.LogoutResponse{
+			Status: http.StatusForbidden,
+			Error:  "no session token",
+		}, status.Errorf(codes.Unauthenticated, "no session token")
+	}
 	session := md["session_token"][0]
 
 	logout, err := s.authClient.Logout(ctx, &authclientv1.LogoutRequest{
@@ -97,6 +104,10 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	})
 	if err != nil {
 		log.Println(err)
+		return &authv1.LogoutResponse{
+			Status: http.StatusForbidden,
+			Error:  "invalid credentials",
+		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 	log.Println(logout)
 
@@ -112,15 +123,33 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		log.Println("no metadata")
+		return &authv1.AuthenticateResponse{
+			Status: http.StatusForbidden,
+			Error:  "no metadata",
+		}, status.Errorf(codes.Unauthenticated, "no metadata")
 	}
-	log.Println(md)
+
 	//extract the token from the metadata
+	if len(md["session_token"]) == 0 {
+		log.Println("no session token")
+		return &authv1.AuthenticateResponse{
+			Status: http.StatusForbidden,
+			Error:  "no session token",
+		}, status.Errorf(codes.Unauthenticated, "no session token")
+	}
 	session := md["session_token"][0]
 
+	log.Println("session token", session)
+
 	authenticate, err := s.authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{
-		Session: session})
+		Session:  session,
+		UserUuid: req.Uuid,
+	})
 	if err != nil {
-		log.Println(err)
+		return &authv1.AuthenticateResponse{
+			Status: http.StatusForbidden,
+			Error:  "Invalid credentials",
+		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 
 	}
 	log.Println(authenticate)
