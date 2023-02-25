@@ -12,7 +12,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/dietzy1/chatapp/services/user/core"
+	"github.com/dietzy1/chatapp/services/user/domain"
 	"github.com/imagekit-developer/imagekit-go"
 	"github.com/imagekit-developer/imagekit-go/api/media"
 	"github.com/imagekit-developer/imagekit-go/api/uploader"
@@ -38,7 +38,7 @@ func New() *cdn {
 }
 
 // sends a POST http request that stores the image bytes with a path of uuid.jpg at the CDN.
-func (f *cdn) UploadFile(ctx context.Context, icon core.Icon, buf bytes.Buffer) (string, error) {
+func (f *cdn) UploadFile(ctx context.Context, icon domain.Icon, buf bytes.Buffer) (string, error) {
 	params := uploader.UploadParam{
 		FileName:          icon.Uuid + ".jpg",
 		UseUniqueFileName: newFalse(),

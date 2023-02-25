@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package user.v1;
 
+
+
 option go_package = "github.com/dietzy1/chatapp/services/user/proto/user/v1;userv1";
 
 
@@ -14,25 +16,21 @@ rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
 rpc AddChatServer(AddChatServerRequest) returns (AddChatServerResponse) {}
 rpc DeleteChatServer(DeleteChatServerRequest) returns (DeleteChatServerResponse) {}
 
-
 //External RPC
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 rpc ChangeName (ChangeNameRequest) returns (ChangeNameResponse) {}
 rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
-
-
 }
 
 message CreateUserRequest {
-
+string user_uuid = 1;
+string username = 2;
 }
 
 message CreateUserResponse {
-
 }
 
 message AddChatServerRequest {
-
 }
 
 message AddChatServerResponse {

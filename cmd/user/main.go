@@ -6,7 +6,8 @@ import (
 	"github.com/dietzy1/chatapp/config"
 
 	"github.com/dietzy1/chatapp/services/user/adapters/repository"
-	"github.com/dietzy1/chatapp/services/user/adapters/server/rest/cdn"
+	"github.com/dietzy1/chatapp/services/user/adapters/rest/cdn"
+
 	"github.com/dietzy1/chatapp/services/user/domain"
 )
 
@@ -24,9 +25,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_ = redis
+
 	cdn := cdn.New()
 
-	app := domain.New(repo, repo, cdn, redis)
+	app := domain.New(repo, repo, cdn)
+
+	//app := domain.New(repo, repo, cdn, redis)
 
 	//Tempory fix to avoid errors
 	_ = app

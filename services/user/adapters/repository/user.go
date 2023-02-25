@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 
-	"github.com/dietzy1/chatapp/services/user/core"
+	"github.com/dietzy1/chatapp/services/user/domain"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (a *Db) AddUser(ctx context.Context, user core.User) error {
+func (a *Db) AddUser(ctx context.Context, user domain.User) error {
 	collection := a.mClient.Database("credentials").Collection("public")
 	_, err := collection.InsertOne(ctx, user)
 	if err != nil {

@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 
-	"github.com/dietzy1/chatapp/services/user/core"
+	"github.com/dietzy1/chatapp/services/user/domain"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (a *Db) StoreIcon(ctx context.Context, icon core.Icon) error {
+func (a *Db) StoreIcon(ctx context.Context, icon domain.Icon) error {
 	collection := a.mClient.Database("user").Collection("public")
 	_, err := collection.InsertOne(ctx, icon)
 	if err != nil {
@@ -16,10 +16,10 @@ func (a *Db) StoreIcon(ctx context.Context, icon core.Icon) error {
 	return nil
 }
 
-func (a *Db) GetIcon(ctx context.Context, uuid string) (core.Icon, error) {
+func (a *Db) GetIcon(ctx context.Context, uuid string) (domain.Icon, error) {
 	//Get icon from database
 	collection := a.mClient.Database("user").Collection("public")
-	Icon := core.Icon{}
+	Icon := domain.Icon{}
 
 	err := collection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&Icon)
 	if err != nil {
@@ -28,7 +28,7 @@ func (a *Db) GetIcon(ctx context.Context, uuid string) (core.Icon, error) {
 	return Icon, nil
 }
 
-func (a *Db) UpdateIcon(ctx context.Context, icon core.Icon) error {
+func (a *Db) UpdateIcon(ctx context.Context, icon domain.Icon) error {
 	//Update icon in database
 	collection := a.mClient.Database("user").Collection("public")
 

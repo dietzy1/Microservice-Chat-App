@@ -1,13 +1,6 @@
 package repository
 
-import (
-	"context"
-
-	"github.com/dietzy1/chatapp/services/user/core"
-	"go.mongodb.org/mongo-driver/bson"
-)
-
-func (a *Db) Register(ctx context.Context, creds core.Credentials) error {
+/* func (a *Db) Register(ctx context.Context, creds core.Credentials) error {
 	collection := a.mClient.Database("credentials").Collection("private")
 	_, err := collection.InsertOne(ctx, creds)
 	if err != nil {
@@ -63,4 +56,4 @@ func (a *Db) ChangePassword(ctx context.Context, creds core.Credentials) error {
 	}
 
 	return nil
-}
+} */
