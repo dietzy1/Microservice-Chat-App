@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -61,7 +60,6 @@ func logger(h http.Handler) http.Handler {
 func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 
 	ok := runtime.WithForwardResponseOption(func(ctx context.Context, w http.ResponseWriter, m proto.Message) error {
-		fmt.Println("withForwardResponseOptionWrapper")
 		//I need to read the cookie from the grpc context and set it as a header in the response
 		md, ok := runtime.ServerMetadataFromContext(ctx)
 		if !ok {
@@ -76,12 +74,24 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 			return nil
 		}
 
+		//perform check if token is set to "logout" and if so, delete the cookie
+		if token[0] == "" {
+			log.Println("Deleting cookie")
+			// Add the session token to the cookie header
+			http.SetCookie(w, &http.Cookie{
+				Name:  "session_token",
+				Value: "",
+
+				MaxAge: -1,
+			})
+			return nil
+		}
+
 		//Add the session token to the cookie header
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session_token",
 			Value:   token[0],
-			Expires: time.Now().Add(15 * time.Minute),
-			MaxAge:  time.Now().Minute() + 15,
+			Expires: time.Now().Add(60 * time.Minute),
 			Path:    "/",
 		})
 		log.Println("session token set")

@@ -89,9 +89,10 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	if req.Session == "" || req.UserUuid == "" {
 		return &authv1.LogoutResponse{
 			Error: "session or user uuid is empty",
-		}, nil
+		}, status.Errorf(http.StatusBadRequest, "session or user uuid is empty")
 	}
 
+	log.Println("Logout GRPC endpoint called")
 	err := s.auth.Logout(ctx, req.Session, req.UserUuid)
 	if err != nil {
 		log.Println(err)

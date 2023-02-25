@@ -88,7 +88,7 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 		}, status.Errorf(codes.Unauthenticated, "no metadata")
 
 	}
-	log.Println(md)
+
 	//extract the token from the metadata
 	if len(md["session_token"]) == 0 {
 		log.Println("no session token")
@@ -100,7 +100,8 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	session := md["session_token"][0]
 
 	logout, err := s.authClient.Logout(ctx, &authclientv1.LogoutRequest{
-		Session: session,
+		Session:  session,
+		UserUuid: req.Uuid,
 	})
 	if err != nil {
 		log.Println(err)
@@ -110,6 +111,9 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 	log.Println(logout)
+
+	md = metadata.Pairs("session_token", "")
+	grpc.SendHeader(ctx, md)
 
 	return &authv1.LogoutResponse{
 		Status: 200,

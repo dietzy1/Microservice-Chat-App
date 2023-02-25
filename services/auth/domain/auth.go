@@ -75,7 +75,6 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 
 func (d domain) Register(ctx context.Context, cred Credentials) (string, error) {
 	//check if username is in database
-	log.Println("Register called")
 	_, err := d.auth.Login(ctx, cred.Username)
 	if err == nil {
 		log.Printf("username %s already exists", cred.Username)
@@ -106,17 +105,17 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 
 // For now I am unsure if I actually need to do anything with the session token
 func (d domain) Logout(ctx context.Context, session string, userUuid string) error {
-	uuid, err := d.cache.Get(userUuid)
+	token, err := d.cache.Get(userUuid)
 	if err == nil {
 		//check the session token against the database if its there it will be deleted
-		uuid, err = d.auth.Authenticate(ctx, userUuid)
+		token, err = d.auth.Authenticate(ctx, userUuid)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
 	}
-	if uuid != session {
+	if token != session {
 		log.Println("invalid session token")
 		return errors.New("invalid session token")
 	}

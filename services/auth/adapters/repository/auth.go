@@ -58,6 +58,7 @@ func (a *auth) Register(ctx context.Context, cred domain.Credentials) (string, e
 // if logout is called, the token is invalidated and the user is logged out
 func (a *auth) Logout(ctx context.Context, userUuid string) error {
 	// perform update to the session token in the database
+
 	collection := a.client.Database(database).Collection(collection)
 	// take in username and use that to update the token to empty
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"session": ""}})
