@@ -12,7 +12,7 @@ type Auth interface {
 	Register(ctx context.Context, cred Credentials) (string, error)
 	Logout(ctx context.Context, userUuid string) error
 	Authenticate(ctx context.Context, userUuid string) (string, error)
-	UpdateToken(ctx context.Context, username string, token string) error
+	UpdateToken(ctx context.Context, username string, token string) (string, error)
 }
 
 type Cache interface {
@@ -53,7 +53,19 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 	}
 	//if someone logins then the session token should be regenerated and returned
 	token := GenerateToken()
-	if err = d.auth.UpdateToken(ctx, cred.Username, token); err != nil {
+	/* 	if err = d.auth.UpdateToken(ctx, cred.Username, token); err != nil {
+		log.Println(err)
+		return "", err
+	} */
+
+	uuid, err := d.auth.UpdateToken(ctx, cred.Username, token)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	//add the user to the cache
+	if err = d.cache.Set(uuid, token); err != nil {
 		log.Println(err)
 		return "", err
 	}
@@ -122,30 +134,31 @@ func (d domain) Logout(ctx context.Context, session string, userUuid string) err
 
 // this method needs to be cached for certain it will be under alot of pressure
 func (d domain) Authenticate(ctx context.Context, session string, userUuid string) (string, error) {
-	// check if token is in cache
-	uuid, err := d.cache.Get(userUuid)
+	//Check if token is in cache
+	token, err := d.cache.Get(userUuid)
 	if err != nil {
+		fmt.Println("cache miss")
 		//if token is not in cache, check if token is in database
-		uuid, err = d.auth.Authenticate(ctx, userUuid)
+		token, err = d.auth.Authenticate(ctx, userUuid)
 		if err != nil {
 			log.Println(err)
 			return "", err
 		}
 	}
-	fmt.Println("uuid", uuid)
-	fmt.Println("session", session)
 
 	//perform check to see if the token is the same as the one in the database
-	if uuid != session {
+	if token != session {
 		log.Println("invalid session token")
 		return "", errors.New("invalid session token")
 	}
+
 	//if token is in database, add token to cache
 	if err := d.cache.Set(userUuid, session); err != nil {
 		log.Println(err)
 		return "", err
 	}
-	log.Println("session token is valid")
+	log.Println("Valid session token")
+
 	return session, nil
 }
 
@@ -157,7 +170,8 @@ func (d domain) Invalidate(ctx context.Context, userUuid string) error {
 	}
 
 	//set the token in the database to an empty string
-	if err := d.auth.UpdateToken(ctx, userUuid, ""); err != nil {
+	_, err := d.auth.UpdateToken(ctx, userUuid, "")
+	if err != nil {
 		log.Println(err)
 		return err
 	}

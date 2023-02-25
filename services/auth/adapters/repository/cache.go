@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -41,5 +42,5 @@ func (c *cache) Get(key string) (string, error) {
 
 // Key is user_uuid and value is the token
 func (c *cache) Set(key string, value string) error {
-	return c.client.Set(context.Background(), key, value, 0).Err()
+	return c.client.Set(context.Background(), key, value, 1*time.Hour).Err()
 }

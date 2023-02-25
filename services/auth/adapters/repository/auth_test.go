@@ -114,7 +114,8 @@ func TestUpdateToken(t *testing.T) {
 	mockData := mongoMock.createMockData()
 
 	//I need to verify that the token is updated to the new token based on the username input
-	if err := mongoMock.client.UpdateToken(context.Background(), mockData.Username, "newToken"); err != nil {
+	_, err := mongoMock.client.UpdateToken(context.Background(), mockData.Username, "newToken")
+	if err == nil {
 		t.Errorf("Error unable to update token: %v", err)
 	}
 

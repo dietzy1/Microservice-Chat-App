@@ -113,6 +113,8 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 		}, nil
 	}
 
+	log.Println("session: ", req.Session, "userID", req.UserUuid)
+
 	session, err := s.auth.Authenticate(ctx, req.Session, req.UserUuid)
 	if err != nil {
 		log.Println(err)

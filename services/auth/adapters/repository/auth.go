@@ -75,15 +75,21 @@ func (a *auth) Authenticate(ctx context.Context, userUuid string) (string, error
 		//maybe I need to return uuid instead here?
 		return cred.Session, err
 	}
-	return cred.Uuid, nil
+	return cred.Session, nil
 }
 
-func (a *auth) UpdateToken(ctx context.Context, username string, session string) error {
+func (a *auth) UpdateToken(ctx context.Context, username string, session string) (string, error) {
 	collection := a.client.Database(database).Collection(collection)
 	// take in username and use that to update the token to empty
 	_, err := collection.UpdateOne(ctx, bson.M{"username": username}, bson.M{"$set": bson.M{"session": session}})
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	cred := domain.Credentials{}
+	err = collection.FindOne(ctx, bson.M{"username": username}).Decode(&cred)
+	if err != nil {
+		return "", err
+	}
+
+	return cred.Uuid, nil
 }
