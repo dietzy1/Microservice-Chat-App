@@ -25,7 +25,7 @@ type UserServiceClient interface {
 	// internal RPC
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	AddChatServer(ctx context.Context, in *AddChatServerRequest, opts ...grpc.CallOption) (*AddChatServerResponse, error)
-	DeleteChatServer(ctx context.Context, in *DeleteChatServerRequest, opts ...grpc.CallOption) (*DeleteChatServerResponse, error)
+	RemoveChatServer(ctx context.Context, in *RemoveChatServerRequest, opts ...grpc.CallOption) (*RemoveChatServerResponse, error)
 	// External RPC
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
 	ChangeName(ctx context.Context, in *ChangeNameRequest, opts ...grpc.CallOption) (*ChangeNameResponse, error)
@@ -58,9 +58,9 @@ func (c *userServiceClient) AddChatServer(ctx context.Context, in *AddChatServer
 	return out, nil
 }
 
-func (c *userServiceClient) DeleteChatServer(ctx context.Context, in *DeleteChatServerRequest, opts ...grpc.CallOption) (*DeleteChatServerResponse, error) {
-	out := new(DeleteChatServerResponse)
-	err := c.cc.Invoke(ctx, "/user.v1.UserService/DeleteChatServer", in, out, opts...)
+func (c *userServiceClient) RemoveChatServer(ctx context.Context, in *RemoveChatServerRequest, opts ...grpc.CallOption) (*RemoveChatServerResponse, error) {
+	out := new(RemoveChatServerResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/RemoveChatServer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ type UserServiceServer interface {
 	// internal RPC
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	AddChatServer(context.Context, *AddChatServerRequest) (*AddChatServerResponse, error)
-	DeleteChatServer(context.Context, *DeleteChatServerRequest) (*DeleteChatServerResponse, error)
+	RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error)
 	// External RPC
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
 	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameResponse, error)
@@ -118,8 +118,8 @@ func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserReq
 func (UnimplementedUserServiceServer) AddChatServer(context.Context, *AddChatServerRequest) (*AddChatServerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddChatServer not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteChatServer(context.Context, *DeleteChatServerRequest) (*DeleteChatServerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteChatServer not implemented")
+func (UnimplementedUserServiceServer) RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveChatServer not implemented")
 }
 func (UnimplementedUserServiceServer) ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeAvatar not implemented")
@@ -178,20 +178,20 @@ func _UserService_AddChatServer_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DeleteChatServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteChatServerRequest)
+func _UserService_RemoveChatServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveChatServerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteChatServer(ctx, in)
+		return srv.(UserServiceServer).RemoveChatServer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.v1.UserService/DeleteChatServer",
+		FullMethod: "/user.v1.UserService/RemoveChatServer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteChatServer(ctx, req.(*DeleteChatServerRequest))
+		return srv.(UserServiceServer).RemoveChatServer(ctx, req.(*RemoveChatServerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -266,8 +266,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_AddChatServer_Handler,
 		},
 		{
-			MethodName: "DeleteChatServer",
-			Handler:    _UserService_DeleteChatServer_Handler,
+			MethodName: "RemoveChatServer",
+			Handler:    _UserService_RemoveChatServer_Handler,
 		},
 		{
 			MethodName: "ChangeAvatar",

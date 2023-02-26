@@ -5,6 +5,16 @@ import (
 	"time"
 )
 
+/* type User struct {
+	Icon        Icon //A link to the users icon
+	Name        string
+	Uuid        string
+	Discription string
+	JoinDate    string
+	Roles       []string
+	ChatServers []string
+	Reports     int
+} */
 //Icon of the user
 //Preferred name of the user
 //Join date
@@ -46,6 +56,25 @@ func (d Domain) CreateUser(ctx context.Context, username string, uuid string) er
 
 	_ = user
 	if err := d.user.AddUser(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d Domain) AddChatServer(ctx context.Context, uuid string, serverUuid string) error {
+
+	//Do call to database and request that the user uuid has the serverUuid added to the chatServers array
+	if err := d.user.UpdateChatServers(ctx, uuid, serverUuid); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d Domain) RemoveChatServer(ctx context.Context, uuid string, server string) error {
+
+	//Do call to database and request that the user uuid has the serverUuid removed from the chatServers array
+	if err := d.user.UpdateChatServers(ctx, uuid, server); err != nil {
 		return err
 	}
 

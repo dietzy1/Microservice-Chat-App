@@ -5,6 +5,7 @@ import (
 
 	"github.com/dietzy1/chatapp/config"
 
+	"github.com/dietzy1/chatapp/services/user/adapters/grpc/server"
 	"github.com/dietzy1/chatapp/services/user/adapters/repository"
 	"github.com/dietzy1/chatapp/services/user/adapters/rest/cdn"
 
@@ -29,12 +30,8 @@ func main() {
 
 	cdn := cdn.New()
 
-	app := domain.New(repo, repo, cdn)
+	domain := domain.New(repo, repo, cdn)
 
-	//app := domain.New(repo, repo, cdn, redis)
+	server.Start(domain)
 
-	//Tempory fix to avoid errors
-	_ = app
-
-	//Should open the GRPC server here and pass the domain into it
 }

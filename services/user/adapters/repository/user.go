@@ -16,6 +16,28 @@ func (a *Db) AddUser(ctx context.Context, user domain.User) error {
 	return nil
 }
 
+// TODO: verify that this works
+// Function that locates a user by uuid and then adds the serveruuid to the array of chatservers
+func (a *Db) AddChatServer(ctx context.Context, uuid string, serveruuid string) error {
+	collection := a.mClient.Database("credentials").Collection("public")
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$push": bson.M{"chatservers": serveruuid}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TODO: veryify that this works
+// Functuon that locates a user by uuid and then it removes the serveruuid from the array of chatservers
+func (a *Db) RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error {
+	collection := a.mClient.Database("credentials").Collection("public")
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$pull": bson.M{"chatservers": serveruuid}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Should take in field of what needs to be changed and the new value
 func (a *Db) ChangeUser(ctx context.Context, uuid string, key string, value string) error {
 	collection := a.mClient.Database("credentials").Collection("public")

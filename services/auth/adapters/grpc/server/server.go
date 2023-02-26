@@ -9,16 +9,21 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/dietzy1/chatapp/services/auth/adapters/grpc/client"
+
 	authv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
+	userClientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 )
 
 type server struct {
 	authv1.UnimplementedAuthServiceServer
 	auth Auth
+
+	userClient userClientv1.UserServiceClient
 }
 
-func newServer(auth Auth) *server {
-	return &server{auth: auth}
+func newServer(auth Auth, userClient userClientv1.UserServiceClient) *server {
+	return &server{auth: auth, userClient: userClient}
 }
 
 func Start(auth Auth) {
@@ -36,8 +41,11 @@ func Start(auth Auth) {
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(loggingMiddleware),
 	)
+
+	userClient := client.NewUserClient()
+
 	//Inject dependencies into the server
-	dependencies := newServer(auth)
+	dependencies := newServer(auth, *userClient)
 
 	//Register the server
 	authv1.RegisterAuthServiceServer(s, dependencies)

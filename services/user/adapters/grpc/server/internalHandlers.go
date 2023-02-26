@@ -25,3 +25,11 @@ func (s *server) CreateUser(ctx context.Context, req *userv1.CreateUserRequest) 
 
 	return &userv1.CreateUserResponse{}, nil
 }
+
+func (s *server) AddChatServer(ctx context.Context, req *userv1.AddChatServerRequest) (*userv1.AddChatServerResponse, error) {
+	panic("implement me")
+}
+
+func (s *server) RemoveChatServer(ctx context.Context, req *userv1.RemoveChatServerRequest) (*userv1.RemoveChatServerResponse, error) {
+	panic("implement me")
+}

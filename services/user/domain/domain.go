@@ -7,6 +7,6 @@ type Domain struct {
 }
 
 // New creates a new application
-func New(user user, cdn cdn, icon icon) *Domain {
-	return &Domain{user: user, cdn: cdn, icon: icon}
+func New(user user, icon icon, cdn cdn) *Domain {
+	return &Domain{user: user, icon: icon, cdn: cdn}
 }
