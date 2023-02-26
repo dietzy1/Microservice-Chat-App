@@ -100,6 +100,9 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 	if err != nil {
 		return "", err
 	}
+
+	//Call the user service to create a user
+
 	return session, nil
 }
 

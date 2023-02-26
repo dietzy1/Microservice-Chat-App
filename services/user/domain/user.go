@@ -35,9 +35,8 @@ type User struct {
 
 type user interface {
 	AddUser(ctx context.Context, user User) error
-	ChangeUser(ctx context.Context, uuid string, key string, value string) error
-	DeleteUser(ctx context.Context, uuid string) error
-	UpdateChatServers(ctx context.Context, uuid string, server string) error
+	AddChatServer(ctx context.Context, uuid string, serveruuid string) error
+	RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error
 }
 
 func (d Domain) CreateUser(ctx context.Context, username string, uuid string) error {
@@ -65,7 +64,7 @@ func (d Domain) CreateUser(ctx context.Context, username string, uuid string) er
 func (d Domain) AddChatServer(ctx context.Context, uuid string, serverUuid string) error {
 
 	//Do call to database and request that the user uuid has the serverUuid added to the chatServers array
-	if err := d.user.UpdateChatServers(ctx, uuid, serverUuid); err != nil {
+	if err := d.user.AddChatServer(ctx, uuid, serverUuid); err != nil {
 		return err
 	}
 	return nil
@@ -74,7 +73,7 @@ func (d Domain) AddChatServer(ctx context.Context, uuid string, serverUuid strin
 func (d Domain) RemoveChatServer(ctx context.Context, uuid string, server string) error {
 
 	//Do call to database and request that the user uuid has the serverUuid removed from the chatServers array
-	if err := d.user.UpdateChatServers(ctx, uuid, server); err != nil {
+	if err := d.user.RemoveChatServer(ctx, uuid, server); err != nil {
 		return err
 	}
 
