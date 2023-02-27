@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package account.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/account/proto/account/v1;accountv1";
+
+service AccountService {
+//External RPC
+rpc ChangeUsername (ChangeUsernameRequest) returns (ChangeUsernameResponse) {}
+rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
+rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse) {}
+
+}
+
+message ChangeUsernameRequest {
+    string user_uuid = 1;
+    string username = 2;
+}
+
+message ChangeUsernameResponse {
+}
+
+message ChangePasswordRequest {
+    string user_uuid = 1;
+    string password = 2;
+}
+
+message ChangePasswordResponse {
+}
+
+message DeleteAccountRequest {
+    string user_uuid = 1;
+    string password = 2;
+}
+
+message DeleteAccountResponse {
+}
+

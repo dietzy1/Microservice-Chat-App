@@ -27,9 +27,8 @@ type UserServiceClient interface {
 	AddChatServer(ctx context.Context, in *AddChatServerRequest, opts ...grpc.CallOption) (*AddChatServerResponse, error)
 	RemoveChatServer(ctx context.Context, in *RemoveChatServerRequest, opts ...grpc.CallOption) (*RemoveChatServerResponse, error)
 	// External RPC
+	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
-	ChangeName(ctx context.Context, in *ChangeNameRequest, opts ...grpc.CallOption) (*ChangeNameResponse, error)
-	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 }
 
 type userServiceClient struct {
@@ -67,27 +66,18 @@ func (c *userServiceClient) RemoveChatServer(ctx context.Context, in *RemoveChat
 	return out, nil
 }
 
+func (c *userServiceClient) EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error) {
+	out := new(EditDescriptionResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/EditDescription", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error) {
 	out := new(ChangeAvatarResponse)
 	err := c.cc.Invoke(ctx, "/user.v1.UserService/ChangeAvatar", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) ChangeName(ctx context.Context, in *ChangeNameRequest, opts ...grpc.CallOption) (*ChangeNameResponse, error) {
-	out := new(ChangeNameResponse)
-	err := c.cc.Invoke(ctx, "/user.v1.UserService/ChangeName", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error) {
-	out := new(ChangePasswordResponse)
-	err := c.cc.Invoke(ctx, "/user.v1.UserService/ChangePassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,9 +93,8 @@ type UserServiceServer interface {
 	AddChatServer(context.Context, *AddChatServerRequest) (*AddChatServerResponse, error)
 	RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error)
 	// External RPC
+	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
-	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameResponse, error)
-	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -121,14 +110,11 @@ func (UnimplementedUserServiceServer) AddChatServer(context.Context, *AddChatSer
 func (UnimplementedUserServiceServer) RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveChatServer not implemented")
 }
+func (UnimplementedUserServiceServer) EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditDescription not implemented")
+}
 func (UnimplementedUserServiceServer) ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeAvatar not implemented")
-}
-func (UnimplementedUserServiceServer) ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangeName not implemented")
-}
-func (UnimplementedUserServiceServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -196,6 +182,24 @@ func _UserService_RemoveChatServer_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_EditDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditDescriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).EditDescription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.UserService/EditDescription",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).EditDescription(ctx, req.(*EditDescriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_ChangeAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangeAvatarRequest)
 	if err := dec(in); err != nil {
@@ -210,42 +214,6 @@ func _UserService_ChangeAvatar_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ChangeAvatar(ctx, req.(*ChangeAvatarRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_ChangeName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangeNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).ChangeName(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.v1.UserService/ChangeName",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).ChangeName(ctx, req.(*ChangeNameRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangePasswordRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).ChangePassword(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.v1.UserService/ChangePassword",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).ChangePassword(ctx, req.(*ChangePasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -270,16 +238,12 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_RemoveChatServer_Handler,
 		},
 		{
+			MethodName: "EditDescription",
+			Handler:    _UserService_EditDescription_Handler,
+		},
+		{
 			MethodName: "ChangeAvatar",
 			Handler:    _UserService_ChangeAvatar_Handler,
-		},
-		{
-			MethodName: "ChangeName",
-			Handler:    _UserService_ChangeName_Handler,
-		},
-		{
-			MethodName: "ChangePassword",
-			Handler:    _UserService_ChangePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

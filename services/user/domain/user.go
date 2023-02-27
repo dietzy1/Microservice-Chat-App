@@ -80,46 +80,8 @@ func (d Domain) RemoveChatServer(ctx context.Context, uuid string, server string
 	return nil
 }
 
-/* user := core.User{
-	Icon: core.Icon{
-		Link: "123",
-		Uuid: "123",
-	},
-	Name:        username,
-	Uuid:        uuid,
-	Discription: "Click to add a discription",
-	JoinDate:    time.Now().Format("2006-01-02 15:04:05"),
-	Roles:       []string{"user"},
-	ChatServers: []string{"123"},
-	Reports:     0,
+func (d Domain) EditDescription(ctx context.Context, uuid string, description string) error {
+
+	//Do call to database and request that the user uuid has the description changed
+	return nil
 }
-if err := d.user.AddUser(ctx, user); err != nil {
-	return err
-} */
-
-/* func (a Domain) setName(context context.Context) {
-	name := "newName"
-	uuid := "uuid"
-
-	err := a.user.ChangeUser(context, "name", uuid, name)
-	if err != nil {
-		return
-	}
-}
-
-func (a Domain) setChatServers(context context.Context) {
-
-	chatServer := "chatserver"
-	uuid := "uuid"
-
-	err := a.user.ChangeUser(context, "chatServers", uuid, chatServer)
-	if err != nil {
-		return
-	}
-} */
-
-//Should be able to change icon - default is some random icon
-//Should be able to change display name -- default is username
-//UUID should be recived from the registration process
-//Join date is recieved from the registration process
-//Chat servers should be recieved from a grpc call from the message server

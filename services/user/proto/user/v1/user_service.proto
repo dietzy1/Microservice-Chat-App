@@ -12,9 +12,8 @@ rpc RemoveChatServer(RemoveChatServerRequest) returns (RemoveChatServerResponse)
 //rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
 
 //External RPC
+rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
-rpc ChangeName (ChangeNameRequest) returns (ChangeNameResponse) {}
-rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
 }
 
 message CreateUserRequest {
@@ -41,8 +40,13 @@ message RemoveChatServerRequest{
 message RemoveChatServerResponse {
 }
 
+message EditDescriptionRequest {
+	string user_uuid = 1;
+	string description = 2;
+}
 
-
+message EditDescriptionResponse {
+}
 
 message ChangeAvatarRequest {
 
@@ -52,21 +56,9 @@ message ChangeAvatarResponse {
 
 }
 
-message ChangeNameRequest {
 
-}
 
-message ChangeNameResponse {
 
-}
-
-message ChangePasswordRequest {
-
-}
-
-message ChangePasswordResponse {
-
-}
 
 
 
