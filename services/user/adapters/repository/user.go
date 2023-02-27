@@ -41,6 +41,28 @@ func (a *Db) RemoveChatServer(ctx context.Context, uuid string, serveruuid strin
 	return nil
 }
 
+// Function that locates a user by uuid and then it changes the description
+func (a *Db) EditDescription(ctx context.Context, uuid string, description string) error {
+	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$set": bson.M{"description": description}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Function that locates a user by uuid and then it returns the user struct
+func (a *Db) GetUser(ctx context.Context, uuid string) (domain.User, error) {
+	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	user := domain.User{}
+
+	err := collection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 // Should take in field of what needs to be changed and the new value
 /* func (a *Db) ChangeUser(ctx context.Context, uuid string, key string, value string) error {
 	collection := a.mClient.Database(database).Collection(collection)

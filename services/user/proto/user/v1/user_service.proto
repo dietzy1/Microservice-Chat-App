@@ -12,6 +12,7 @@ rpc RemoveChatServer(RemoveChatServerRequest) returns (RemoveChatServerResponse)
 //rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
 
 //External RPC
+rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
 rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 }
@@ -40,6 +41,19 @@ message RemoveChatServerRequest{
 message RemoveChatServerResponse {
 }
 
+message GetUserRequest {
+	string user_uuid = 1;
+}
+
+message GetUserResponse {
+	string name = 1;
+	string uuid = 2;
+	Icon icon = 3;
+	string description = 4;
+	string join_date = 5;
+	repeated string chat_servers = 6;
+}
+
 message EditDescriptionRequest {
 	string user_uuid = 1;
 	string description = 2;
@@ -56,6 +70,10 @@ message ChangeAvatarResponse {
 
 }
 
+message Icon {
+	string link = 1;
+	string uuid = 2;
+}
 
 
 

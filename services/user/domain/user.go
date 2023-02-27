@@ -5,38 +5,21 @@ import (
 	"time"
 )
 
-/* type User struct {
-	Icon        Icon //A link to the users icon
-	Name        string
-	Uuid        string
-	Discription string
-	JoinDate    string
-	Roles       []string
-	ChatServers []string
-	Reports     int
-} */
-//Icon of the user
-//Preferred name of the user
-//Join date
-//Chat servers the user is in
-//Friends
-//Blocked users
-//User settings
-//User permissions
-
 type User struct {
-	Name        string
-	Uuid        string
-	Icon        Icon //A link to the users icon
-	Description string
-	JoinDate    string
-	ChatServers []string
+	Name        string   `bson:"name"`
+	Uuid        string   `bson:"uuid"`
+	Icon        Icon     `bson:"icon"`
+	Description string   `bson:"description"`
+	JoinDate    string   `bson:"joinDate"`
+	ChatServers []string `bson:"chatServers"`
 }
 
 type user interface {
 	AddUser(ctx context.Context, user User) error
 	AddChatServer(ctx context.Context, uuid string, serveruuid string) error
 	RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error
+	EditDescription(ctx context.Context, uuid string, description string) error
+	GetUser(ctx context.Context, uuid string) (User, error)
 }
 
 func (d Domain) CreateUser(ctx context.Context, username string, uuid string) error {
@@ -53,7 +36,6 @@ func (d Domain) CreateUser(ctx context.Context, username string, uuid string) er
 		ChatServers: []string{"MANUALLY INPUT THE STANDART CHAT SERVER"},
 	}
 
-	_ = user
 	if err := d.user.AddUser(ctx, user); err != nil {
 		return err
 	}
@@ -83,5 +65,20 @@ func (d Domain) RemoveChatServer(ctx context.Context, uuid string, server string
 func (d Domain) EditDescription(ctx context.Context, uuid string, description string) error {
 
 	//Do call to database and request that the user uuid has the description changed
+	if err := d.user.EditDescription(ctx, uuid, description); err != nil {
+		return err
+	}
+
+	//Do call to database and request that the user uuid has the description changed
 	return nil
+}
+
+func (d Domain) GetUser(ctx context.Context, uuid string) (User, error) {
+
+	//Do call to database and request a full user struct based on the uuid
+	user, err := d.user.GetUser(ctx, uuid)
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
 }

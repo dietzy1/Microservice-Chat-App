@@ -27,6 +27,7 @@ type UserServiceClient interface {
 	AddChatServer(ctx context.Context, in *AddChatServerRequest, opts ...grpc.CallOption) (*AddChatServerResponse, error)
 	RemoveChatServer(ctx context.Context, in *RemoveChatServerRequest, opts ...grpc.CallOption) (*RemoveChatServerResponse, error)
 	// External RPC
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
 }
@@ -66,6 +67,15 @@ func (c *userServiceClient) RemoveChatServer(ctx context.Context, in *RemoveChat
 	return out, nil
 }
 
+func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error) {
 	out := new(EditDescriptionResponse)
 	err := c.cc.Invoke(ctx, "/user.v1.UserService/EditDescription", in, out, opts...)
@@ -93,6 +103,7 @@ type UserServiceServer interface {
 	AddChatServer(context.Context, *AddChatServerRequest) (*AddChatServerResponse, error)
 	RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error)
 	// External RPC
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
 }
@@ -109,6 +120,9 @@ func (UnimplementedUserServiceServer) AddChatServer(context.Context, *AddChatSer
 }
 func (UnimplementedUserServiceServer) RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveChatServer not implemented")
+}
+func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUserServiceServer) EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDescription not implemented")
@@ -182,6 +196,24 @@ func _UserService_RemoveChatServer_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.UserService/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_EditDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditDescriptionRequest)
 	if err := dec(in); err != nil {
@@ -236,6 +268,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveChatServer",
 			Handler:    _UserService_RemoveChatServer_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _UserService_GetUser_Handler,
 		},
 		{
 			MethodName: "EditDescription",
