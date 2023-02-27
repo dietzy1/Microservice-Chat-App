@@ -30,6 +30,7 @@ type UserServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
+	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (UserService_UploadAvatarClient, error)
 }
 
 type userServiceClient struct {
@@ -94,6 +95,40 @@ func (c *userServiceClient) ChangeAvatar(ctx context.Context, in *ChangeAvatarRe
 	return out, nil
 }
 
+func (c *userServiceClient) UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (UserService_UploadAvatarClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], "/user.v1.UserService/UploadAvatar", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &userServiceUploadAvatarClient{stream}
+	return x, nil
+}
+
+type UserService_UploadAvatarClient interface {
+	Send(*UploadAvatarRequest) error
+	CloseAndRecv() (*UploadAvatarResponse, error)
+	grpc.ClientStream
+}
+
+type userServiceUploadAvatarClient struct {
+	grpc.ClientStream
+}
+
+func (x *userServiceUploadAvatarClient) Send(m *UploadAvatarRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *userServiceUploadAvatarClient) CloseAndRecv() (*UploadAvatarResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadAvatarResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -106,6 +141,7 @@ type UserServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
+	UploadAvatar(UserService_UploadAvatarServer) error
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -129,6 +165,9 @@ func (UnimplementedUserServiceServer) EditDescription(context.Context, *EditDesc
 }
 func (UnimplementedUserServiceServer) ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) UploadAvatar(UserService_UploadAvatarServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -250,6 +289,32 @@ func _UserService_ChangeAvatar_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UploadAvatar_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServiceServer).UploadAvatar(&userServiceUploadAvatarServer{stream})
+}
+
+type UserService_UploadAvatarServer interface {
+	SendAndClose(*UploadAvatarResponse) error
+	Recv() (*UploadAvatarRequest, error)
+	grpc.ServerStream
+}
+
+type userServiceUploadAvatarServer struct {
+	grpc.ServerStream
+}
+
+func (x *userServiceUploadAvatarServer) SendAndClose(m *UploadAvatarResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *userServiceUploadAvatarServer) Recv() (*UploadAvatarRequest, error) {
+	m := new(UploadAvatarRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +347,12 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_ChangeAvatar_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadAvatar",
+			Handler:       _UserService_UploadAvatar_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "user/v1/user_service.proto",
 }

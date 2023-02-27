@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"os"
@@ -28,8 +27,6 @@ func Start(user User) {
 	grpclog.SetLoggerV2(log)
 
 	addr := os.Getenv("USERSERVICE")
-
-	fmt.Println("USER addr: ", addr)
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
