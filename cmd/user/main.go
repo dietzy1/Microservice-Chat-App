@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/dietzy1/chatapp/config"
 
@@ -15,6 +17,8 @@ import (
 func main() {
 
 	config.ReadEnvfile()
+
+	fmt.Println(os.Getenv("USERSERVICE"))
 
 	repo, err := repository.New()
 	if err != nil {

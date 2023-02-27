@@ -45,10 +45,10 @@ func (d Domain) CreateUser(ctx context.Context, username string, uuid string) er
 		Name: username,
 		Uuid: uuid,
 		Icon: Icon{
-			Link: "https://ik.imagekit.io/your_imagekit_id/icons/default.jpg",
-			Uuid: "default",
+			Link: "https://ik.imagekit.io/imageAPI/user/defaultAvatar.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1677417476895",
+			Uuid: "defaultAvatar",
 		},
-		Description: "No description yet",
+		Description: "No description",
 		JoinDate:    time.Now().Format("02 January 2006"),
 		ChatServers: []string{"MANUALLY INPUT THE STANDART CHAT SERVER"},
 	}

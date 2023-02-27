@@ -13,7 +13,7 @@ import (
 func NewUserClient() *userclientv1.UserServiceClient {
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"dns:///0.0.0.0"+os.Getenv("USER"),
+		"dns:///0.0.0.0"+os.Getenv("USERSERVICE"),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)

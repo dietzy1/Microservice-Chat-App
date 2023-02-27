@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"log"
+
+	userClientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 )
 
 type Auth interface {
 	Login(ctx context.Context, username string) (string, error)
 	Register(ctx context.Context, cred Credentials) (string, error)
+	Unregister(ctx context.Context, userUuid string) error
 	Logout(ctx context.Context, userUuid string) error
 	Authenticate(ctx context.Context, userUuid string) (string, error)
 	UpdateToken(ctx context.Context, username string, token string) (string, error)
@@ -23,6 +26,8 @@ type Cache interface {
 type domain struct {
 	auth  Auth
 	cache Cache
+
+	userClient userClientv1.UserServiceClient
 }
 
 type Credentials struct {
@@ -32,8 +37,8 @@ type Credentials struct {
 	Session  string `json:"session" bson:"session"`
 }
 
-func New(auth Auth, cache Cache) *domain {
-	return &domain{auth: auth, cache: cache}
+func New(auth Auth, cache Cache, userClient userClientv1.UserServiceClient) *domain {
+	return &domain{auth: auth, cache: cache, userClient: userClient}
 }
 
 // If someone is trying to login to the application the session token should be returned
@@ -44,7 +49,6 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	fmt.Println(cred.Password)
 
 	//Perform bcrypt check to see if password is correct
 	if err = CompareHash(password, cred.Password); err != nil {
@@ -53,10 +57,6 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 	}
 	//if someone logins then the session token should be regenerated and returned
 	token := GenerateToken()
-	/* 	if err = d.auth.UpdateToken(ctx, cred.Username, token); err != nil {
-		log.Println(err)
-		return "", err
-	} */
 
 	uuid, err := d.auth.UpdateToken(ctx, cred.Username, token)
 	if err != nil {
@@ -102,6 +102,21 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 	}
 
 	//Call the user service to create a user
+
+	_, err = d.userClient.CreateUser(ctx, &userClientv1.CreateUserRequest{
+		Username: cred.Username,
+		UserUuid: cred.Uuid,
+	})
+	if err != nil {
+		log.Println(err)
+
+		//if the user service fails to create a user then the user should be deleted from the auth service
+		if err := d.auth.Unregister(ctx, cred.Uuid); err != nil {
+			log.Println(err)
+			return "", err
+		}
+		return "", err
+	}
 
 	return session, nil
 }
