@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/dietzy1/chatapp/services/user/domain"
@@ -9,14 +10,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// I might want to split these up
 type User interface {
 	//internal
 	CreateUser(ctx context.Context, username string, uuid string) error
 	AddChatServer(ctx context.Context, uuid string, serverUuid string) error
 	RemoveChatServer(ctx context.Context, uuid string, server string) error
+	UploadAvatar(ctx context.Context, image bytes.Buffer) (domain.Icon, error)
 
 	//external
 	GetUser(ctx context.Context, uuid string) (domain.User, error)
+	GetIcons(ctx context.Context) ([]domain.Icon, error)
 	EditDescription(ctx context.Context, uuid string, description string) error
 }
 

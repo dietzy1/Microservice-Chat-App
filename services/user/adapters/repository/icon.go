@@ -20,6 +20,22 @@ func (a *Db) StoreIcon(ctx context.Context, icon domain.Icon) error {
 	return nil
 }
 
+// Retrieve all icons from database
+func (a *Db) GetAllIcons(ctx context.Context) ([]domain.Icon, error) {
+	collection := a.mClient.Database(iconDatabase).Collection(iconCollection)
+	Icons := []domain.Icon{}
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return Icons, err
+	}
+	err = cursor.All(ctx, &Icons)
+	if err != nil {
+		return Icons, err
+	}
+	return Icons, nil
+}
+
 // get icon based on uuid
 func (a *Db) GetIcon(ctx context.Context, uuid string) (domain.Icon, error) {
 	//Get icon from database

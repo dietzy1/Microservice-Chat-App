@@ -16,6 +16,7 @@ rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
 rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
+rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
 }
 
 message CreateUserRequest {
@@ -92,21 +93,12 @@ message ImageInfo {
 	string image_type = 1;
 }
 
-
-
-
-
-/* type User struct {
-	Icon        Icon //A link to the users icon
-	Name        string
-	Uuid        string
-	Discription string
-	JoinDate    string
-	Roles       []string
-	ChatServers []string
-	Reports     int
+message GetAvatarsRequest {
 }
- */
+
+message GetAvatarsResponse {
+	repeated Icon icons = 1;
+}
 
 
 

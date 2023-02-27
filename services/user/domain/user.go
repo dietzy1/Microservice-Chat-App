@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"math/rand"
 	"time"
 )
 
@@ -23,19 +24,28 @@ type user interface {
 }
 
 func (d Domain) CreateUser(ctx context.Context, username string, uuid string) error {
+	// Retrieve all the icons from the database
+	avatars, err := d.icon.GetAllIcons(ctx)
+	if err != nil {
+		return err
+	}
+	//Choose a random avatar from the list of avatars
+	avatar := avatars[rand.Intn(len(avatars))]
 
+	//Create a new user struct
 	user := User{
 		Name: username,
 		Uuid: uuid,
 		Icon: Icon{
-			Link: "https://ik.imagekit.io/imageAPI/user/defaultAvatar.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1677417476895",
-			Uuid: "defaultAvatar",
+			Link: avatar.Link,
+			Uuid: avatar.Uuid,
 		},
 		Description: "No description",
 		JoinDate:    time.Now().Format("02 January 2006"),
 		ChatServers: []string{"MANUALLY INPUT THE STANDART CHAT SERVER"},
 	}
 
+	//Do call to database and request that the user is added to the database
 	if err := d.user.AddUser(ctx, user); err != nil {
 		return err
 	}

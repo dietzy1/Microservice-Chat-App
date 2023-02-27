@@ -75,7 +75,6 @@ func (s *server) UploadAvatar(stream userv1.UserService_UploadAvatarServer) erro
 
 	imageData := bytes.Buffer{}
 	for {
-		log.Println("waiting to receive more data")
 
 		req, err := stream.Recv()
 		if err == io.EOF {
@@ -95,13 +94,41 @@ func (s *server) UploadAvatar(stream userv1.UserService_UploadAvatarServer) erro
 	log.Println("finished receiving data")
 	log.Println(imageData.Len())
 
+	//send ImageData to domain
+	res, err := s.user.UploadAvatar(stream.Context(), imageData)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Error uploading avatar: %v", err)
+	}
+
 	err = stream.SendAndClose(&userv1.UploadAvatarResponse{
-		Link: "https://www.google.com",
-		Uuid: "1234",
+		Link: res.Link,
+		Uuid: res.Uuid,
 	})
 	if err != nil {
 		return status.Errorf(codes.Internal, "Error sending response: %v", err)
 	}
 
 	return nil
+}
+
+func (s *server) GetAvatars(ctx context.Context, req *userv1.GetAvatarsRequest) (*userv1.GetAvatarsResponse, error) {
+
+	avatars, err := s.user.GetIcons(ctx)
+	if err != nil {
+		return &userv1.GetAvatarsResponse{}, status.Errorf(codes.Internal, "Error getting avatars: %v", err)
+	}
+
+	//convert domain avatars to proto avatars
+	protoAvatars := []*userv1.Icon{}
+	for _, avatar := range avatars {
+		protoAvatars = append(protoAvatars, &userv1.Icon{
+			Uuid: avatar.Uuid,
+			Link: avatar.Link,
+		})
+	}
+
+	return &userv1.GetAvatarsResponse{
+		Icons: protoAvatars,
+	}, nil
+
 }

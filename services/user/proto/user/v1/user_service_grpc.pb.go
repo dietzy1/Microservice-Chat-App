@@ -31,6 +31,7 @@ type UserServiceClient interface {
 	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
 	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (UserService_UploadAvatarClient, error)
+	GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error)
 }
 
 type userServiceClient struct {
@@ -129,6 +130,15 @@ func (x *userServiceUploadAvatarClient) CloseAndRecv() (*UploadAvatarResponse, e
 	return m, nil
 }
 
+func (c *userServiceClient) GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error) {
+	out := new(GetAvatarsResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/GetAvatars", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -142,6 +152,7 @@ type UserServiceServer interface {
 	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
 	UploadAvatar(UserService_UploadAvatarServer) error
+	GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -168,6 +179,9 @@ func (UnimplementedUserServiceServer) ChangeAvatar(context.Context, *ChangeAvata
 }
 func (UnimplementedUserServiceServer) UploadAvatar(UserService_UploadAvatarServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvatars not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -315,6 +329,24 @@ func (x *userServiceUploadAvatarServer) Recv() (*UploadAvatarRequest, error) {
 	return m, nil
 }
 
+func _UserService_GetAvatars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvatarsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAvatars(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.UserService/GetAvatars",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAvatars(ctx, req.(*GetAvatarsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +377,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeAvatar",
 			Handler:    _UserService_ChangeAvatar_Handler,
+		},
+		{
+			MethodName: "GetAvatars",
+			Handler:    _UserService_GetAvatars_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

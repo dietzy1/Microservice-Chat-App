@@ -22,17 +22,50 @@ import (
 func main() {
 	config.ReadEnvfile()
 
+	log.Println(discoverFolder())
+
 	client := connect()
 
-	uploadAvatar(*client, "test.png")
+	for _, file := range discoverFolder() {
+		err := uploadAvatar(*client, file)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
-	//Look into the upload folder and look for new files that doesn't match the files in uploaded folder
+		log.Println("uploaded file: ", file)
+
+		//take the file out of the folder and put it into uploaded
+		err = os.Rename("upload/"+file, "uploaded/"+file)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+	}
 
 }
 
-func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) {
-	//Open the image file
-	file, err := os.Open(imagePath)
+// function that looks into a folder and returns a list of file names
+func discoverFolder() []string {
+	files, err := os.ReadDir("upload")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var fileNames []string
+
+	for _, file := range files {
+		fileNames = append(fileNames, file.Name())
+	}
+
+	return fileNames
+}
+
+func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error {
+	//Open the image file in the upload folder
+
+	file, err := os.Open("upload/" + imagePath)
 	if err != nil {
 		log.Fatal("cannot open image file: ", err)
 	}
@@ -96,6 +129,7 @@ func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) {
 	}
 	log.Println("Upload avatar response: ", res)
 
+	return nil
 }
 
 func connect() *userclientv1.UserServiceClient {
@@ -113,14 +147,3 @@ func connect() *userclientv1.UserServiceClient {
 	client := userclientv1.NewUserServiceClient(conn)
 	return &client
 }
-
-/* cdn := cdn.New()
-
-buf := new(bytes.Buffer)
-
-buf.ReadFrom(image)
-
-ok, err := cdn.UploadFile(context.TODO(), test, *buf)
-if err != nil {
-	panic(err)
-} */

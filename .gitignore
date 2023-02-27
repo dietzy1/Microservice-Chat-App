@@ -1,3 +1,9 @@
 .env
 .dsstore
 .DS_STORE
+
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp
