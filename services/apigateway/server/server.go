@@ -20,6 +20,7 @@ import (
 
 	//import the generated protobuf code straight from their source
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
+	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 
 	"github.com/dietzy1/chatapp/services/apigateway/cache"
 
@@ -40,20 +41,19 @@ type server struct {
 	//authClient client.AuthServiceClient
 	authClient authclientv1.AuthServiceClient
 
-	/*
-		 	messageClient  client.MessageClient
-			userClient     client.UserClient
-			chatroomClient client.ChatRoomClient
-	*/
+	//messageClient  client.MessageClient
+	userClient userclientv1.UserServiceClient
+	//chatroomClient client.ChatRoomClient
+
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(cache Cache, authClient authclientv1.AuthServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
-	return &server{cache: cache, authClient: authClient /* messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient */}
+func newServer(cache Cache, authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
+	return &server{cache: cache, authClient: authClient, userClient: userClient /* messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient */}
 }
 
 // run the generated GRPC gateway server
-func runGateway() error {
+func runGateway(authClient authclientv1.AuthServiceClient) error {
 	log := grpclog.NewLoggerV2WithVerbosity(os.Stdout, io.Discard, io.Discard, 1)
 	grpclog.SetLoggerV2(log)
 
@@ -90,11 +90,13 @@ func runGateway() error {
 	//gatewayAddress := ":8090"
 
 	//middleware chaining
-	middleware := logger(cors(gwmux))
+	mw := wrapperAuthMiddleware(authClient)
+	middleware := mw(logger(cors(gwmux)))
+
+	//middleware := logger(cors(gwmux))
 
 	gwServer := &http.Server{
-		Addr: gatewayAddress,
-		//Handler: cors(gwmux),
+		Addr:    gatewayAddress,
 		Handler: middleware,
 	}
 
@@ -118,13 +120,14 @@ func Start() {
 	//initiate dependencies for the server
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
+	userClient := client.NewUserClient()
 	//chatroomclient := client.NewChatRoomClient()
 
 	/* messageClient := client.NewMessageClient()
 	userClient := client.NewUserClient()
 	chatRoomClient := client.NewChatRoomClient() */
 
-	dependencies := newServer(&lruCache, *authClient /* *messageClient, *userClient, *chatRoomClient */)
+	dependencies := newServer(&lruCache, *authClient, *userClient /* *messageClient, *userClient, *chatRoomClient */)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
@@ -136,6 +139,6 @@ func Start() {
 		log.Fatal(s.Serve(lis))
 	}()
 	//Run the GRPC gateway server
-	err = runGateway()
+	err = runGateway(*authClient)
 	log.Fatalln(err)
 }

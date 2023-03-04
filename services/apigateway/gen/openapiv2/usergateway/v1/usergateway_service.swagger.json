@@ -53,16 +53,16 @@
         ]
       }
     },
-    "/v1/user/changepassword": {
+    "/v1/user/editdescription": {
       "post": {
-        "summary": "Change the password of a user",
-        "description": "GRPC gateway call to change the password of a user.",
-        "operationId": "UserGatewayService_ChangePassword",
+        "summary": "Edit the description of a user",
+        "description": "GRPC gateway call to edit the description of a user.",
+        "operationId": "UserGatewayService_EditDescription",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ChangePasswordResponse"
+              "$ref": "#/definitions/v1EditDescriptionResponse"
             }
           },
           "default": {
@@ -78,7 +78,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ChangePasswordRequest"
+              "$ref": "#/definitions/v1EditDescriptionRequest"
             }
           }
         ],
@@ -87,16 +87,40 @@
         ]
       }
     },
-    "/v1/user/changeusername": {
-      "post": {
-        "summary": "Change the username of a user",
-        "description": "GRPC gateway call to change the username of a user.",
-        "operationId": "UserGatewayService_ChangeUsername",
+    "/v1/user/getavatars": {
+      "get": {
+        "summary": "Get all avatars",
+        "description": "GRPC gateway call to get all avatars.",
+        "operationId": "UserGatewayService_GetAvatars",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ChangeUsernameResponse"
+              "$ref": "#/definitions/v1GetAvatarsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/v1/user/{userUuid}": {
+      "get": {
+        "summary": "Get a user",
+        "description": "GRPC gateway call to get a user.",
+        "operationId": "UserGatewayService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserResponse"
             }
           },
           "default": {
@@ -108,12 +132,10 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
+            "name": "userUuid",
+            "in": "path",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1ChangeUsernameRequest"
-            }
+            "type": "string"
           }
         ],
         "tags": [
@@ -153,62 +175,75 @@
     "v1ChangeAvatarRequest": {
       "type": "object",
       "properties": {
-        "userId": {
+        "userUuid": {
           "type": "string"
         },
-        "avatar": {
+        "iconUuid": {
           "type": "string"
         }
       }
     },
     "v1ChangeAvatarResponse": {
+      "type": "object"
+    },
+    "v1EditDescriptionRequest": {
       "type": "object",
       "properties": {
-        "error": {
+        "userUuid": {
           "type": "string"
         },
-        "avatarlink": {
+        "description": {
           "type": "string"
         }
       }
     },
-    "v1ChangePasswordRequest": {
+    "v1EditDescriptionResponse": {
+      "type": "object"
+    },
+    "v1GetAvatarsResponse": {
       "type": "object",
       "properties": {
-        "userId": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
+        "icons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Icon"
+          }
         }
       }
     },
-    "v1ChangePasswordResponse": {
+    "v1GetUserResponse": {
       "type": "object",
       "properties": {
-        "error": {
+        "name": {
           "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "icon": {
+          "$ref": "#/definitions/v1Icon"
+        },
+        "description": {
+          "type": "string"
+        },
+        "joinDate": {
+          "type": "string"
+        },
+        "chatServers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "v1ChangeUsernameRequest": {
+    "v1Icon": {
       "type": "object",
       "properties": {
-        "userId": {
+        "link": {
           "type": "string"
         },
-        "username": {
-          "type": "string"
-        }
-      }
-    },
-    "v1ChangeUsernameResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "username": {
+        "uuid": {
           "type": "string"
         }
       }

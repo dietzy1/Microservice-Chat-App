@@ -2,12 +2,14 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"time"
 
+	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
@@ -54,6 +56,55 @@ func logger(h http.Handler) http.Handler {
 
 		//I need to make this logger way more visible
 	})
+}
+
+func recoverer(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println(err)
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+		h.ServeHTTP(w, r)
+	})
+}
+
+func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			//if the request path is /login or /register /authenticate, then skip the auth middleware
+
+			fmt.Println("request path: ", r.URL.Path)
+
+			if r.URL.Path == "/v1/auth/login" || r.URL.Path == "/v1/auth/register" || r.URL.Path == "/v1/auth/authenticate" {
+				h.ServeHTTP(w, r)
+				return
+			}
+			//Unsure if I actually need to do the cookie thing here or if its done at some other part of the middleware
+
+			//Call the auth service to check if the session token is valid
+			cookie, err := r.Cookie("session_token")
+			if err != nil {
+				log.Println(err)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+
+			//Call the auth service to check if the session token is valid
+			ctx := context.Background()
+			ctx = metadata.AppendToOutgoingContext(ctx, "session_token", cookie.Value)
+			_, err = authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{})
+			if err != nil {
+				log.Println(err)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+
+			h.ServeHTTP(w, r)
+
+		})
+	}
 }
 
 // Called on the response from the GRPC call - is used to set session token cookies

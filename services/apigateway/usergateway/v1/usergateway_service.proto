@@ -20,10 +20,54 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 
 
 service UserGatewayService {
-rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
-rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
-rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
-rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
+rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+        get: "/v1/user/{user_uuid}",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Get a user"
+            description: "GRPC gateway call to get a user."
+            tags: "User"
+        };
+    }
+
+rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {
+    option (google.api.http) = {
+        post: "/v1/user/editdescription",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Edit the description of a user"
+            description: "GRPC gateway call to edit the description of a user."
+            tags: "User"
+        };
+    }
+
+
+
+rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {
+    option (google.api.http) = {
+        post: "/v1/user/changeavatar",
+        body: "*",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Change the avatar of a user"
+            description: "GRPC gateway call to change the avatar of a user."
+            tags: "User"
+        };
+    }
+
+rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {
+    option (google.api.http) = {
+        get: "/v1/user/getavatars",
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Get all avatars"
+            description: "GRPC gateway call to get all avatars."
+            tags: "User"
+        };
+    }
+
 }
 
 message GetUserRequest {
@@ -69,41 +113,3 @@ message Icon {
 	string link = 1;
 	string uuid = 2;
 }
-
-
-/* service UserGatewayService1 {
-rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {
-    option (google.api.http) = {
-        post: "/v1/user/changeavatar",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Change the avatar of a user"
-            description: "GRPC gateway call to change the avatar of a user."
-            tags: "User"
-        };
-    }
-
-rpc ChangeUsername (ChangeUsernameRequest) returns (ChangeUsernameResponse) {
-    option (google.api.http) = {
-        post: "/v1/user/changeusername",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Change the username of a user"
-            description: "GRPC gateway call to change the username of a user."
-                        tags: "User"
-        };
-    }
-rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
-    option (google.api.http) = {
-        post: "/v1/user/changepassword",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Change the password of a user"
-            description: "GRPC gateway call to change the password of a user."
-                        tags: "User"
-        };
-    }    
-} */

@@ -22,9 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserGatewayServiceClient interface {
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
-	ChangeUsername(ctx context.Context, in *ChangeUsernameRequest, opts ...grpc.CallOption) (*ChangeUsernameResponse, error)
-	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error)
 }
 
 type userGatewayServiceClient struct {
@@ -33,6 +34,24 @@ type userGatewayServiceClient struct {
 
 func NewUserGatewayServiceClient(cc grpc.ClientConnInterface) UserGatewayServiceClient {
 	return &userGatewayServiceClient{cc}
+}
+
+func (c *userGatewayServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userGatewayServiceClient) EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error) {
+	out := new(EditDescriptionResponse)
+	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/EditDescription", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *userGatewayServiceClient) ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error) {
@@ -44,18 +63,9 @@ func (c *userGatewayServiceClient) ChangeAvatar(ctx context.Context, in *ChangeA
 	return out, nil
 }
 
-func (c *userGatewayServiceClient) ChangeUsername(ctx context.Context, in *ChangeUsernameRequest, opts ...grpc.CallOption) (*ChangeUsernameResponse, error) {
-	out := new(ChangeUsernameResponse)
-	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/ChangeUsername", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userGatewayServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error) {
-	out := new(ChangePasswordResponse)
-	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/ChangePassword", in, out, opts...)
+func (c *userGatewayServiceClient) GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error) {
+	out := new(GetAvatarsResponse)
+	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/GetAvatars", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,23 +76,27 @@ func (c *userGatewayServiceClient) ChangePassword(ctx context.Context, in *Chang
 // All implementations should embed UnimplementedUserGatewayServiceServer
 // for forward compatibility
 type UserGatewayServiceServer interface {
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
-	ChangeUsername(context.Context, *ChangeUsernameRequest) (*ChangeUsernameResponse, error)
-	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error)
 }
 
 // UnimplementedUserGatewayServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedUserGatewayServiceServer struct {
 }
 
+func (UnimplementedUserGatewayServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserGatewayServiceServer) EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditDescription not implemented")
+}
 func (UnimplementedUserGatewayServiceServer) ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeAvatar not implemented")
 }
-func (UnimplementedUserGatewayServiceServer) ChangeUsername(context.Context, *ChangeUsernameRequest) (*ChangeUsernameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangeUsername not implemented")
-}
-func (UnimplementedUserGatewayServiceServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+func (UnimplementedUserGatewayServiceServer) GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvatars not implemented")
 }
 
 // UnsafeUserGatewayServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -94,6 +108,42 @@ type UnsafeUserGatewayServiceServer interface {
 
 func RegisterUserGatewayServiceServer(s grpc.ServiceRegistrar, srv UserGatewayServiceServer) {
 	s.RegisterService(&UserGatewayService_ServiceDesc, srv)
+}
+
+func _UserGatewayService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserGatewayServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usergateway.v1.UserGatewayService/GetUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserGatewayServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserGatewayService_EditDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditDescriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserGatewayServiceServer).EditDescription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usergateway.v1.UserGatewayService/EditDescription",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserGatewayServiceServer).EditDescription(ctx, req.(*EditDescriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UserGatewayService_ChangeAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -114,38 +164,20 @@ func _UserGatewayService_ChangeAvatar_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserGatewayService_ChangeUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangeUsernameRequest)
+func _UserGatewayService_GetAvatars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvatarsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserGatewayServiceServer).ChangeUsername(ctx, in)
+		return srv.(UserGatewayServiceServer).GetAvatars(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/usergateway.v1.UserGatewayService/ChangeUsername",
+		FullMethod: "/usergateway.v1.UserGatewayService/GetAvatars",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserGatewayServiceServer).ChangeUsername(ctx, req.(*ChangeUsernameRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserGatewayService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChangePasswordRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserGatewayServiceServer).ChangePassword(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/usergateway.v1.UserGatewayService/ChangePassword",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserGatewayServiceServer).ChangePassword(ctx, req.(*ChangePasswordRequest))
+		return srv.(UserGatewayServiceServer).GetAvatars(ctx, req.(*GetAvatarsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -158,16 +190,20 @@ var UserGatewayService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserGatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetUser",
+			Handler:    _UserGatewayService_GetUser_Handler,
+		},
+		{
+			MethodName: "EditDescription",
+			Handler:    _UserGatewayService_EditDescription_Handler,
+		},
+		{
 			MethodName: "ChangeAvatar",
 			Handler:    _UserGatewayService_ChangeAvatar_Handler,
 		},
 		{
-			MethodName: "ChangeUsername",
-			Handler:    _UserGatewayService_ChangeUsername_Handler,
-		},
-		{
-			MethodName: "ChangePassword",
-			Handler:    _UserGatewayService_ChangePassword_Handler,
+			MethodName: "GetAvatars",
+			Handler:    _UserGatewayService_GetAvatars_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
