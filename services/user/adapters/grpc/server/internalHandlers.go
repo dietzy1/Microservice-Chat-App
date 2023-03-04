@@ -20,7 +20,8 @@ type User interface {
 
 	//external
 	GetUser(ctx context.Context, uuid string) (domain.User, error)
-	GetIcons(ctx context.Context) ([]domain.Icon, error)
+	GetIcon(ctx context.Context, uuid string) (domain.Icon, error) //potentially needs to be removed
+	GetAllIcons(ctx context.Context) ([]domain.Icon, error)
 	EditDescription(ctx context.Context, uuid string, description string) error
 }
 

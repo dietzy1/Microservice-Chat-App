@@ -16,7 +16,8 @@ import (
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 )
 
-//
+//https://emojipedia.org/anxious-face-with-sweat/
+//https://getemoji.com/
 
 // Purpose of this function is to upload an avatar to the user service
 func main() {
@@ -56,7 +57,11 @@ func discoverFolder() []string {
 	var fileNames []string
 
 	for _, file := range files {
-		fileNames = append(fileNames, file.Name())
+
+		if file.Name() != ".DS_Store" {
+
+			fileNames = append(fileNames, file.Name())
+		}
 	}
 
 	return fileNames

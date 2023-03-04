@@ -40,7 +40,7 @@ func New() *cdn {
 // sends a POST http request that stores the image bytes with a path of uuid.jpg at the CDN.
 func (f *cdn) UploadIcon(ctx context.Context, icon domain.Icon, buf bytes.Buffer) (string, error) {
 	params := uploader.UploadParam{
-		FileName:          icon.Uuid + ".jpg",
+		FileName:          icon.Uuid + ".png",
 		UseUniqueFileName: newFalse(),
 		Folder:            "/user/",
 		IsPrivateFile:     newFalse(),

@@ -69,7 +69,7 @@ func (s *server) UploadAvatar(stream userv1.UserService_UploadAvatarServer) erro
 	avatarType := req.GetInfo().ImageType
 
 	//Check if the avatar type is equal to png or jpg
-	if avatarType != ".png" && avatarType != ".jpg" {
+	if avatarType != ".png" && avatarType != ".jpg" && avatarType != ".jpeg" && avatarType != ".gif" && avatarType != ".webp" {
 		return status.Errorf(codes.InvalidArgument, "Invalid image type")
 	}
 
@@ -113,7 +113,7 @@ func (s *server) UploadAvatar(stream userv1.UserService_UploadAvatarServer) erro
 
 func (s *server) GetAvatars(ctx context.Context, req *userv1.GetAvatarsRequest) (*userv1.GetAvatarsResponse, error) {
 
-	avatars, err := s.user.GetIcons(ctx)
+	avatars, err := s.user.GetAllIcons(ctx)
 	if err != nil {
 		return &userv1.GetAvatarsResponse{}, status.Errorf(codes.Internal, "Error getting avatars: %v", err)
 	}

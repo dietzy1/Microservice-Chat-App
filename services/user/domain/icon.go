@@ -4,10 +4,15 @@ import (
 	"bytes"
 	"context"
 	"image"
-	"image/jpeg"
+	"image/png"
 	"io"
+	"log"
+
+	_ "image/gif"
+	_ "image/jpeg"
 
 	"github.com/google/uuid"
+	_ "golang.org/x/image/webp"
 )
 
 type cdn interface {
@@ -29,8 +34,9 @@ type icon interface {
 }
 
 func (d Domain) UploadAvatar(ctx context.Context, image bytes.Buffer) (Icon, error) {
-	//convert to jpeg
-	err := ConvertToJPEG(&image, &image)
+	//convert to jpeg - Accepts webp, png, jpeg and gif
+	buf := bytes.Buffer{}
+	err := ConvertToPng(&buf, &image)
 	if err != nil {
 		return Icon{}, err
 	}
@@ -41,7 +47,7 @@ func (d Domain) UploadAvatar(ctx context.Context, image bytes.Buffer) (Icon, err
 	}
 
 	//upload icon to CDN
-	icon.Link, err = d.cdn.UploadIcon(ctx, icon, image)
+	icon.Link, err = d.cdn.UploadIcon(ctx, icon, buf)
 	if err != nil {
 		return Icon{}, err
 	}
@@ -96,12 +102,13 @@ func (d Domain) GetIcon(ctx context.Context, uuid string) (Icon, error) {
 }
 
 // Accepts formats of webp, png, jpeg and gif
-func ConvertToJPEG(w io.Writer, r io.Reader) error {
-	img, _, err := image.Decode(r)
+func ConvertToPng(w io.Writer, r io.Reader) error {
+	img, imageType, err := image.Decode(r)
 	if err != nil {
 		return err
 	}
-	return jpeg.Encode(w, img, &jpeg.Options{Quality: 100})
+	log.Println("Encoding the image of type: ", imageType, " to png")
+	return png.Encode(w, img)
 }
 
 //The way I think I want this logic to work is that I upload icons to the CDN and then store the link to the icon in the database.
