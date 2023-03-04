@@ -18,7 +18,60 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     schemes: HTTPS;
 };
 
+
 service UserGatewayService {
+rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
+rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
+rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
+}
+
+message GetUserRequest {
+	string user_uuid = 1;
+}
+
+message GetUserResponse {
+	string name = 1;
+	string uuid = 2;
+	Icon icon = 3;
+	string description = 4;
+	string join_date = 5;
+	repeated string chat_servers = 6;
+}
+
+message EditDescriptionRequest {
+	string user_uuid = 1;
+	string description = 2;
+}
+
+message EditDescriptionResponse {
+}
+
+
+message ChangeAvatarRequest {
+    string user_uuid = 1;
+    string icon_uuid = 2;
+}
+
+message ChangeAvatarResponse {
+
+}
+
+
+message GetAvatarsRequest {
+}
+
+message GetAvatarsResponse {
+	repeated Icon icons = 1;
+}
+
+message Icon {
+	string link = 1;
+	string uuid = 2;
+}
+
+
+/* service UserGatewayService1 {
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {
     option (google.api.http) = {
         post: "/v1/user/changeavatar",
@@ -53,33 +106,4 @@ rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
                         tags: "User"
         };
     }    
-}
-
-message ChangeAvatarRequest {
-    string user_id = 1;
-    string avatar = 2;
-}
-
-message ChangeAvatarResponse {
-    string error = 1;
-    string avatarlink = 2;
-}
-
-message ChangeUsernameRequest {
-    string user_id = 1;
-    string username = 2;
-}
-
-message ChangeUsernameResponse {
-    string error = 1;
-    string username = 2;
-}
-
-message ChangePasswordRequest {
-    string user_id = 1;
-    string password = 2;
-}
-
-message ChangePasswordResponse {
-    string error = 1;
-}
+} */

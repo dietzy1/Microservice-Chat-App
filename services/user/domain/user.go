@@ -21,6 +21,7 @@ type user interface {
 	RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error
 	EditDescription(ctx context.Context, uuid string, description string) error
 	GetUser(ctx context.Context, uuid string) (User, error)
+	ChangeAvatar(ctx context.Context, userUuid string, avatarUuid string) error
 }
 
 func (d Domain) CreateUser(ctx context.Context, username string, uuid string) error {
@@ -91,4 +92,14 @@ func (d Domain) GetUser(ctx context.Context, uuid string) (User, error) {
 		return User{}, err
 	}
 	return user, nil
+}
+
+func (d Domain) ChangeAvatar(ctx context.Context, userUuid string, iconUuid string) error {
+
+	//Do call to database and request that the user uuid has the avatar changed
+	if err := d.user.ChangeAvatar(ctx, userUuid, iconUuid); err != nil {
+		return err
+	}
+
+	return nil
 }

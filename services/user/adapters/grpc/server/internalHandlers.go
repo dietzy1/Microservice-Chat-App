@@ -23,6 +23,7 @@ type User interface {
 	GetIcon(ctx context.Context, uuid string) (domain.Icon, error) //potentially needs to be removed
 	GetAllIcons(ctx context.Context) ([]domain.Icon, error)
 	EditDescription(ctx context.Context, uuid string, description string) error
+	ChangeAvatar(ctx context.Context, uuid string, iconUuid string) error
 }
 
 //implement the handlers here

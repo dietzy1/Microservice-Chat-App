@@ -51,10 +51,15 @@ func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptio
 
 func (s *server) ChangeAvatar(ctx context.Context, req *userv1.ChangeAvatarRequest) (*userv1.ChangeAvatarResponse, error) {
 
-	/* err := s.user.ChangeAvatar(ctx, req.UserUuid, req.AvatarUuid)
+	//data validation
+	if req.UserUuid == "" || req.IconUuid == "" {
+		return &userv1.ChangeAvatarResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
+	}
+
+	err := s.user.ChangeAvatar(ctx, req.UserUuid, req.IconUuid)
 	if err != nil {
 		return &userv1.ChangeAvatarResponse{}, status.Errorf(codes.Internal, "Error changing avatar: %v", err)
-	} */
+	}
 
 	return &userv1.ChangeAvatarResponse{}, nil
 }

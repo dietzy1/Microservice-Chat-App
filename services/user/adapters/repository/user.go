@@ -63,6 +63,24 @@ func (a *Db) GetUser(ctx context.Context, uuid string) (domain.User, error) {
 	return user, nil
 }
 
+func (a *Db) ChangeAvatar(ctx context.Context, userUuid string, avatarUuid string) error {
+	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+
+	//Retrieve the requested icon from the database
+	icon, err := a.GetIcon(ctx, avatarUuid)
+	if err != nil {
+		return err
+	}
+
+	// Go into the user and change the Icon object to the new icon
+	_, err = collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"icon": icon}})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Should take in field of what needs to be changed and the new value
 /* func (a *Db) ChangeUser(ctx context.Context, uuid string, key string, value string) error {
 	collection := a.mClient.Database(database).Collection(collection)

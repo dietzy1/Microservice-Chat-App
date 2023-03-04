@@ -65,7 +65,8 @@ message EditDescriptionResponse {
 }
 
 message ChangeAvatarRequest {
-
+string user_uuid = 1;
+string icon_uuid = 2;
 }
 
 message ChangeAvatarResponse {
