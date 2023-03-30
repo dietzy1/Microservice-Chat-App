@@ -7,62 +7,41 @@ option go_package = "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom
 service ChatroomService {
     rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
     rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {}
-    rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
-    rpc LeaveRoom(LeaveRoomRequest) returns (LeaveRoomResponse) {}
     rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {}
-}
 
+ /*    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
+    rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {}
+    rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {}
+
+    rpc ChangeRoomName(ChangeRoomNameRequest) returns (ChangeRoomNameResponse) {}
+    rpc ChangeRoomDescription(ChangeRoomDescriptionRequest) returns (ChangeRoomDescriptionResponse) {}
+    rpc ChangeRoomIcon(ChangeRoomIconRequest) returns (ChangeRoomIconResponse) {}
+
+    rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {}
+    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {}
+    rpc AddUser(AddUserRequest) returns (AddUserRequest) {} */
+
+}
 
 message CreateRoomRequest {
     string name = 1;
-    string owner_uuid = 2;
-    string description = 3;
-    repeated string tags = 4;
-    }
-    
-    message CreateRoomResponse {
-    string error = 1;
-    string chatroom_uuid = 2;
-    }
-    
-    message DeleteRoomRequest {
-    string chatroom_uuid = 1;
-    string owner_uuid = 2;
-    }
-    
-    message DeleteRoomResponse {
-    string error = 1;
-    }
-    
-    message JoinRoomRequest {
-    string chatroom_uuid = 1;
-    string user_uuid = 2;
-    }
-    
-    message JoinRoomResponse {
-    string error = 1;
-    string chatroom_uuid = 2;
-    }
-    
-    message LeaveRoomRequest {
-    string chatroom_uuid = 1;
-    string user_uuid = 2;
-    }
-    
-    message LeaveRoomResponse {
-    string error = 1;
-    string chatroom_uuid = 2;
-    }
-    
-    message GetRoomRequest {
-    string chatroom_uuid = 1;
-    }
-    
-    message GetRoomResponse {
-    string error = 1;
-    string name = 2;
+    string description = 2;
     string owner_uuid = 3;
-    repeated string users = 4;
-    string description = 5;
-    repeated string tags = 6;
-    }
+}
+
+message CreateRoomResponse {
+   
+}
+
+
+/* type Chatroom struct {
+	Users       []string `json:"users" bson:"users"`
+	Uuid        string   `json:"uuid" bson:"uuid"`
+	Name        string   `json:"name" bson:"name"`
+	Icon        Icon     `json:"icon" bson:"icon"`
+	Owner       string   `json:"owner" bson:"owner"`
+	Description string   `json:"description" bson:"description"`
+} */
+
+
+

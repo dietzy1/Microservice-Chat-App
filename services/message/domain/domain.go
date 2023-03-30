@@ -22,3 +22,21 @@ type MsgRepo interface {
 }
 
 //Implement the methods for the domain layer and create the interface and inject it into the grpc layer
+
+type Message struct {
+	Author       string
+	Content      string
+	AuthorUuid   string
+	ChatRoomUuid string
+	ChannelUuid  string
+	MessageUuid  string
+	Timestamp    string
+}
+
+type MessageRequest struct {
+	Author         string
+	Content        string
+	Author_uuid    string
+	Chat_room_uuid string
+	Channel_uuid   string
+}

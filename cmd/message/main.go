@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dietzy1/chatapp/config"
 	"github.com/dietzy1/chatapp/services/apigateway/server"
 	"github.com/dietzy1/chatapp/services/auth/domain"
@@ -11,7 +13,10 @@ func main() {
 
 	config.ReadEnvfile()
 
-	repo := repository.New()
+	repo, err := repository.New()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	domain := domain.New(repo)
 

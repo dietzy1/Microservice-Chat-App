@@ -17,7 +17,11 @@ rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
 rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
+
 }
+
+
+
 
 message CreateUserRequest {
 string user_uuid = 1;

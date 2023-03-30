@@ -36,7 +36,6 @@ type Chatroom struct {
 	Icon        Icon     `json:"icon" bson:"icon"`
 	Owner       string   `json:"owner" bson:"owner"`
 	Description string   `json:"description" bson:"description"`
-	Tags        []string `json:"tags" bson:"tags"`
 }
 
 // Need to pass in owner uuid
