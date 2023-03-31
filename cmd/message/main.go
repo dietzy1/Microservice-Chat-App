@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/dietzy1/chatapp/config"
-	"github.com/dietzy1/chatapp/services/apigateway/server"
-	"github.com/dietzy1/chatapp/services/auth/domain"
-	"github.com/dietzy1/chatapp/services/user/adapters/repository"
+	"github.com/dietzy1/chatapp/services/message/adapters/grpc/server"
+	"github.com/dietzy1/chatapp/services/message/adapters/repository"
+	"github.com/dietzy1/chatapp/services/message/domain"
 )
 
 func main() {
