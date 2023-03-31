@@ -15,9 +15,11 @@ rpc RemoveChatServer(RemoveChatServerRequest) returns (RemoveChatServerResponse)
 rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
 rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
 rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
-rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
+
 rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
 
+//Sortof internal
+rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
 }
 
 

@@ -2,23 +2,25 @@ package domain
 
 import (
 	"context"
+	"log"
 
-	"github.com/dietzy1/chatapp/services/message/core"
+	"github.com/google/uuid"
 )
 
 type Domain struct {
+	repo MsgRepo
 }
 
-func New() *Domain {
-	return &Domain{}
+func New(repo MsgRepo) *Domain {
+	return &Domain{repo: repo}
 }
 
 // add the interface to the domain struct
 type MsgRepo interface {
-	GetMsg(ctx context.Context, room core.ChatRoom) (core.Message, error)
-	AddMsg(ctx context.Context, room core.ChatRoom, msg core.Message) error
-	UpdateMsg(ctx context.Context, room core.ChatRoom, msg core.Message) error
-	DeleteMsg(ctx context.Context, room core.ChatRoom, id string) error
+	GetMessages(ctx context.Context, chatroomUuid string, channelUuid string) ([]Message, error)
+	AddMessage(ctx context.Context, msg Message) error
+	UpdateMessage(ctx context.Context, msg Message) error
+	DeleteMessage(ctx context.Context, msg Message) error
 }
 
 //Implement the methods for the domain layer and create the interface and inject it into the grpc layer
@@ -33,10 +35,68 @@ type Message struct {
 	Timestamp    string
 }
 
-type MessageRequest struct {
-	Author         string
-	Content        string
-	Author_uuid    string
-	Chat_room_uuid string
-	Channel_uuid   string
+func (d *Domain) CreateMessage(ctx context.Context, msg Message) (Message, error) {
+
+	//Add the required UUIDS and timestamps
+	msg.MessageUuid = uuid.New().String()
+	msg.Timestamp = formatTimestamp()
+
+	//Call the repository layer
+	err := d.repo.AddMessage(ctx, msg)
+	if err != nil {
+		log.Println(err)
+		return Message{}, err
+	}
+
+	return msg, nil
 }
+
+func (d *Domain) GetMessages(ctx context.Context, chatroomUuid string, channelUuid string) ([]Message, error) {
+
+	//Call the repository layer'
+	messages, err := d.repo.GetMessages(ctx, chatroomUuid, channelUuid)
+	if err != nil {
+		log.Println(err)
+		return []Message{}, err
+	}
+
+	return messages, nil
+}
+
+func (d *Domain) EditMessage(ctx context.Context, msg Message) (Message, error) {
+
+	//The logic here is simple it we simply need to go in and replace the content of the message IDs stay the same
+	err := d.repo.UpdateMessage(ctx, msg)
+	if err != nil {
+		log.Println(err)
+		return Message{}, err
+	}
+
+	return Message{}, nil
+}
+
+func (d *Domain) DeleteMessage(ctx context.Context, msg Message) error {
+
+	err := d.repo.DeleteMessage(ctx, msg)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+//The logic I need to happen here is that I need to generate the required UUIDS and then I need to pass on all of the information
+//To the repository layer
+
+//Something that needs to be implemented layer is another middle layer inbetween the message service and the API gateway so multiple requests
+//For the same channel and chatroom is grouped together into one request to the message service
+
+//I need to figure out how to handle the messaging itself in the respository layer
+// -- Chatroom
+// -- Channel
+
+//Each server could contain their own collection of chatrooms, and then the channel messages are stored randomly in the chatroom
+//But this would require the chatroom to be stored in the channel as well
+//Which could be non ideal as it would make it harder to query the chatroom
+//TODO: A project for later is reducing the amount of data being sent over the wire in reality it should only be required to send a few select pieces of UUIDS instead of full messages

@@ -10,7 +10,7 @@ import (
 )
 
 type message interface {
-	CreateMessage(ctx context.Context, msg domain.MessageRequest) (domain.Message, error)
+	CreateMessage(ctx context.Context, msg domain.Message) (domain.Message, error)
 	GetMessages(ctx context.Context, chatroomUuid string, channelUuid string) ([]domain.Message, error)
 	EditMessage(ctx context.Context, msg domain.Message) (domain.Message, error)
 	DeleteMessage(ctx context.Context, msg domain.Message) error
@@ -23,12 +23,12 @@ func (s *server) CreateMessage(ctx context.Context, req *messagev1.CreateMessage
 	}
 
 	//Create the message request
-	msgReq := domain.MessageRequest{
-		Author:         req.Author,
-		Content:        req.Content,
-		Author_uuid:    req.AuthorUuid,
-		Chat_room_uuid: req.ChatRoomUuid,
-		Channel_uuid:   req.ChannelUuid,
+	msgReq := domain.Message{
+		Author:       req.Author,
+		Content:      req.Content,
+		AuthorUuid:   req.AuthorUuid,
+		ChatRoomUuid: req.ChatRoomUuid,
+		ChannelUuid:  req.ChannelUuid,
 	}
 
 	//Create the message
