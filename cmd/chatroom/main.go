@@ -11,6 +11,8 @@ func main() {
 
 	config.ReadEnvfile()
 
+	//cdn := cdn.New()
+
 	repo := repository.New()
 
 	domain := domain.New(repo)
