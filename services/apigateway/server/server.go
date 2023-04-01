@@ -20,6 +20,8 @@ import (
 
 	//import the generated protobuf code straight from their source
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
+	chatroomclientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
+	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 
 	"github.com/dietzy1/chatapp/services/apigateway/cache"
@@ -45,11 +47,14 @@ type server struct {
 	userClient userclientv1.UserServiceClient
 	//chatroomClient client.ChatRoomClient
 
+	messageClient messageclientv1.MessageServiceClient
+
+	chatroomClient chatroomclientv1.ChatroomServiceClient
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(cache Cache, authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient /* messageClient client.MessageClient, userClient client.UserClient, chatRoomClient client.ChatRoomClient */) *server {
-	return &server{cache: cache, authClient: authClient, userClient: userClient /* messageClient: messageClient, userClient: userClient, chatroomClient: chatRoomClient */}
+func newServer(cache Cache, authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient, messageClient messageclientv1.MessageServiceClient, chatroomClient chatroomclientv1.ChatroomServiceClient) *server {
+	return &server{cache: cache, authClient: authClient, userClient: userClient, messageClient: messageClient, chatroomClient: chatroomClient}
 }
 
 // run the generated GRPC gateway server
@@ -121,13 +126,10 @@ func Start() {
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
 	userClient := client.NewUserClient()
-	//chatroomclient := client.NewChatRoomClient()
+	chatroomClient := client.NewChatRoomClient()
+	messageClient := client.NewMessageClient()
 
-	/* messageClient := client.NewMessageClient()
-	userClient := client.NewUserClient()
-	chatRoomClient := client.NewChatRoomClient() */
-
-	dependencies := newServer(&lruCache, *authClient, *userClient /* *messageClient, *userClient, *chatRoomClient */)
+	dependencies := newServer(&lruCache, *authClient, *userClient, *messageClient, *chatroomClient)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()

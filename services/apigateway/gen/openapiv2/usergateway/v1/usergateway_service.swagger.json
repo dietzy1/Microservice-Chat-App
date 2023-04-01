@@ -19,6 +19,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/user": {
+      "post": {
+        "summary": "Get a user",
+        "description": "GRPC gateway call to get a user.",
+        "operationId": "UserGatewayService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      }
+    },
     "/v1/user/changeavatar": {
       "post": {
         "summary": "Change the avatar of a user",
@@ -110,38 +144,6 @@
           "User"
         ]
       }
-    },
-    "/v1/user/{userUuid}": {
-      "get": {
-        "summary": "Get a user",
-        "description": "GRPC gateway call to get a user.",
-        "operationId": "UserGatewayService_GetUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetUserResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "userUuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "User"
-        ]
-      }
     }
   },
   "definitions": {
@@ -208,6 +210,14 @@
           "items": {
             "$ref": "#/definitions/v1Icon"
           }
+        }
+      }
+    },
+    "v1GetUserRequest": {
+      "type": "object",
+      "properties": {
+        "userUuid": {
+          "type": "string"
         }
       }
     },

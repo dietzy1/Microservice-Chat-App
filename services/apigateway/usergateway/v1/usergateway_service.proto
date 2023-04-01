@@ -22,7 +22,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service UserGatewayService {
 rpc GetUser (GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-        get: "/v1/user",
+        post: "/v1/user",
         body: "*",
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

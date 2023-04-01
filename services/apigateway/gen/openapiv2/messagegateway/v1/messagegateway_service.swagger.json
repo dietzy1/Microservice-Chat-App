@@ -169,6 +169,12 @@
         "chatRoomUuid": {
           "type": "string"
         },
+        "channelUuid": {
+          "type": "string"
+        },
+        "messageUuid": {
+          "type": "string"
+        },
         "timestamp": {
           "type": "string"
         }
@@ -200,34 +206,18 @@
         "chatRoomUuid": {
           "type": "string"
         },
+        "channelUuid": {
+          "type": "string"
+        },
+        "messageUuid": {
+          "type": "string"
+        },
         "timestamp": {
           "type": "string"
         }
       }
     },
     "v1EditMessageResponse": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      }
-    },
-    "v1GetMessagesResponse": {
-      "type": "object",
-      "properties": {
-        "messages": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Messages"
-          }
-        }
-      }
-    },
-    "v1Messages": {
       "type": "object",
       "properties": {
         "author": {
@@ -243,6 +233,46 @@
           "type": "string"
         },
         "channelUuid": {
+          "type": "string"
+        },
+        "messageUuid": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Msg"
+          }
+        }
+      }
+    },
+    "v1Msg": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "authorUuid": {
+          "type": "string"
+        },
+        "chatRoomUuid": {
+          "type": "string"
+        },
+        "channelUuid": {
+          "type": "string"
+        },
+        "messageUuid": {
           "type": "string"
         },
         "timestamp": {
