@@ -19,9 +19,9 @@ type chatroom interface {
 	DeleteChannel(ctx context.Context, channel domain.Channel) error
 	GetChannel(ctx context.Context, channel domain.Channel) (domain.Channel, error)
 
-	InviteUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) (string, error)
+	InviteUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
 	RemoveUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
-	AddUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) (string, error)
+	AddUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
 }
 
 func (s *server) CreateRoom(ctx context.Context, req *chatroomv1.CreateRoomRequest) (*chatroomv1.CreateRoomResponse, error) {
@@ -107,9 +107,9 @@ func (s *server) CreateChannel(ctx context.Context, req *chatroomv1.CreateChanne
 	}
 
 	channel := domain.Channel{
-		ChannelUuid:  req.OwnerUuid,
 		Name:         req.Name,
 		ChatroomUuid: req.ChatroomUuid,
+		Owner:        req.OwnerUuid,
 	}
 
 	_, err := s.chatroom.CreateChannel(ctx, channel)
@@ -181,7 +181,7 @@ func (s *server) InviteUser(ctx context.Context, req *chatroomv1.InviteUserReque
 		Owner: req.OwnerUuid,
 	}
 
-	_, err := s.chatroom.InviteUser(ctx, chatroom, req.UserUuid)
+	err := s.chatroom.InviteUser(ctx, chatroom, req.UserUuid)
 	if err != nil {
 		return &chatroomv1.InviteUserResponse{}, status.Error(500, "Internal Server Error")
 	}
@@ -221,7 +221,7 @@ func (s *server) AddUser(ctx context.Context, req *chatroomv1.AddUserRequest) (*
 		Owner: req.OwnerUuid,
 	}
 
-	_, err := s.chatroom.AddUser(ctx, chatroom, req.UserUuid)
+	err := s.chatroom.AddUser(ctx, chatroom, req.UserUuid)
 	if err != nil {
 		return &chatroomv1.AddUserResponse{}, status.Error(500, "Internal Server Error")
 	}

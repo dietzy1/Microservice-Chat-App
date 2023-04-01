@@ -64,6 +64,15 @@ func (a *Db) CreateChatroom(ctx context.Context, chatroom domain.Chatroom) error
 	return nil
 }
 
+func (a *Db) DeleteChatroom(ctx context.Context, chatroomUuid string) error {
+	collection := a.client.Database(database).Collection(collection)
+	_, err := collection.DeleteOne(ctx, bson.M{"uuid": chatroomUuid})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (a *Db) GetChatroom(ctx context.Context, chatroomUuid string) (domain.Chatroom, error) {
 	collection := a.client.Database(database).Collection(collection)
 	var chatroom domain.Chatroom
@@ -72,15 +81,6 @@ func (a *Db) GetChatroom(ctx context.Context, chatroomUuid string) (domain.Chatr
 		return chatroom, err
 	}
 	return chatroom, nil
-}
-
-func (a *Db) DeleteChatroom(ctx context.Context, chatroomUuid string) error {
-	collection := a.client.Database(database).Collection(collection)
-	_, err := collection.DeleteOne(ctx, bson.M{"uuid": chatroomUuid})
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // ---------------------------------------------------------------------------

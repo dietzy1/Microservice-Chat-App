@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+	"errors"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -20,13 +22,14 @@ type chatroom interface {
 	CreateChatroom(ctx context.Context, chatroom Chatroom) error
 	GetChatroom(ctx context.Context, chatroomUuid string) (Chatroom, error)
 	DeleteChatroom(ctx context.Context, chatroomUuid string) error
-	AddUserToChatroom(ctx context.Context, chatroomUuid string, userUuid string) error
-	RemoveUserFromChatroom(ctx context.Context, chatroomUuid string, userUuid string) error
-	/* ChangeDescription()
-	ChangeName()
-	ChangeTags() */
-	//these should be implemented later but its not nessesary for the first version
 
+	CreateChannel(ctx context.Context, channel Channel) error
+	DeleteChannel(ctx context.Context, channelUuid string) error
+	GetChannel(ctx context.Context, channelUuid string) (Channel, error)
+
+	InviteUser(ctx context.Context, chatroomUuid string, userUuid string) error
+	RemoveUser(ctx context.Context, chatroomUuid string, userUuid string) error
+	AddUser(ctx context.Context, chatroomUuid string, userUuid string) error
 }
 
 type Chatroom struct {
@@ -71,11 +74,13 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 	//Use the chatroom object to create a new chatroom in the database
 	err := d.repo.CreateChatroom(ctx, chatroom)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
 	err = d.repo.CreateChannel(ctx, channel)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -88,19 +93,22 @@ func (d *Domain) DeleteRoom(ctx context.Context, chatroom Chatroom) error {
 	//The owner uuid should be passed through the cookie so it should already be authenticated prior to this call
 
 	//Check if owner uuid is the owner of the chatroom
-	room, err := d.GetRoom(ctx, chatroom.Uuid)
+	room, err := d.repo.GetChatroom(ctx, chatroom.Uuid)
 	if err != nil {
 		//Chatroom does not exist
+		log.Println(err)
 		return err
 	}
 	if room.Owner != chatroom.Owner {
 		//User is not the owner of the chatroom
-		return err
+		log.Println("User is not the owner of the chatroom")
+		return errors.New("user is not the owner of the chatroom")
 	}
 
 	//Delete chatroom
 	err = d.repo.DeleteChatroom(ctx, chatroom.Uuid)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -108,25 +116,25 @@ func (d *Domain) DeleteRoom(ctx context.Context, chatroom Chatroom) error {
 
 func (d *Domain) GetRoom(ctx context.Context, chatroom Chatroom) (Chatroom, error) {
 
-	return Chatroom{}, nil
+	room, err := d.repo.GetChatroom(ctx, chatroom.Uuid)
+	if err != nil {
+		log.Println(err)
+		return Chatroom{}, err
+	}
+
+	return room, nil
 }
 
 //---------------------------------------------------------------------------------
 
 func (d *Domain) CreateChannel(ctx context.Context, channel Channel) (string, error) {
-	//Check if channel name is taken
-	_, err := d.GetChannel(ctx, channel.Name)
-	if err != nil {
-		//return incase the name is already taken
-		return "", err
-	}
 
 	//The other fields are already set from the grpc call
 	channel.ChannelUuid = uuid.New().String()
-
 	//Use the channel object to create a new channel in the database
-	err = d.repo.CreateChannel(ctx, channel)
+	err := d.repo.CreateChannel(ctx, channel)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -138,19 +146,22 @@ func (d *Domain) DeleteChannel(ctx context.Context, channel Channel) error {
 	//The owner uuid should be passed through the cookie so it should already be authenticated prior to this call
 
 	//Check if owner uuid is the owner of the chatroom
-	room, err := d.GetRoom(ctx, channel.ChatroomUuid)
+	room, err := d.repo.GetChatroom(ctx, channel.ChatroomUuid)
 	if err != nil {
 		//Chatroom does not exist
+		log.Println(err)
 		return err
 	}
 	if room.Owner != channel.Owner {
 		//User is not the owner of the chatroom
-		return err
+		log.Println(err)
+		return errors.New("user is not the owner of the chatroom")
 	}
 
 	//Delete channel
 	err = d.repo.DeleteChannel(ctx, channel.ChannelUuid)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -158,32 +169,38 @@ func (d *Domain) DeleteChannel(ctx context.Context, channel Channel) error {
 
 func (d *Domain) GetChannel(ctx context.Context, channel Channel) (Channel, error) {
 
+	channel, err := d.repo.GetChannel(ctx, channel.ChannelUuid)
+	if err != nil {
+		log.Println(err)
+		return Channel{}, err
+	}
+
 	return Channel{}, nil
 }
 
 //---------------------------------------------------------------------------------
 
-func (d *Domain) InviteUser(ctx context.Context, chatroom Chatroom, userUuid string) (string, error) {
+func (d *Domain) InviteUser(ctx context.Context, chatroom Chatroom, userUuid string) error {
 	//Check if user is already in the chatroom
-	for _, user := range chatroom.Users {
-		if user == userUuid {
-			return nil
-		}
+	room, err := d.repo.GetChatroom(ctx, chatroom.Uuid)
+	if err != nil {
+		log.Println(err)
+		return err
 	}
-
-	//Check if user is already invited
-	for _, user := range chatroom.Invited {
+	//Check if user is already in the chatroom
+	for _, user := range room.Users {
 		if user == userUuid {
 			return nil
 		}
 	}
 
 	//Add user to invited list
-	chatroom.Invited = append(chatroom.Invited, userUuid)
+	room.Invited = append(chatroom.Invited, userUuid)
 
 	//Update chatroom
-	err := d.repo.UpdateChatroom(ctx, chatroom)
+	err = d.repo.InviteUser(ctx, chatroom.Uuid, userUuid)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -191,24 +208,47 @@ func (d *Domain) InviteUser(ctx context.Context, chatroom Chatroom, userUuid str
 }
 
 func (d *Domain) RemoveUser(ctx context.Context, chatroom Chatroom, userUuid string) error {
-	//Check if user is in the chatroom
-	for i, user := range chatroom.Users {
-		if user == userUuid {
-			chatroom.Users = append(chatroom.Users[:i], chatroom.Users[i+1:]...)
-			break
-		}
+
+	//Check if owner uuid is the owner of the chatroom
+	room, err := d.repo.GetChatroom(ctx, chatroom.Uuid)
+	if err != nil {
+		//Chatroom does not exist
+		log.Println(err)
+		return err
+	}
+	if room.Owner != chatroom.Owner {
+		//User is not the owner of the chatroom
+		log.Println(err)
+		return errors.New("user is not the owner of the chatroom")
 	}
 
 	//Update chatroom
-	err := d.repo.UpdateChatroom(ctx, chatroom)
+	err = d.repo.RemoveUser(ctx, chatroom.Uuid, userUuid)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	return nil
 }
 
-func (d *Domain) AddUser(ctx context.Context, chatroom Chatroom, userUuid string) (string, error) {
+func (d *Domain) AddUser(ctx context.Context, chatroom Chatroom, userUuid string) error {
+	room, err := d.repo.GetChatroom(ctx, chatroom.Uuid)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	//Check if user is in the invited list
+	for _, user := range room.Invited {
+		if user == userUuid {
+			//Add user to chatroom
+			err = d.repo.AddUser(ctx, chatroom.Uuid, userUuid)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+		}
+	}
 
 	return nil
 }
