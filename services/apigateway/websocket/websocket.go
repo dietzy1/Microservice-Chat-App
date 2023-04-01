@@ -5,6 +5,7 @@ package websocket
 //then the server should pass along the information to the application layer
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -20,9 +21,10 @@ const (
 )
 
 type ws struct {
-	hub  *ConnectionManager
-	conn *websocket.Conn
-	send chan *messagev1.CreateMessageRequest
+	hub           *ConnectionManager
+	conn          *websocket.Conn
+	send          chan *messagev1.CreateMessageRequest
+	messageClient messagev1.MessageServiceClient
 }
 
 // I need to implement some error handling so it doesn't crash the server on incorrect proto format
@@ -51,6 +53,7 @@ func (ws *ws) readPump() {
 		log.Printf("SENT msg: %s", msg)
 
 		ws.hub.broadcast <- msg
+
 	}
 }
 
@@ -72,6 +75,14 @@ func (ws *ws) writePump() {
 			//This was websocket.TextMessage beforehand
 			w, err := ws.conn.NextWriter(websocket.BinaryMessage)
 			if err != nil {
+				return
+			}
+
+			//Here we contact the message service and send the message to the database
+			_, err = ws.messageClient.CreateMessage(context.TODO(), message)
+			if err != nil {
+				//If we are unable to store messages then we shouldn't be able to send messages right
+				log.Println(err)
 				return
 			}
 

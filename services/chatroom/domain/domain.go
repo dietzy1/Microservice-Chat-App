@@ -30,12 +30,19 @@ type chatroom interface {
 }
 
 type Chatroom struct {
-	Users       []string `json:"users" bson:"users"`
-	Uuid        string   `json:"uuid" bson:"uuid"`
-	Name        string   `json:"name" bson:"name"`
-	Icon        Icon     `json:"icon" bson:"icon"`
-	Owner       string   `json:"owner" bson:"owner"`
-	Description string   `json:"description" bson:"description"`
+	Name     string   `json:"name" bson:"name"`
+	Uuid     string   `json:"uuid" bson:"uuid"`
+	Icon     Icon     `json:"icon" bson:"icon"`
+	Owner    string   `json:"owner" bson:"owner"`
+	Users    []string `json:"users" bson:"users"`
+	Channels []string `json:"channels" bson:"channels"`
+	Invited  []string `json:"invited" bson:"invited"`
+}
+
+type Channels struct {
+	Uuid         string `json:"uuid" bson:"uuid"`
+	Name         string `json:"name" bson:"name"`
+	ChatroomUuid string `json:"chatroom" bson:"chatroom"`
 }
 
 // Need to pass in owner uuid

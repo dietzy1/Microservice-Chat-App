@@ -9,39 +9,105 @@ service ChatroomService {
     rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {}
     rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {}
 
- /*    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
+
+    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
     rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {}
     rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {}
 
-    rpc ChangeRoomName(ChangeRoomNameRequest) returns (ChangeRoomNameResponse) {}
-    rpc ChangeRoomDescription(ChangeRoomDescriptionRequest) returns (ChangeRoomDescriptionResponse) {}
-    rpc ChangeRoomIcon(ChangeRoomIconRequest) returns (ChangeRoomIconResponse) {}
-
     rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {}
     rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {}
-    rpc AddUser(AddUserRequest) returns (AddUserRequest) {} */
+    rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
 
 }
 
 message CreateRoomRequest {
     string name = 1;
-    string description = 2;
-    string owner_uuid = 3;
+    string owner_uuid = 2;
 }
 
 message CreateRoomResponse {
-   
+}
+
+message DeleteRoomRequest {
+    string uuid = 1;
+    string owner_uuid = 2;
+}
+
+message DeleteRoomResponse {
+}
+
+message GetRoomRequest {
+    string uuid = 1;
+}
+
+message GetRoomResponse {
+    string uuid = 1;
+    string name = 2;
+    string owner_uuid = 3;
+    repeated string user_uuids = 4;
+    repeated string channel_uuids = 5;
+}
+
+// -- ------------------------------------------------------------------------------
+
+
+message CreateChannelRequest {
+    string name = 1;
+    string owner_uuid = 2;
+    string chatroom_uuid = 3;
+}
+
+message CreateChannelResponse {
+}
+
+message DeleteChannelRequest {
+    string uuid = 1;
+    string owner_uuid = 2;
+}
+
+message DeleteChannelResponse {
+}
+
+message GetChannelRequest {
+    string uuid = 1;
+}
+
+message GetChannelResponse {
+    string uuid = 1;
+    string name = 2;
+    string chatroom_uuid = 3;
 }
 
 
-/* type Chatroom struct {
-	Users       []string `json:"users" bson:"users"`
-	Uuid        string   `json:"uuid" bson:"uuid"`
-	Name        string   `json:"name" bson:"name"`
-	Icon        Icon     `json:"icon" bson:"icon"`
-	Owner       string   `json:"owner" bson:"owner"`
-	Description string   `json:"description" bson:"description"`
-} */
+// -- ------------------------------------------------------------------------------
 
+message InviteUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
+
+message InviteUserResponse {
+}
+
+message RemoveUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
+
+message RemoveUserResponse {
+}
+
+message AddUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
+
+message AddUserResponse {
+}
+
+// -- ------------------------------------------------------------------------------
 
 
