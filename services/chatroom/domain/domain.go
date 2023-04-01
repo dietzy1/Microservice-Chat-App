@@ -39,10 +39,11 @@ type Chatroom struct {
 	Invited  []string `json:"invited" bson:"invited"`
 }
 
-type Channels struct {
-	Uuid         string `json:"uuid" bson:"uuid"`
+type Channel struct {
+	ChannelUuid  string `json:"uuid" bson:"uuid"`
 	Name         string `json:"name" bson:"name"`
 	ChatroomUuid string `json:"chatroom" bson:"chatroom"`
+	Owner        string `json:"owner" bson:"owner"`
 }
 
 // Need to pass in owner uuid
@@ -57,12 +58,9 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 		return "", err
 	}
 	//perform check if tags and description are not empty
-	if chatroom.Description == "" || chatroom.Tags == nil {
-		return "", err
-	}
 
 	//perform call to cdn and upload the icon
-	chatroom.Icon.Link = d.cdn.UploadIcon(ctx, chatroom.Icon)
+	//chatroom.Icon.Link = d.cdn.UploadIcon(ctx, chatroom.Icon)
 	chatroom.Icon.Uuid = uuid.New().String()
 
 	//The other fields are already set from the grpc call
@@ -145,51 +143,3 @@ func (d *Domain) GetRoom(ctx context.Context, chatroomUuid string) (Chatroom, er
 
 	return chatroom, nil
 }
-
-/* message CreateRoomRequest {
-   string name = 1;
-   string owner_uuid = 2;
-   }
-
-   message CreateRoomResponse {
-   string error = 1;
-   string chatroom_uuid = 2;
-   }
-
-   message DeleteRoomRequest {
-   string chatroom_uuid = 1;
-   string owner_uuid = 2;
-   }
-
-   message DeleteRoomResponse {
-   string error = 1;
-   }
-
-   message JoinRoomRequest {
-   string chatroom_uuid = 1;
-   string user_uuid = 2;
-   }
-
-   message JoinRoomResponse {
-   string error = 2;
-   }
-
-   message LeaveRoomRequest {
-   string chatroom_uuid = 1;
-   string user_uuid = 2;
-   }
-
-   message LeaveRoomResponse {
-   string error = 1;
-   }
-
-   message GetRoomRequest {
-   string chatroom_uuid = 1;
-   }
-
-   message GetRoomResponse {
-   string error = 1;
-   string name = 2;
-   string owner_uuid = 3;
-   repeated string users = 4;
-   } */

@@ -34,7 +34,9 @@ func Start(chatroom chatroom) {
 		log.Fatalln("Failed to listen:", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(loggingMiddleware),
+	)
 	//Inject dependencies into the server
 	dependencies := newServer(chatroom)
 

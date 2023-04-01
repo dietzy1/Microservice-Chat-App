@@ -61,21 +61,23 @@ message CreateChannelResponse {
 }
 
 message DeleteChannelRequest {
-    string uuid = 1;
-    string owner_uuid = 2;
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
+    string owner_uuid = 3;
 }
 
 message DeleteChannelResponse {
 }
 
 message GetChannelRequest {
-    string uuid = 1;
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
 }
 
 message GetChannelResponse {
-    string uuid = 1;
-    string name = 2;
-    string chatroom_uuid = 3;
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
+    string name = 3;
 }
 
 
