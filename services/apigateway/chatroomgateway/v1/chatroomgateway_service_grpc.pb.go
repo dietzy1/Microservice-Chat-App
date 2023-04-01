@@ -24,9 +24,13 @@ const _ = grpc.SupportPackageIsVersion7
 type ChatroomGatewayServiceClient interface {
 	CreateRoom(ctx context.Context, in *CreateRoomRequest, opts ...grpc.CallOption) (*CreateRoomResponse, error)
 	DeleteRoom(ctx context.Context, in *DeleteRoomRequest, opts ...grpc.CallOption) (*DeleteRoomResponse, error)
-	JoinRoom(ctx context.Context, in *JoinRoomRequest, opts ...grpc.CallOption) (*JoinRoomResponse, error)
-	LeaveRoom(ctx context.Context, in *LeaveRoomRequest, opts ...grpc.CallOption) (*LeaveRoomResponse, error)
 	GetRoom(ctx context.Context, in *GetRoomRequest, opts ...grpc.CallOption) (*GetRoomResponse, error)
+	CreateChannel(ctx context.Context, in *CreateChannelRequest, opts ...grpc.CallOption) (*CreateChannelResponse, error)
+	DeleteChannel(ctx context.Context, in *DeleteChannelRequest, opts ...grpc.CallOption) (*DeleteChannelResponse, error)
+	GetChannel(ctx context.Context, in *GetChannelRequest, opts ...grpc.CallOption) (*GetChannelResponse, error)
+	InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error)
+	RemoveUser(ctx context.Context, in *RemoveUserRequest, opts ...grpc.CallOption) (*RemoveUserResponse, error)
+	AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error)
 }
 
 type chatroomGatewayServiceClient struct {
@@ -55,27 +59,63 @@ func (c *chatroomGatewayServiceClient) DeleteRoom(ctx context.Context, in *Delet
 	return out, nil
 }
 
-func (c *chatroomGatewayServiceClient) JoinRoom(ctx context.Context, in *JoinRoomRequest, opts ...grpc.CallOption) (*JoinRoomResponse, error) {
-	out := new(JoinRoomResponse)
-	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/JoinRoom", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatroomGatewayServiceClient) LeaveRoom(ctx context.Context, in *LeaveRoomRequest, opts ...grpc.CallOption) (*LeaveRoomResponse, error) {
-	out := new(LeaveRoomResponse)
-	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/LeaveRoom", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *chatroomGatewayServiceClient) GetRoom(ctx context.Context, in *GetRoomRequest, opts ...grpc.CallOption) (*GetRoomResponse, error) {
 	out := new(GetRoomResponse)
 	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) CreateChannel(ctx context.Context, in *CreateChannelRequest, opts ...grpc.CallOption) (*CreateChannelResponse, error) {
+	out := new(CreateChannelResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) DeleteChannel(ctx context.Context, in *DeleteChannelRequest, opts ...grpc.CallOption) (*DeleteChannelResponse, error) {
+	out := new(DeleteChannelResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) GetChannel(ctx context.Context, in *GetChannelRequest, opts ...grpc.CallOption) (*GetChannelResponse, error) {
+	out := new(GetChannelResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/GetChannel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) InviteUser(ctx context.Context, in *InviteUserRequest, opts ...grpc.CallOption) (*InviteUserResponse, error) {
+	out := new(InviteUserResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/InviteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) RemoveUser(ctx context.Context, in *RemoveUserRequest, opts ...grpc.CallOption) (*RemoveUserResponse, error) {
+	out := new(RemoveUserResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) AddUser(ctx context.Context, in *AddUserRequest, opts ...grpc.CallOption) (*AddUserResponse, error) {
+	out := new(AddUserResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/AddUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,9 +128,13 @@ func (c *chatroomGatewayServiceClient) GetRoom(ctx context.Context, in *GetRoomR
 type ChatroomGatewayServiceServer interface {
 	CreateRoom(context.Context, *CreateRoomRequest) (*CreateRoomResponse, error)
 	DeleteRoom(context.Context, *DeleteRoomRequest) (*DeleteRoomResponse, error)
-	JoinRoom(context.Context, *JoinRoomRequest) (*JoinRoomResponse, error)
-	LeaveRoom(context.Context, *LeaveRoomRequest) (*LeaveRoomResponse, error)
 	GetRoom(context.Context, *GetRoomRequest) (*GetRoomResponse, error)
+	CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error)
+	DeleteChannel(context.Context, *DeleteChannelRequest) (*DeleteChannelResponse, error)
+	GetChannel(context.Context, *GetChannelRequest) (*GetChannelResponse, error)
+	InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error)
+	RemoveUser(context.Context, *RemoveUserRequest) (*RemoveUserResponse, error)
+	AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error)
 }
 
 // UnimplementedChatroomGatewayServiceServer should be embedded to have forward compatible implementations.
@@ -103,14 +147,26 @@ func (UnimplementedChatroomGatewayServiceServer) CreateRoom(context.Context, *Cr
 func (UnimplementedChatroomGatewayServiceServer) DeleteRoom(context.Context, *DeleteRoomRequest) (*DeleteRoomResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 }
-func (UnimplementedChatroomGatewayServiceServer) JoinRoom(context.Context, *JoinRoomRequest) (*JoinRoomResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method JoinRoom not implemented")
-}
-func (UnimplementedChatroomGatewayServiceServer) LeaveRoom(context.Context, *LeaveRoomRequest) (*LeaveRoomResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LeaveRoom not implemented")
-}
 func (UnimplementedChatroomGatewayServiceServer) GetRoom(context.Context, *GetRoomRequest) (*GetRoomResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoom not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateChannel not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) DeleteChannel(context.Context, *DeleteChannelRequest) (*DeleteChannelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteChannel not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) GetChannel(context.Context, *GetChannelRequest) (*GetChannelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetChannel not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) InviteUser(context.Context, *InviteUserRequest) (*InviteUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InviteUser not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) RemoveUser(context.Context, *RemoveUserRequest) (*RemoveUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUser not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) AddUser(context.Context, *AddUserRequest) (*AddUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
 }
 
 // UnsafeChatroomGatewayServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -160,42 +216,6 @@ func _ChatroomGatewayService_DeleteRoom_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatroomGatewayService_JoinRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(JoinRoomRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatroomGatewayServiceServer).JoinRoom(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/JoinRoom",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatroomGatewayServiceServer).JoinRoom(ctx, req.(*JoinRoomRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatroomGatewayService_LeaveRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LeaveRoomRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatroomGatewayServiceServer).LeaveRoom(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/LeaveRoom",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatroomGatewayServiceServer).LeaveRoom(ctx, req.(*LeaveRoomRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ChatroomGatewayService_GetRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRoomRequest)
 	if err := dec(in); err != nil {
@@ -210,6 +230,114 @@ func _ChatroomGatewayService_GetRoom_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatroomGatewayServiceServer).GetRoom(ctx, req.(*GetRoomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_CreateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).CreateChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).CreateChannel(ctx, req.(*CreateChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_DeleteChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).DeleteChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).DeleteChannel(ctx, req.(*DeleteChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_GetChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChannelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).GetChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/GetChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).GetChannel(ctx, req.(*GetChannelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_InviteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InviteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).InviteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/InviteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).InviteUser(ctx, req.(*InviteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_RemoveUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).RemoveUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).RemoveUser(ctx, req.(*RemoveUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).AddUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/AddUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).AddUser(ctx, req.(*AddUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -230,16 +358,32 @@ var ChatroomGatewayService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatroomGatewayService_DeleteRoom_Handler,
 		},
 		{
-			MethodName: "JoinRoom",
-			Handler:    _ChatroomGatewayService_JoinRoom_Handler,
-		},
-		{
-			MethodName: "LeaveRoom",
-			Handler:    _ChatroomGatewayService_LeaveRoom_Handler,
-		},
-		{
 			MethodName: "GetRoom",
 			Handler:    _ChatroomGatewayService_GetRoom_Handler,
+		},
+		{
+			MethodName: "CreateChannel",
+			Handler:    _ChatroomGatewayService_CreateChannel_Handler,
+		},
+		{
+			MethodName: "DeleteChannel",
+			Handler:    _ChatroomGatewayService_DeleteChannel_Handler,
+		},
+		{
+			MethodName: "GetChannel",
+			Handler:    _ChatroomGatewayService_GetChannel_Handler,
+		},
+		{
+			MethodName: "InviteUser",
+			Handler:    _ChatroomGatewayService_InviteUser_Handler,
+		},
+		{
+			MethodName: "RemoveUser",
+			Handler:    _ChatroomGatewayService_RemoveUser_Handler,
+		},
+		{
+			MethodName: "AddUser",
+			Handler:    _ChatroomGatewayService_AddUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

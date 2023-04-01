@@ -43,30 +43,6 @@ rpc DeleteRoom (DeleteRoomRequest) returns (DeleteRoomResponse) {
           };
     }
 
-rpc JoinRoom (JoinRoomRequest) returns (JoinRoomResponse) {
-    option (google.api.http) = {
-        post: "/v1/chatroom/joinroom",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Join a chatroom"
-            description: "GRPC gateway call to join a chatroom."
-            tags: "Chatroom"
-          };
-    }
-
-rpc LeaveRoom (LeaveRoomRequest) returns (LeaveRoomResponse) {
-    option (google.api.http) = {
-        post: "/v1/chatroom/leaveroom",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Leave a chatroom"
-            description: "GRPC gateway call to leave a chatroom."
-            tags: "Chatroom"
-          };
-    }
-
 rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
     option (google.api.http) = {
         get: "/v1/chatroom/getroom/{chatroom_uuid}",
@@ -77,73 +53,169 @@ rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
             tags: "Chatroom"
           };
     }
+
+    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
+        option (google.api.http) = {
+            post: "/v1/chatroom/createchannel",
+            body: "*",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Create a channel"
+                description: "GRPC gateway call to create a channel."
+                tags: "Channel"
+              };
+        }
+    
+    rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
+        option (google.api.http) = {
+            post: "/v1/chatroom/deletechannel",
+            body: "*",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Delete a channel"
+                description: "GRPC gateway call to delete a channel."
+                tags: "Channel"
+              };
+        }
+    
+    rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {
+        option (google.api.http) = {
+            get: "/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Get a channel"
+                description: "GRPC gateway call to get a channel."
+                tags: "Channel"
+              };
+    }
+
+    rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/chatroom/inviteuser",
+            body: "*",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Invite a user"
+                description: "GRPC gateway call to invite a user."
+                tags: "User"
+              };
+        }
+    
+    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/chatroom/removeuser",
+            body: "*",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Remove a user"
+                description: "GRPC gateway call to remove a user."
+                tags: "User"
+              };
+            }
+    
+    rpc AddUser(AddUserRequest) returns (AddUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/chatroom/adduser",
+            body: "*",
+            };
+            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+                summary: "Add a user"
+                description: "GRPC gateway call to add a user."
+                tags: "User"
+              };
+            }
+
 }
 
+
 message CreateRoomRequest {
-string name = 1;
-string owner_uuid = 2;
+    string name = 1;
+    string owner_uuid = 2;
 }
 
 message CreateRoomResponse {
-string error = 1;
-string chatroom_uuid = 2;
 }
 
 message DeleteRoomRequest {
-string chatroom_uuid = 1;
-string owner_uuid = 2;
+    string chatroom_uuid = 1;
+    string owner_uuid = 2;
 }
 
 message DeleteRoomResponse {
-string error = 1;
-}
-
-message JoinRoomRequest {
-string chatroom_uuid = 1;
-string user_uuid = 2;
-}
-
-message JoinRoomResponse {
-string error = 1;
-}
-
-message LeaveRoomRequest {
-string chatroom_uuid = 1;
-string user_uuid = 2;
-}
-
-message LeaveRoomResponse {
-string error = 1;
 }
 
 message GetRoomRequest {
-string chatroom_uuid = 1;
+    string chatroom_uuid = 1;
 }
 
 message GetRoomResponse {
-string error = 1;
-string name = 2;
-string owner_uuid = 3;
-repeated string users = 4;
+    string chatroom_uuid = 1;
+    string name = 2;
+    string owner_uuid = 3;
+    repeated string user_uuids = 4;
+    repeated string channel_uuids = 5;
+}
+
+// -- ------------------------------------------------------------------------------
+
+
+message CreateChannelRequest {
+    string name = 1;
+    string owner_uuid = 2;
+    string chatroom_uuid = 3;
+}
+
+message CreateChannelResponse {
+}
+
+message DeleteChannelRequest {
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
+    string owner_uuid = 3;
+}
+
+message DeleteChannelResponse {
+}
+
+message GetChannelRequest {
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
+}
+
+message GetChannelResponse {
+    string chatroom_uuid = 1;
+    string channel_uuid = 2;
+    string name = 3;
 }
 
 
+// -- ------------------------------------------------------------------------------
 
+message InviteUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
 
+message InviteUserResponse {
+}
 
+message RemoveUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
 
+message RemoveUserResponse {
+}
 
+message AddUserRequest {
+    string user_uuid = 1;
+    string chatroom_uuid = 2;
+    string owner_uuid = 3;
+}
 
+message AddUserResponse {
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+// -- ------------------------------------------------------------------------------

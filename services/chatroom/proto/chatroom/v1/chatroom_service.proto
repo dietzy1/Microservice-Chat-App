@@ -29,7 +29,7 @@ message CreateRoomResponse {
 }
 
 message DeleteRoomRequest {
-    string uuid = 1;
+    string chatroom_uuid = 1;
     string owner_uuid = 2;
 }
 
@@ -37,11 +37,11 @@ message DeleteRoomResponse {
 }
 
 message GetRoomRequest {
-    string uuid = 1;
+    string chatroom_uuid = 1;
 }
 
 message GetRoomResponse {
-    string uuid = 1;
+    string chatroom_uuid = 1;
     string name = 2;
     string owner_uuid = 3;
     repeated string user_uuids = 4;

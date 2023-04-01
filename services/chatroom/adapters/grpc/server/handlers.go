@@ -47,12 +47,12 @@ func (s *server) CreateRoom(ctx context.Context, req *chatroomv1.CreateRoomReque
 func (s *server) DeleteRoom(ctx context.Context, req *chatroomv1.DeleteRoomRequest) (*chatroomv1.DeleteRoomResponse, error) {
 
 	// Perform check if uuid or Owneruuid is empty
-	if req.Uuid == "" || req.OwnerUuid == "" {
+	if req.ChatroomUuid == "" || req.OwnerUuid == "" {
 		return &chatroomv1.DeleteRoomResponse{}, status.Error(400, "Uuid and OwnerUuid cannot be empty")
 	}
 
 	chatroom := domain.Chatroom{
-		Uuid:  req.Uuid,
+		Uuid:  req.ChatroomUuid,
 		Owner: req.OwnerUuid,
 	}
 
@@ -67,12 +67,12 @@ func (s *server) DeleteRoom(ctx context.Context, req *chatroomv1.DeleteRoomReque
 func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*chatroomv1.GetRoomResponse, error) {
 
 	// Perform check if uuid is empty
-	if req.Uuid == "" {
+	if req.ChatroomUuid == "" {
 		return &chatroomv1.GetRoomResponse{}, status.Error(400, "Uuid cannot be empty")
 	}
 
 	chatroom := domain.Chatroom{
-		Uuid: req.Uuid,
+		Uuid: req.ChatroomUuid,
 	}
 
 	chatroom, err := s.chatroom.GetRoom(ctx, chatroom)
@@ -90,7 +90,7 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 
 	return &chatroomv1.GetRoomResponse{
 		Name:         chatroom.Name,
-		Uuid:         chatroom.Uuid,
+		ChatroomUuid: chatroom.Uuid,
 		OwnerUuid:    chatroom.Owner,
 		UserUuids:    users,
 		ChannelUuids: channels,

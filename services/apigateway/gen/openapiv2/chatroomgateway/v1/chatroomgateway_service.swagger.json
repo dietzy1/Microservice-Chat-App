@@ -19,6 +19,74 @@
     "application/json"
   ],
   "paths": {
+    "/v1/chatroom/adduser": {
+      "post": {
+        "summary": "Add a user",
+        "description": "GRPC gateway call to add a user.",
+        "operationId": "ChatroomGatewayService_AddUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AddUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/v1/chatroom/createchannel": {
+      "post": {
+        "summary": "Create a channel",
+        "description": "GRPC gateway call to create a channel.",
+        "operationId": "ChatroomGatewayService_CreateChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateChannelResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateChannelRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Channel"
+        ]
+      }
+    },
     "/v1/chatroom/createroom": {
       "post": {
         "summary": "Create a chatroom",
@@ -50,6 +118,40 @@
         ],
         "tags": [
           "Chatroom"
+        ]
+      }
+    },
+    "/v1/chatroom/deletechannel": {
+      "post": {
+        "summary": "Delete a channel",
+        "description": "GRPC gateway call to delete a channel.",
+        "operationId": "ChatroomGatewayService_DeleteChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteChannelResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1DeleteChannelRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Channel"
         ]
       }
     },
@@ -87,6 +189,44 @@
         ]
       }
     },
+    "/v1/chatroom/getchannel/{chatroomUuid}/{channelUuid}": {
+      "get": {
+        "summary": "Get a channel",
+        "description": "GRPC gateway call to get a channel.",
+        "operationId": "ChatroomGatewayService_GetChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetChannelResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "chatroomUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "channelUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Channel"
+        ]
+      }
+    },
     "/v1/chatroom/getroom/{chatroomUuid}": {
       "get": {
         "summary": "Get a chatroom",
@@ -119,16 +259,16 @@
         ]
       }
     },
-    "/v1/chatroom/joinroom": {
+    "/v1/chatroom/inviteuser": {
       "post": {
-        "summary": "Join a chatroom",
-        "description": "GRPC gateway call to join a chatroom.",
-        "operationId": "ChatroomGatewayService_JoinRoom",
+        "summary": "Invite a user",
+        "description": "GRPC gateway call to invite a user.",
+        "operationId": "ChatroomGatewayService_InviteUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1JoinRoomResponse"
+              "$ref": "#/definitions/v1InviteUserResponse"
             }
           },
           "default": {
@@ -144,25 +284,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1JoinRoomRequest"
+              "$ref": "#/definitions/v1InviteUserRequest"
             }
           }
         ],
         "tags": [
-          "Chatroom"
+          "User"
         ]
       }
     },
-    "/v1/chatroom/leaveroom": {
+    "/v1/chatroom/removeuser": {
       "post": {
-        "summary": "Leave a chatroom",
-        "description": "GRPC gateway call to leave a chatroom.",
-        "operationId": "ChatroomGatewayService_LeaveRoom",
+        "summary": "Remove a user",
+        "description": "GRPC gateway call to remove a user.",
+        "operationId": "ChatroomGatewayService_RemoveUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1LeaveRoomResponse"
+              "$ref": "#/definitions/v1RemoveUserResponse"
             }
           },
           "default": {
@@ -178,12 +318,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1LeaveRoomRequest"
+              "$ref": "#/definitions/v1RemoveUserRequest"
             }
           }
         ],
         "tags": [
-          "Chatroom"
+          "User"
         ]
       }
     }
@@ -216,6 +356,40 @@
         }
       }
     },
+    "v1AddUserRequest": {
+      "type": "object",
+      "properties": {
+        "userUuid": {
+          "type": "string"
+        },
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AddUserResponse": {
+      "type": "object"
+    },
+    "v1CreateChannelRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        },
+        "chatroomUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateChannelResponse": {
+      "type": "object"
+    },
     "v1CreateRoomRequest": {
       "type": "object",
       "properties": {
@@ -228,15 +402,24 @@
       }
     },
     "v1CreateRoomResponse": {
+      "type": "object"
+    },
+    "v1DeleteChannelRequest": {
       "type": "object",
       "properties": {
-        "error": {
+        "chatroomUuid": {
           "type": "string"
         },
-        "chatroomUuid": {
+        "channelUuid": {
+          "type": "string"
+        },
+        "ownerUuid": {
           "type": "string"
         }
       }
+    },
+    "v1DeleteChannelResponse": {
+      "type": "object"
     },
     "v1DeleteRoomRequest": {
       "type": "object",
@@ -250,9 +433,18 @@
       }
     },
     "v1DeleteRoomResponse": {
+      "type": "object"
+    },
+    "v1GetChannelResponse": {
       "type": "object",
       "properties": {
-        "error": {
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "channelUuid": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }
@@ -260,7 +452,7 @@
     "v1GetRoomResponse": {
       "type": "object",
       "properties": {
-        "error": {
+        "chatroomUuid": {
           "type": "string"
         },
         "name": {
@@ -269,7 +461,13 @@
         "ownerUuid": {
           "type": "string"
         },
-        "users": {
+        "userUuids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "channelUuids": {
           "type": "array",
           "items": {
             "type": "string"
@@ -277,43 +475,39 @@
         }
       }
     },
-    "v1JoinRoomRequest": {
+    "v1InviteUserRequest": {
       "type": "object",
       "properties": {
+        "userUuid": {
+          "type": "string"
+        },
         "chatroomUuid": {
           "type": "string"
         },
+        "ownerUuid": {
+          "type": "string"
+        }
+      }
+    },
+    "v1InviteUserResponse": {
+      "type": "object"
+    },
+    "v1RemoveUserRequest": {
+      "type": "object",
+      "properties": {
         "userUuid": {
           "type": "string"
-        }
-      }
-    },
-    "v1JoinRoomResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        }
-      }
-    },
-    "v1LeaveRoomRequest": {
-      "type": "object",
-      "properties": {
+        },
         "chatroomUuid": {
           "type": "string"
         },
-        "userUuid": {
+        "ownerUuid": {
           "type": "string"
         }
       }
     },
-    "v1LeaveRoomResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        }
-      }
+    "v1RemoveUserResponse": {
+      "type": "object"
     }
   },
   "externalDocs": {
