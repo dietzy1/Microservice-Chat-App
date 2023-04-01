@@ -167,7 +167,7 @@ func (s *server) GetChannel(ctx context.Context, req *chatroomv1.GetChannelReque
 
 }
 
-//----------
+//---------------------------------------------------------------------------------
 
 func (s *server) InviteUser(ctx context.Context, req *chatroomv1.InviteUserRequest) (*chatroomv1.InviteUserResponse, error) {
 
