@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package accountgateway.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1;accountgatewayv1";
+
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+// These annotations are used when generating the OpenAPI file.
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {version: "1.0"};
+    external_docs: {
+      url: "https://github.com/dietzy1/Microservice-Chat-App";
+      description: "Backend GRPC chatapp microservice";
+    }
+    schemes: HTTPS;
+};
+
+service AccountGatewayService {
+//External RPC
+rpc ChangeUsername (ChangeUsernameRequest) returns (ChangeUsernameResponse) {
+    option (google.api.http) = {
+        post: "/v1/account/changeusername"
+        body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        tags: "Account";
+        summary: "Change username";
+        description: "Change username";
+    };
+}
+rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+    option (google.api.http) = {
+        post: "/v1/account/changepassword"
+        body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        tags: "Account";
+        summary: "Change password";
+        description: "Change password";
+    };
+}
+rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse) {
+    option (google.api.http) = {
+        post: "/v1/account/deleteaccount"
+        body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        tags: "Account";
+        summary: "Delete account";
+        description: "Delete account";
+    };
+}
+}
+
+message ChangeUsernameRequest {
+    string user_uuid = 1;
+    string username = 2;
+}
+
+message ChangeUsernameResponse {
+}
+
+message ChangePasswordRequest {
+    string user_uuid = 1;
+    string password = 2;
+    string new_password = 3;
+}
+
+message ChangePasswordResponse {
+}
+
+message DeleteAccountRequest {
+    string user_uuid = 1;
+    string password = 2;
+}
+
+message DeleteAccountResponse {
+}
+

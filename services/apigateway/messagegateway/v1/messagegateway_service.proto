@@ -4,8 +4,9 @@ package messagegateway.v1;
 
 option go_package = "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1;messagegatewayv1";
 
-
+// buf:lint:ignore IMPORT_USED
 import "google/api/annotations.proto";
+// buf:lint:ignore
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 // These annotations are used when generating the OpenAPI file.
