@@ -5,111 +5,98 @@ package chatroom.v1;
 option go_package = "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1;chatroomv1";
 
 service ChatroomService {
-    rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
-    rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {}
-    rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {}
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
+  rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {}
+  rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {}
 
+  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
+  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {}
+  rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {}
 
-    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
-    rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {}
-    rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {}
-
-    rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {}
-    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {}
-    rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
-
+  rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {}
+  rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {}
+  rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
 }
 
 message CreateRoomRequest {
-    string name = 1;
-    string owner_uuid = 2;
+  string name = 1;
+  string owner_uuid = 2;
 }
 
-message CreateRoomResponse {
-}
+message CreateRoomResponse {}
 
 message DeleteRoomRequest {
-    string chatroom_uuid = 1;
-    string owner_uuid = 2;
+  string chatroom_uuid = 1;
+  string owner_uuid = 2;
 }
 
-message DeleteRoomResponse {
-}
+message DeleteRoomResponse {}
 
 message GetRoomRequest {
-    string chatroom_uuid = 1;
+  string chatroom_uuid = 1;
 }
 
 message GetRoomResponse {
-    string chatroom_uuid = 1;
-    string name = 2;
-    string owner_uuid = 3;
-    repeated string user_uuids = 4;
-    repeated string channel_uuids = 5;
+  string chatroom_uuid = 1;
+  string name = 2;
+  string owner_uuid = 3;
+  repeated string user_uuids = 4;
+  repeated string channel_uuids = 5;
 }
 
 // -- ------------------------------------------------------------------------------
 
-
 message CreateChannelRequest {
-    string name = 1;
-    string owner_uuid = 2;
-    string chatroom_uuid = 3;
+  string name = 1;
+  string owner_uuid = 2;
+  string chatroom_uuid = 3;
 }
 
-message CreateChannelResponse {
-}
+message CreateChannelResponse {}
 
 message DeleteChannelRequest {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
-    string owner_uuid = 3;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message DeleteChannelResponse {
-}
+message DeleteChannelResponse {}
 
 message GetChannelRequest {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
 }
 
 message GetChannelResponse {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
-    string name = 3;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
+  string name = 3;
 }
-
 
 // -- ------------------------------------------------------------------------------
 
 message InviteUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message InviteUserResponse {
-}
+message InviteUserResponse {}
 
 message RemoveUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message RemoveUserResponse {
-}
+message RemoveUserResponse {}
 
 message AddUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message AddUserResponse {
-}
+message AddUserResponse {}
 
 // -- ------------------------------------------------------------------------------
-
-

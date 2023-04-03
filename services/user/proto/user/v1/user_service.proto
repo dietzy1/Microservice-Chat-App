@@ -5,114 +5,94 @@ package user.v1;
 option go_package = "github.com/dietzy1/chatapp/services/user/proto/user/v1;userv1";
 
 service UserService {
-	//internal RPC
-rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
-rpc AddChatServer(AddChatServerRequest) returns (AddChatServerResponse) {}
-rpc RemoveChatServer(RemoveChatServerRequest) returns (RemoveChatServerResponse) {}
-//rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+  //internal RPC
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+  rpc AddChatServer(AddChatServerRequest) returns (AddChatServerResponse) {}
+  rpc RemoveChatServer(RemoveChatServerRequest) returns (RemoveChatServerResponse) {}
+  //rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
 
-//External RPC
-rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
-rpc EditDescription (EditDescriptionRequest) returns (EditDescriptionResponse) {}
-rpc ChangeAvatar (ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
+  //External RPC
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+  rpc EditDescription(EditDescriptionRequest) returns (EditDescriptionResponse) {}
+  rpc ChangeAvatar(ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 
-rpc GetAvatars (GetAvatarsRequest) returns (GetAvatarsResponse) {}
+  rpc GetAvatars(GetAvatarsRequest) returns (GetAvatarsResponse) {}
 
-//Sortof internal
-rpc UploadAvatar (stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
+  //Sortof internal
+  rpc UploadAvatar(stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
 }
-
-
-
 
 message CreateUserRequest {
-string user_uuid = 1;
-string username = 2;
+  string user_uuid = 1;
+  string username = 2;
 }
 
-message CreateUserResponse {
-}
+message CreateUserResponse {}
 
 message AddChatServerRequest {
-	string user_uuid = 1;
-	string chatserver_uuid = 2;
+  string user_uuid = 1;
+  string chatserver_uuid = 2;
 }
 
-message AddChatServerResponse {
+message AddChatServerResponse {}
+
+message RemoveChatServerRequest {
+  string user_uuid = 1;
+  string chatserver_uuid = 2;
 }
 
-message RemoveChatServerRequest{
-	string user_uuid = 1;
-	string chatserver_uuid = 2;
-}
-
-message RemoveChatServerResponse {
-}
+message RemoveChatServerResponse {}
 
 message GetUserRequest {
-	string user_uuid = 1;
+  string user_uuid = 1;
 }
 
 message GetUserResponse {
-	string name = 1;
-	string uuid = 2;
-	Icon icon = 3;
-	string description = 4;
-	string join_date = 5;
-	repeated string chat_servers = 6;
+  string name = 1;
+  string uuid = 2;
+  Icon icon = 3;
+  string description = 4;
+  string join_date = 5;
+  repeated string chat_servers = 6;
 }
 
 message EditDescriptionRequest {
-	string user_uuid = 1;
-	string description = 2;
+  string user_uuid = 1;
+  string description = 2;
 }
 
-message EditDescriptionResponse {
-}
+message EditDescriptionResponse {}
 
 message ChangeAvatarRequest {
-string user_uuid = 1;
-string icon_uuid = 2;
+  string user_uuid = 1;
+  string icon_uuid = 2;
 }
 
-message ChangeAvatarResponse {
-
-}
+message ChangeAvatarResponse {}
 
 message Icon {
-	string link = 1;
-	string uuid = 2;
+  string link = 1;
+  string uuid = 2;
 }
 
 message UploadAvatarRequest {
-oneof data {
-	ImageInfo info = 1;
-	bytes chunk_data = 2;
-	};
+  oneof data {
+    ImageInfo info = 1;
+    bytes chunk_data = 2;
+  }
 }
 
 message UploadAvatarResponse {
-	string link = 1;
-	string uuid = 2;
+  string link = 1;
+  string uuid = 2;
 }
 
 message ImageInfo {
-	string image_type = 1;
+  string image_type = 1;
 }
 
-message GetAvatarsRequest {
-}
+message GetAvatarsRequest {}
 
 message GetAvatarsResponse {
-	repeated Icon icons = 1;
+  repeated Icon icons = 1;
 }
-
-
-
-
-
-
-
-
-
-

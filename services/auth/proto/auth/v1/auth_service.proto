@@ -5,71 +5,56 @@ package auth.v1;
 option go_package = "github.com/dietzy1/chatapp/services/auth/proto/auth/v1;authv1";
 
 service AuthService {
-rpc Login (LoginRequest) returns (LoginResponse) {}
-rpc Register (RegisterRequest) returns (RegisterResponse) {}
-rpc Logout (LogoutRequest) returns (LogoutResponse) {}
-rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {}
-rpc Invalidate (InvalidateRequest) returns (InvalidateResponse) {}
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  rpc Register(RegisterRequest) returns (RegisterResponse) {}
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+  rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {}
+  rpc Invalidate(InvalidateRequest) returns (InvalidateResponse) {}
 }
 
 message LoginRequest {
-string username = 1;
-string password = 2;
+  string username = 1;
+  string password = 2;
 }
 
 message LoginResponse {
-string session = 1;
-string error = 2;
+  string session = 1;
+  string error = 2;
 }
 
 message RegisterRequest {
-string username = 1;
-string password = 2;
+  string username = 1;
+  string password = 2;
 }
-    
+
 message RegisterResponse {
-string session = 1;
-string error = 2;
+  string session = 1;
+  string error = 2;
 }
 
 message LogoutRequest {
-string session = 1;
-string user_uuid = 2;
+  string session = 1;
+  string user_uuid = 2;
 }
 
 message LogoutResponse {
-string error = 1;
+  string error = 1;
 }
 
 message AuthenticateRequest {
-string session = 1;
-string user_uuid = 2;
+  string session = 1;
+  string user_uuid = 2;
 }
 
 message AuthenticateResponse {
-string session = 1;
-string error = 2;
+  string session = 1;
+  string error = 2;
 }
 
 message InvalidateRequest {
-string user_uuid = 1;
+  string user_uuid = 1;
 }
 
 message InvalidateResponse {
-string error = 1;
+  string error = 1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

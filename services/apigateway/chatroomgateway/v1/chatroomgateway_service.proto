@@ -2,220 +2,203 @@ syntax = "proto3";
 
 package chatroomgateway.v1;
 
-option go_package = "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1;chatroomgatewayv1";
-
-
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
+option go_package = "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1;chatroomgatewayv1";
 // These annotations are used when generating the OpenAPI file.
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-    info: {version: "1.0"};
-    external_docs: {
-      url: "https://github.com/dietzy1/Microservice-Chat-App";
-      description: "Backend GRPC chatapp microservice";
-    }
-    schemes: HTTPS;
+  info: {version: "1.0"};
+  external_docs: {
+    url: "https://github.com/dietzy1/Microservice-Chat-App";
+    description: "Backend GRPC chatapp microservice";
+  }
+  schemes: HTTPS;
 };
 
 service ChatroomGatewayService {
-rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {
     option (google.api.http) = {
-        post: "/v1/chatroom/createroom",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Create a chatroom"
-            description: "GRPC gateway call to create a chatroom."
-            tags: "Chatroom"
-          };
-    }
+      post: "/v1/chatroom/createroom",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Create a chatroom"
+      description: "GRPC gateway call to create a chatroom."
+      tags: "Chatroom"
+    };
+  }
 
-rpc DeleteRoom (DeleteRoomRequest) returns (DeleteRoomResponse) {
+  rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {
     option (google.api.http) = {
-        post: "/v1/chatroom/deleteroom",
-        body: "*",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Delete a chatroom"
-            description: "GRPC gateway call to delete a chatroom."
-            tags: "Chatroom"
-          };
-    }
+      post: "/v1/chatroom/deleteroom",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Delete a chatroom"
+      description: "GRPC gateway call to delete a chatroom."
+      tags: "Chatroom"
+    };
+  }
 
-rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
+  rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {
+    option (google.api.http) = {get: "/v1/chatroom/getroom/{chatroom_uuid}"};
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get a chatroom"
+      description: "GRPC gateway call to get a chatroom."
+      tags: "Chatroom"
+    };
+  }
+
+  rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
     option (google.api.http) = {
-        get: "/v1/chatroom/getroom/{chatroom_uuid}",
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            summary: "Get a chatroom"
-            description: "GRPC gateway call to get a chatroom."
-            tags: "Chatroom"
-          };
-    }
+      post: "/v1/chatroom/createchannel",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Create a channel"
+      description: "GRPC gateway call to create a channel."
+      tags: "Channel"
+    };
+  }
 
-    rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
-        option (google.api.http) = {
-            post: "/v1/chatroom/createchannel",
-            body: "*",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Create a channel"
-                description: "GRPC gateway call to create a channel."
-                tags: "Channel"
-              };
-        }
-    
-    rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
-        option (google.api.http) = {
-            post: "/v1/chatroom/deletechannel",
-            body: "*",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Delete a channel"
-                description: "GRPC gateway call to delete a channel."
-                tags: "Channel"
-              };
-        }
-    
-    rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {
-        option (google.api.http) = {
-            get: "/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Get a channel"
-                description: "GRPC gateway call to get a channel."
-                tags: "Channel"
-              };
-    }
+  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
+    option (google.api.http) = {
+      post: "/v1/chatroom/deletechannel",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Delete a channel"
+      description: "GRPC gateway call to delete a channel."
+      tags: "Channel"
+    };
+  }
 
-    rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {
-        option (google.api.http) = {
-            post: "/v1/chatroom/inviteuser",
-            body: "*",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Invite a user"
-                description: "GRPC gateway call to invite a user."
-                tags: "User"
-              };
-        }
-    
-    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {
-        option (google.api.http) = {
-            post: "/v1/chatroom/removeuser",
-            body: "*",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Remove a user"
-                description: "GRPC gateway call to remove a user."
-                tags: "User"
-              };
-            }
-    
-    rpc AddUser(AddUserRequest) returns (AddUserResponse) {
-        option (google.api.http) = {
-            post: "/v1/chatroom/adduser",
-            body: "*",
-            };
-            option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-                summary: "Add a user"
-                description: "GRPC gateway call to add a user."
-                tags: "User"
-              };
-            }
+  rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {
+    option (google.api.http) = {get: "/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}"};
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get a channel"
+      description: "GRPC gateway call to get a channel."
+      tags: "Channel"
+    };
+  }
 
+  rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/chatroom/inviteuser",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Invite a user"
+      description: "GRPC gateway call to invite a user."
+      tags: "User"
+    };
+  }
+
+  rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/chatroom/removeuser",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Remove a user"
+      description: "GRPC gateway call to remove a user."
+      tags: "User"
+    };
+  }
+
+  rpc AddUser(AddUserRequest) returns (AddUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/chatroom/adduser",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Add a user"
+      description: "GRPC gateway call to add a user."
+      tags: "User"
+    };
+  }
 }
-
 
 message CreateRoomRequest {
-    string name = 1;
-    string owner_uuid = 2;
+  string name = 1;
+  string owner_uuid = 2;
 }
 
-message CreateRoomResponse {
-}
+message CreateRoomResponse {}
 
 message DeleteRoomRequest {
-    string chatroom_uuid = 1;
-    string owner_uuid = 2;
+  string chatroom_uuid = 1;
+  string owner_uuid = 2;
 }
 
-message DeleteRoomResponse {
-}
+message DeleteRoomResponse {}
 
 message GetRoomRequest {
-    string chatroom_uuid = 1;
+  string chatroom_uuid = 1;
 }
 
 message GetRoomResponse {
-    string chatroom_uuid = 1;
-    string name = 2;
-    string owner_uuid = 3;
-    repeated string user_uuids = 4;
-    repeated string channel_uuids = 5;
+  string chatroom_uuid = 1;
+  string name = 2;
+  string owner_uuid = 3;
+  repeated string user_uuids = 4;
+  repeated string channel_uuids = 5;
 }
 
 // -- ------------------------------------------------------------------------------
 
-
 message CreateChannelRequest {
-    string name = 1;
-    string owner_uuid = 2;
-    string chatroom_uuid = 3;
+  string name = 1;
+  string owner_uuid = 2;
+  string chatroom_uuid = 3;
 }
 
-message CreateChannelResponse {
-}
+message CreateChannelResponse {}
 
 message DeleteChannelRequest {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
-    string owner_uuid = 3;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message DeleteChannelResponse {
-}
+message DeleteChannelResponse {}
 
 message GetChannelRequest {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
 }
 
 message GetChannelResponse {
-    string chatroom_uuid = 1;
-    string channel_uuid = 2;
-    string name = 3;
+  string chatroom_uuid = 1;
+  string channel_uuid = 2;
+  string name = 3;
 }
-
 
 // -- ------------------------------------------------------------------------------
 
 message InviteUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message InviteUserResponse {
-}
+message InviteUserResponse {}
 
 message RemoveUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message RemoveUserResponse {
-}
+message RemoveUserResponse {}
 
 message AddUserRequest {
-    string user_uuid = 1;
-    string chatroom_uuid = 2;
-    string owner_uuid = 3;
+  string user_uuid = 1;
+  string chatroom_uuid = 2;
+  string owner_uuid = 3;
 }
 
-message AddUserResponse {
-}
+message AddUserResponse {}
 
 // -- ------------------------------------------------------------------------------
