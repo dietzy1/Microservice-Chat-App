@@ -6,6 +6,7 @@ package websocket
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -77,6 +78,7 @@ func (ws *ws) writePump() {
 			if err != nil {
 				return
 			}
+			fmt.Println("message: ", message)
 
 			//Here we contact the message service and send the message to the database
 			_, err = ws.messageClient.CreateMessage(context.TODO(), message)

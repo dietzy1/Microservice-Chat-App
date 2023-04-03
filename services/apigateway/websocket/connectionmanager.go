@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	client "github.com/dietzy1/chatapp/services/apigateway/clients"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/gorilla/websocket"
 )
@@ -32,9 +33,12 @@ func Start() {
 
 	go connectionManager.Run()
 
+	//Create a message client
+	messageClient := client.NewMessageClient()
+
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Websocket connection request received")
-		serveWs(w, r)
+		serveWs(w, r, *messageClient)
 	})
 
 	err := http.ListenAndServe(os.Getenv("WS"), nil)
@@ -63,8 +67,9 @@ type id struct {
 	channel  string
 }
 
+// TODO: this solution is really cursed
 // Might need to somehow take in which chatroom the client is in
-func serveWs(w http.ResponseWriter, r *http.Request) {
+func serveWs(w http.ResponseWriter, r *http.Request, client messagev1.MessageServiceClient) {
 	log.Println("Websocket connection established")
 	opts := &websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -79,10 +84,6 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		channel:  r.URL.Query().Get("channel"),
 	}
 
-	//var ch ChannelID
-
-	//ch.Id = r.URL.Query().Get("id")
-
 	conn, err := opts.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -95,7 +96,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		go cm[id.chatroom+id.channel].Run()
 	}
 
-	ws := &ws{hub: cm[id.chatroom+id.channel], conn: conn, send: make(chan *messagev1.CreateMessageRequest, 256)}
+	ws := &ws{hub: cm[id.chatroom+id.channel], conn: conn, send: make(chan *messagev1.CreateMessageRequest, 256), messageClient: client}
 	ws.hub.register <- ws
 
 	go ws.writePump()
