@@ -9,7 +9,7 @@ import (
 
 type Account interface {
 	ChangeUsername(ctx context.Context, userUuid string, username string) error
-	ChangePassword(ctx context.Context, userUuid string, username string) error
+	ChangePassword(ctx context.Context, userUuid string, password string, newPassword string) error
 	DeleteAccount(ctx context.Context, userUuid string, password string) error
 }
 
@@ -36,7 +36,7 @@ func (s *server) ChangePassword(ctx context.Context, req *accountv1.ChangePasswo
 	}
 
 	//Call domain
-	err := s.account.ChangePassword(ctx, req.UserUuid, req.Password)
+	err := s.account.ChangePassword(ctx, req.UserUuid, req.Password, req.NewPassword)
 	if err != nil {
 		return &accountv1.ChangePasswordResponse{}, status.Error(400, "Error changing password")
 	}
