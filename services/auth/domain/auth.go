@@ -42,18 +42,18 @@ func New(auth Auth, cache Cache, userClient userClientv1.UserServiceClient) *dom
 }
 
 // If someone is trying to login to the application the session token should be returned
-func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
+func (d domain) Login(ctx context.Context, cred Credentials) (Credentials, error) {
 	//Check password in database
 	password, err := d.auth.Login(ctx, cred.Username)
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return Credentials{}, err
 	}
 
 	//Perform bcrypt check to see if password is correct
 	if err = CompareHash(password, cred.Password); err != nil {
 		log.Println(err)
-		return "", err
+		return Credentials{}, err
 	}
 	//if someone logins then the session token should be regenerated and returned
 	token := GenerateToken()
@@ -61,36 +61,38 @@ func (d domain) Login(ctx context.Context, cred Credentials) (string, error) {
 	uuid, err := d.auth.UpdateToken(ctx, cred.Username, token)
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return Credentials{}, err
 	}
 
 	//add the user to the cache
 	if err = d.cache.Set(uuid, token); err != nil {
 		log.Println(err)
-		return "", err
+		return Credentials{}, err
 	}
+	log.Println("TOKEN: ", token)
+	log.Println("UUID: ", uuid)
 
-	return token, nil
+	return Credentials{Session: token, Uuid: uuid}, nil
 }
 
-func (d domain) Register(ctx context.Context, cred Credentials) (string, error) {
+func (d domain) Register(ctx context.Context, cred Credentials) (Credentials, error) {
 	//check if username is in database
 	_, err := d.auth.Login(ctx, cred.Username)
 	if err == nil {
 		log.Printf("username %s already exists", cred.Username)
-		return "", errors.New("username already exists")
+		return Credentials{}, errors.New("username already exists")
 	}
 
 	//perform check if password is of atleast 8 characters
 	if len(cred.Password) < 8 {
 		log.Println("password is too short")
-		return "", errors.New("password is too short")
+		return Credentials{}, errors.New("password is too short")
 	}
 
 	//hash password
 	cred.Password, err = GenerateHash(cred.Password)
 	if err != nil {
-		return "", err
+		return Credentials{}, err
 	}
 
 	cred.Uuid = GenerateToken()
@@ -98,7 +100,7 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 	//add user to database
 	session, err := d.auth.Register(ctx, cred)
 	if err != nil {
-		return "", err
+		return Credentials{}, err
 	}
 
 	//Call the user service to create a user
@@ -113,12 +115,12 @@ func (d domain) Register(ctx context.Context, cred Credentials) (string, error) 
 		//if the user service fails to create a user then the user should be deleted from the auth service
 		if err := d.auth.Unregister(ctx, cred.Uuid); err != nil {
 			log.Println(err)
-			return "", err
+			return Credentials{}, err
 		}
-		return "", err
+		return Credentials{}, err
 	}
 
-	return session, nil
+	return Credentials{Session: session, Uuid: cred.Uuid}, nil
 }
 
 // For now I am unsure if I actually need to do anything with the session token
@@ -150,7 +152,7 @@ func (d domain) Logout(ctx context.Context, session string, userUuid string) err
 }
 
 // this method needs to be cached for certain it will be under alot of pressure
-func (d domain) Authenticate(ctx context.Context, session string, userUuid string) (string, error) {
+func (d domain) Authenticate(ctx context.Context, session string, userUuid string) (Credentials, error) {
 	//Check if token is in cache
 	token, err := d.cache.Get(userUuid)
 	if err != nil {
@@ -159,24 +161,24 @@ func (d domain) Authenticate(ctx context.Context, session string, userUuid strin
 		token, err = d.auth.Authenticate(ctx, userUuid)
 		if err != nil {
 			log.Println(err)
-			return "", err
+			return Credentials{}, err
 		}
 	}
 
 	//perform check to see if the token is the same as the one in the database
 	if token != session {
 		log.Println("invalid session token")
-		return "", errors.New("invalid session token")
+		return Credentials{}, errors.New("invalid session token")
 	}
 
 	//if token is in database, add token to cache
 	if err := d.cache.Set(userUuid, session); err != nil {
 		log.Println(err)
-		return "", err
+		return Credentials{}, err
 	}
 	log.Println("Valid session token")
 
-	return session, nil
+	return Credentials{Session: session, Uuid: userUuid}, nil
 }
 
 // This function doesn't care about validating the session token it should always delete

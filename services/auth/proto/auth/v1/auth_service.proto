@@ -19,7 +19,7 @@ message LoginRequest {
 
 message LoginResponse {
   string session = 1;
-  string error = 2;
+  string user_uuid = 2;
 }
 
 message RegisterRequest {
@@ -29,7 +29,7 @@ message RegisterRequest {
 
 message RegisterResponse {
   string session = 1;
-  string error = 2;
+  string user_uuid = 2;
 }
 
 message LogoutRequest {
@@ -38,7 +38,6 @@ message LogoutRequest {
 }
 
 message LogoutResponse {
-  string error = 1;
 }
 
 message AuthenticateRequest {
@@ -48,7 +47,7 @@ message AuthenticateRequest {
 
 message AuthenticateResponse {
   string session = 1;
-  string error = 2;
+  string user_uuid = 2;
 }
 
 message InvalidateRequest {
@@ -56,5 +55,4 @@ message InvalidateRequest {
 }
 
 message InvalidateResponse {
-  string error = 1;
 }

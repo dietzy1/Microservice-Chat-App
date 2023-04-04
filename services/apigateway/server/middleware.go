@@ -78,14 +78,21 @@ func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.
 
 			fmt.Println("request path: ", r.URL.Path)
 
-			if r.URL.Path == "/v1/auth/login" || r.URL.Path == "/v1/auth/register" || r.URL.Path == "/v1/auth/authenticate" {
+			//TODO: this prolly needs to be changed since the paths have changed
+			if r.URL.Path == "/authgateway.v1.AuthGatewayService/Login" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Register" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Authenticate" {
 				h.ServeHTTP(w, r)
 				return
 			}
 			//Unsure if I actually need to do the cookie thing here or if its done at some other part of the middleware
 
 			//Call the auth service to check if the session token is valid
-			/* cookie, err := r.Cookie("session_token")
+			cookie, err := r.Cookie("session_token")
+			if err != nil {
+				log.Println(err)
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+			cookie1, err := r.Cookie("uuid_token")
 			if err != nil {
 				log.Println(err)
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -94,13 +101,16 @@ func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.
 
 			//Call the auth service to check if the session token is valid
 			ctx := context.Background()
-			ctx = metadata.AppendToOutgoingContext(ctx, "session_token", cookie.Value)
-			_, err = authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{})
+			ctx = metadata.AppendToOutgoingContext(ctx, "session_token", cookie.Value, "uuid_token", cookie1.Value)
+			_, err = authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{
+				Session:  cookie.Value,
+				UserUuid: cookie1.Value,
+			})
 			if err != nil {
 				log.Println(err)
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
-			} */
+			}
 
 			h.ServeHTTP(w, r)
 
@@ -118,12 +128,16 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 			log.Println("no metadata")
 			return nil
 		}
-		fmt.Println("2nd hit")
 
 		//Specificly look for the session_token key in the metadata
 		token := md.HeaderMD.Get("session_token")
 		if len(token) == 0 {
 			log.Println("no session token")
+			return nil
+		}
+		token1 := md.HeaderMD.Get("uuid_token")
+		if len(token1) == 0 {
+			log.Println("no uuid token")
 			return nil
 		}
 
@@ -132,9 +146,13 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 			log.Println("Deleting cookie")
 			// Add the session token to the cookie header
 			http.SetCookie(w, &http.Cookie{
-				Name:  "session_token",
-				Value: "",
-
+				Name:   "session_token",
+				Value:  "",
+				MaxAge: -1,
+			})
+			http.SetCookie(w, &http.Cookie{
+				Name:   "uuid_token",
+				Value:  "",
 				MaxAge: -1,
 			})
 			return nil
@@ -144,6 +162,12 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session_token",
 			Value:   token[0],
+			Expires: time.Now().Add(60 * time.Minute),
+			Path:    "/",
+		})
+		http.SetCookie(w, &http.Cookie{
+			Name:    "uuid_token",
+			Value:   token1[0],
 			Expires: time.Now().Add(60 * time.Minute),
 			Path:    "/",
 		})
@@ -165,6 +189,10 @@ func incomingHeaderMatcherWrapper() runtime.ServeMuxOption {
 			log.Default().Println("session_token recieved")
 			return key, true
 		}
+		if key == "uuid_token" {
+			log.Default().Println("uuid_token recieved")
+			return key, true
+		}
 
 		return runtime.DefaultHeaderMatcher(key)
 	})
@@ -179,12 +207,18 @@ func withMetaDataWrapper() runtime.ServeMuxOption {
 
 		cookie, err := req.Cookie("session_token")
 		if err != nil {
-			log.Println(err)
+			log.Println("session token:", err)
 			return nil
 		}
-		log.Println(cookie)
+		log.Println("METADATA COOKIE:", cookie)
+		cookie1, err := req.Cookie("uuid_token")
+		if err != nil {
+			log.Println("useruuid token:", err)
+			return nil
+		}
+		log.Println("METADATA COOKIE:", cookie1)
 
-		md := metadata.Pairs("session_token", cookie.Value)
+		md := metadata.Pairs("session_token", cookie.Value, "uuid_token", cookie1.Value)
 
 		// ADD THE COOKIE TO THE METADATA
 

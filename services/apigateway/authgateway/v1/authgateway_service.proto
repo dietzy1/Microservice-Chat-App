@@ -72,8 +72,6 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  int32 status = 1;
-  string error = 2;
 }
 
 message RegisterRequest {
@@ -81,10 +79,7 @@ message RegisterRequest {
   string password = 2;
 }
 
-message RegisterResponse {
-  string session = 1;
-  int32 status = 2;
-  string error = 3;
+message RegisterResponse { 
 }
 
 message LogoutRequest {
@@ -92,15 +87,10 @@ message LogoutRequest {
 }
 
 message LogoutResponse {
-  int32 status = 1;
-  string error = 2;
 }
 
 message AuthenticateRequest {
-  string uuid = 1;
 }
 
 message AuthenticateResponse {
-  int32 status = 1;
-  string error = 2;
 }

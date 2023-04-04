@@ -13,10 +13,10 @@ import (
 //It needs a domain interface it can use to call the domain functions
 
 type Auth interface {
-	Login(ctx context.Context, cred domain.Credentials) (string, error)
-	Register(ctx context.Context, cred domain.Credentials) (string, error)
+	Login(ctx context.Context, cred domain.Credentials) (domain.Credentials, error)
+	Register(ctx context.Context, cred domain.Credentials) (domain.Credentials, error)
 	Logout(ctx context.Context, session string, useruuid string) error
-	Authenticate(ctx context.Context, session string, useruuid string) (string, error)
+	Authenticate(ctx context.Context, session string, useruuid string) (domain.Credentials, error)
 	Invalidate(ctx context.Context, userUUid string) error
 }
 
@@ -32,24 +32,24 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 	//Validate that the fields aren't empty
 	if req.Username == "" || req.Password == "" {
 		return &authv1.LoginResponse{
-			Session: "",
-			Error:   "username or password is empty",
+			Session:  "",
+			UserUuid: "",
 		}, nil
 	}
 
 	//perform client side call to the authentication service
-	session, err := s.auth.Login(ctx, cred)
+	creds, err := s.auth.Login(ctx, cred)
 	if err != nil {
 		log.Println(err)
 		return &authv1.LoginResponse{
-			Session: "",
-			Error:   err.Error(),
+			Session:  "",
+			UserUuid: "",
 		}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
 	return &authv1.LoginResponse{
-		Session: session,
-		Error:   "",
+		Session:  creds.Session,
+		UserUuid: creds.Uuid,
 	}, nil
 }
 
@@ -62,91 +62,78 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 	//Validate that the fields aren't empty
 	if req.Username == "" || req.Password == "" {
 		return &authv1.RegisterResponse{
-			Session: "",
-			Error:   "username or password is empty",
+			Session:  "",
+			UserUuid: "",
 		}, status.Errorf(http.StatusBadRequest, "username or password is empty")
 	}
 
 	//perform client side call to the authentication service
-	session, err := s.auth.Register(ctx, cred)
+	creds, err := s.auth.Register(ctx, cred)
 	if err != nil {
 		log.Println(err)
 		return &authv1.RegisterResponse{
-			Session: "",
-			Error:   err.Error(),
+			Session:  "",
+			UserUuid: "",
 		}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
-	log.Println(session)
-	log.Println(err)
 
 	return &authv1.RegisterResponse{
-		Session: session,
-		Error:   "no error",
+		Session:  creds.Session,
+		UserUuid: creds.Uuid,
 	}, nil
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
 	if req.Session == "" || req.UserUuid == "" {
-		return &authv1.LogoutResponse{
-			Error: "session or user uuid is empty",
-		}, status.Errorf(http.StatusBadRequest, "session or user uuid is empty")
+		return &authv1.LogoutResponse{}, status.Errorf(http.StatusBadRequest, "session or user uuid is empty")
 	}
 
 	log.Println("Logout GRPC endpoint called")
 	err := s.auth.Logout(ctx, req.Session, req.UserUuid)
 	if err != nil {
 		log.Println(err)
-		return &authv1.LogoutResponse{
-			Error: err.Error(),
-		}, err
+		return &authv1.LogoutResponse{}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
-	return &authv1.LogoutResponse{
-		Error: "",
-	}, nil
+	return &authv1.LogoutResponse{}, nil
 }
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
 	if req.Session == "" || req.UserUuid == "" {
 		log.Println("session is or user uuid is empty session: ", req.Session, "userID", req.UserUuid)
 		return &authv1.AuthenticateResponse{
-			Error: "session is or user uuid is empty",
+			Session:  "",
+			UserUuid: "",
 		}, nil
 	}
 
 	log.Println("session: ", req.Session, "userID", req.UserUuid)
 
-	session, err := s.auth.Authenticate(ctx, req.Session, req.UserUuid)
+	creds, err := s.auth.Authenticate(ctx, req.Session, req.UserUuid)
 	if err != nil {
 		log.Println(err)
 		return &authv1.AuthenticateResponse{
-			Session: "",
-			Error:   err.Error(),
+			Session:  "",
+			UserUuid: "",
 		}, err
 	}
 
 	return &authv1.AuthenticateResponse{
-		Session: session,
-		Error:   "",
+		Session:  creds.Session,
+		UserUuid: creds.Uuid,
 	}, nil
 }
 
 func (s *server) Invalidate(ctx context.Context, req *authv1.InvalidateRequest) (*authv1.InvalidateResponse, error) {
 	if req.UserUuid == "" {
-		return &authv1.InvalidateResponse{
-			Error: "user uuid is empty",
-		}, nil
+		return &authv1.InvalidateResponse{}, status.Errorf(http.StatusBadRequest, "user uuid is empty")
 	}
 
 	err := s.auth.Invalidate(ctx, req.UserUuid)
 	if err != nil {
 		log.Println(err)
-		return &authv1.InvalidateResponse{
-			Error: err.Error(),
-		}, err
+		return &authv1.InvalidateResponse{}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
-	return &authv1.InvalidateResponse{
-		Error: "",
-	}, nil
+	return &authv1.InvalidateResponse{}, nil
 }

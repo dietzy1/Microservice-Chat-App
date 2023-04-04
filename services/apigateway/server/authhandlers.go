@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"log"
-	"net/http"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
@@ -31,21 +30,18 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 	if err != nil {
 		log.Println(err)
 		//return error code
-		return &authv1.LoginResponse{
-			Status: http.StatusForbidden,
-			Error:  "invalid credentials",
-		}, err
+		return &authv1.LoginResponse{}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 	log.Println(login)
 
 	//add the session token to the metadata
-	md := metadata.Pairs("session_token", login.Session)
+	md := metadata.Pairs("session_token", login.Session, "uuid_token", login.UserUuid)
+
+	//log the metadata
+	log.Println(md)
 	grpc.SendHeader(ctx, md)
 
-	return &authv1.LoginResponse{
-		Status: 200,
-		Error:  "no error",
-	}, nil
+	return &authv1.LoginResponse{}, nil
 
 }
 
@@ -61,10 +57,7 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 	if err != nil {
 		log.Println(err)
 		//return error code
-		return &authv1.RegisterResponse{
-			Status: http.StatusForbidden,
-			Error:  "invalid credentials",
-		}, err
+		return &authv1.RegisterResponse{}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 	log.Println("Register object", register)
 
@@ -72,30 +65,21 @@ func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 	md := metadata.Pairs("session_token", register.Session)
 	grpc.SendHeader(ctx, md)
 
-	return &authv1.RegisterResponse{
-		Status: 200,
-		Error:  "no error",
-	}, nil
+	return &authv1.RegisterResponse{}, nil
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		log.Println("no metadata")
-		return &authv1.LogoutResponse{
-			Status: http.StatusForbidden,
-			Error:  "no metadata",
-		}, status.Errorf(codes.Unauthenticated, "no metadata")
+		return &authv1.LogoutResponse{}, status.Errorf(codes.Unauthenticated, "no metadata")
 
 	}
 
 	//extract the token from the metadata
 	if len(md["session_token"]) == 0 {
 		log.Println("no session token")
-		return &authv1.LogoutResponse{
-			Status: http.StatusForbidden,
-			Error:  "no session token",
-		}, status.Errorf(codes.Unauthenticated, "no session token")
+		return &authv1.LogoutResponse{}, status.Errorf(codes.Unauthenticated, "no session token")
 	}
 	session := md["session_token"][0]
 
@@ -105,20 +89,14 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	})
 	if err != nil {
 		log.Println(err)
-		return &authv1.LogoutResponse{
-			Status: http.StatusForbidden,
-			Error:  "invalid credentials",
-		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
+		return &authv1.LogoutResponse{}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 	}
 	log.Println(logout)
 
 	md = metadata.Pairs("session_token", "")
 	grpc.SendHeader(ctx, md)
 
-	return &authv1.LogoutResponse{
-		Status: 200,
-		Error:  "no error",
-	}, nil
+	return &authv1.LogoutResponse{}, nil
 }
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
@@ -127,47 +105,29 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		log.Println("no metadata")
-		return &authv1.AuthenticateResponse{
-			Status: http.StatusForbidden,
-			Error:  "no metadata",
-		}, status.Errorf(codes.Unauthenticated, "no metadata")
+		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "no metadata")
 	}
 
 	//extract the token from the metadata
-	if len(md["session_token"]) == 0 {
+	if len(md["session_token"]) == 0 || len(md["uuid_token"]) == 0 {
 		log.Println("no session token")
-		return &authv1.AuthenticateResponse{
-			Status: http.StatusForbidden,
-			Error:  "no session token",
-		}, status.Errorf(codes.Unauthenticated, "no session token")
+		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "no session token")
 	}
 	session := md["session_token"][0]
+	uuid := md["uuid_token"][0]
 
 	log.Println("session token", session)
+	log.Println("uuid_token", uuid)
 
 	authenticate, err := s.authClient.Authenticate(ctx, &authclientv1.AuthenticateRequest{
 		Session:  session,
-		UserUuid: req.Uuid,
+		UserUuid: uuid,
 	})
 	if err != nil {
-		return &authv1.AuthenticateResponse{
-			Status: http.StatusForbidden,
-			Error:  "Invalid credentials",
-		}, status.Errorf(codes.Unauthenticated, "invalid credentials")
+		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "invalid credentials")
 
 	}
 	log.Println(authenticate)
 
-	return &authv1.AuthenticateResponse{
-		Status: 200,
-		Error:  "no error",
-	}, nil
+	return &authv1.AuthenticateResponse{}, nil
 }
-
-//I think I know what is going wrong its because the other functions arent using the session token for anything
-//So some of the middleware functions are blocking because metadata is empty
-//I could make it so metadata should only be passed if an authentication route is being hit
-//but I still need to figure out how I want to secure all of the routes
-//Since it would be the most optimal to have a single middleware function that checks if the user is authenticated
-//And that single middleware function should very likely call the authentication service to check if the user is authenticated
-//So I need to figure out how I want to do that
