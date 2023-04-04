@@ -11,6 +11,7 @@ import (
 )
 
 func NewAccountClient() *accountclientv1.AccountServiceClient {
+	log.Println("Connecting to account service", os.Getenv("ACCOUNT"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("ACCOUNT"),

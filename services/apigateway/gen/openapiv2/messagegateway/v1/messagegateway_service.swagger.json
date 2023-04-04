@@ -19,7 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/message/deletemessage": {
+    "/messagegateway.v1.MessageGatewayService/DeleteMessage": {
       "post": {
         "summary": "Delete a message in a chatroom",
         "description": "GRPC gateway call to delete an existing message in a chatroom.",
@@ -53,7 +53,7 @@
         ]
       }
     },
-    "/v1/message/editmessage": {
+    "/messagegateway.v1.MessageGatewayService/EditMessages": {
       "post": {
         "summary": "Edit a message in a chatroom",
         "description": "GRPC gateway call to edit an existing message in a chatroom.",
@@ -87,8 +87,8 @@
         ]
       }
     },
-    "/v1/message/getmessages": {
-      "get": {
+    "/messagegateway.v1.MessageGatewayService/GetMessages": {
+      "post": {
         "summary": "get messages from a chatroom",
         "description": "GRPC gateway call to retrieve a set amount of messages from a chatroom.",
         "operationId": "MessageGatewayService_GetMessages",
@@ -108,16 +108,12 @@
         },
         "parameters": [
           {
-            "name": "chatRoomUuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "channelUuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetMessagesRequest"
+            }
           }
         ],
         "tags": [
@@ -239,6 +235,17 @@
           "type": "string"
         },
         "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetMessagesRequest": {
+      "type": "object",
+      "properties": {
+        "chatRoomUuid": {
+          "type": "string"
+        },
+        "channelUuid": {
           "type": "string"
         }
       }

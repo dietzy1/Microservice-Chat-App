@@ -20,7 +20,7 @@ service AccountGatewayService {
   //External RPC
   rpc ChangeUsername(ChangeUsernameRequest) returns (ChangeUsernameResponse) {
     option (google.api.http) = {
-      post: "/v1/account/changeusername"
+      post: "/accountgateway.v1.AccountGatewayService/ChangeUsername"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -31,7 +31,7 @@ service AccountGatewayService {
   }
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
     option (google.api.http) = {
-      post: "/v1/account/changepassword"
+      post: "/accountgateway.v1.AccountGatewayService/ChangePassword"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -42,7 +42,7 @@ service AccountGatewayService {
   }
   rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {
     option (google.api.http) = {
-      post: "/v1/account/deleteaccount"
+      post: "/accountgateway.v1.AccountGatewayService/DeleteAccount"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

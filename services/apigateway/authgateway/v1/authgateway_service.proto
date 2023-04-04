@@ -19,7 +19,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service AuthGatewayService {
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/login",
+      post: "/authgateway.v1.AuthGatewayService/Login",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -31,7 +31,7 @@ service AuthGatewayService {
 
   rpc Register(RegisterRequest) returns (RegisterResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/register",
+      post: "/authgateway.v1.AuthGatewayService/Register",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -43,7 +43,7 @@ service AuthGatewayService {
 
   rpc Logout(LogoutRequest) returns (LogoutResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/logout",
+      post: "/authgateway.v1.AuthGatewayService/Logout",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -55,7 +55,7 @@ service AuthGatewayService {
 
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
     option (google.api.http) = {
-      post: "/v1/auth/authenticate",
+      post: "/authgateway.v1.AuthGatewayService/Authenticate",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

@@ -137,6 +137,14 @@ func request_UserGatewayService_GetAvatars_0(ctx context.Context, marshaler runt
 	var protoReq GetAvatarsRequest
 	var metadata runtime.ServerMetadata
 
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := client.GetAvatars(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -145,6 +153,14 @@ func request_UserGatewayService_GetAvatars_0(ctx context.Context, marshaler runt
 func local_request_UserGatewayService_GetAvatars_0(ctx context.Context, marshaler runtime.Marshaler, server UserGatewayServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetAvatarsRequest
 	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.GetAvatars(ctx, &protoReq)
 	return msg, metadata, err
@@ -165,7 +181,7 @@ func RegisterUserGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetUser", runtime.WithHTTPPathPattern("/v1/user"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetUser", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/GetUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -190,7 +206,7 @@ func RegisterUserGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/EditDescription", runtime.WithHTTPPathPattern("/v1/user/editdescription"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/EditDescription", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/EditDescription"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -215,7 +231,7 @@ func RegisterUserGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/ChangeAvatar", runtime.WithHTTPPathPattern("/v1/user/changeavatar"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/ChangeAvatar", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/ChangeAvatar"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -232,7 +248,7 @@ func RegisterUserGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 
 	})
 
-	mux.Handle("GET", pattern_UserGatewayService_GetAvatars_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_UserGatewayService_GetAvatars_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -240,7 +256,7 @@ func RegisterUserGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetAvatars", runtime.WithHTTPPathPattern("/v1/user/getavatars"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetAvatars", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/GetAvatars"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -304,7 +320,7 @@ func RegisterUserGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetUser", runtime.WithHTTPPathPattern("/v1/user"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetUser", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/GetUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -326,7 +342,7 @@ func RegisterUserGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/EditDescription", runtime.WithHTTPPathPattern("/v1/user/editdescription"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/EditDescription", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/EditDescription"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -348,7 +364,7 @@ func RegisterUserGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/ChangeAvatar", runtime.WithHTTPPathPattern("/v1/user/changeavatar"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/ChangeAvatar", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/ChangeAvatar"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -364,13 +380,13 @@ func RegisterUserGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 
 	})
 
-	mux.Handle("GET", pattern_UserGatewayService_GetAvatars_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_UserGatewayService_GetAvatars_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetAvatars", runtime.WithHTTPPathPattern("/v1/user/getavatars"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/usergateway.v1.UserGatewayService/GetAvatars", runtime.WithHTTPPathPattern("/usergateway.v1.UserGatewayService/GetAvatars"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -390,13 +406,13 @@ func RegisterUserGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 }
 
 var (
-	pattern_UserGatewayService_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "user"}, ""))
+	pattern_UserGatewayService_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"usergateway.v1.UserGatewayService", "GetUser"}, ""))
 
-	pattern_UserGatewayService_EditDescription_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "editdescription"}, ""))
+	pattern_UserGatewayService_EditDescription_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"usergateway.v1.UserGatewayService", "EditDescription"}, ""))
 
-	pattern_UserGatewayService_ChangeAvatar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "changeavatar"}, ""))
+	pattern_UserGatewayService_ChangeAvatar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"usergateway.v1.UserGatewayService", "ChangeAvatar"}, ""))
 
-	pattern_UserGatewayService_GetAvatars_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "user", "getavatars"}, ""))
+	pattern_UserGatewayService_GetAvatars_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"usergateway.v1.UserGatewayService", "GetAvatars"}, ""))
 )
 
 var (

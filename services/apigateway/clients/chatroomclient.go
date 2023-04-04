@@ -13,6 +13,7 @@ import (
 
 // func NewChatRoomClient() *chatroomclientv1.ChatroomGatewayServiceClient {
 func NewChatRoomClient() *chatroomclientv1.ChatroomServiceClient {
+	log.Println("Connecting to chatroom service", os.Getenv("CHATROOM"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("CHATROOM"),

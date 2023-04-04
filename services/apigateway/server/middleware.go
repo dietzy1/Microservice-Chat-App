@@ -17,6 +17,7 @@ import (
 
 // CORS middleware wrapper that allows origins -- configured in ENV
 func cors(h http.Handler) http.Handler {
+	log.Println("CORS WAS HIT")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if allowedOrigin(r.Header.Get("Origin")) {
 			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
@@ -84,7 +85,7 @@ func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.
 			//Unsure if I actually need to do the cookie thing here or if its done at some other part of the middleware
 
 			//Call the auth service to check if the session token is valid
-			cookie, err := r.Cookie("session_token")
+			/* cookie, err := r.Cookie("session_token")
 			if err != nil {
 				log.Println(err)
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -99,7 +100,7 @@ func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.
 				log.Println(err)
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
-			}
+			} */
 
 			h.ServeHTTP(w, r)
 
@@ -117,6 +118,7 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 			log.Println("no metadata")
 			return nil
 		}
+		fmt.Println("2nd hit")
 
 		//Specificly look for the session_token key in the metadata
 		token := md.HeaderMD.Get("session_token")

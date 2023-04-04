@@ -11,6 +11,7 @@ import (
 
 	//authv1 "github.com/dietzy1/chatapp/services/apigateway/gen/go/auth/v1"
 
+	accountv1 "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1"
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
@@ -94,6 +95,18 @@ func runGateway(authClient authclientv1.AuthServiceClient) error {
 	if err = authv1.RegisterAuthGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
 		return fmt.Errorf("failed to register gateway: %v", err)
 	}
+	if err = userv1.RegisterUserGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
+		return fmt.Errorf("failed to register gateway: %v", err)
+	}
+	if err = messagev1.RegisterMessageGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
+		return fmt.Errorf("failed to register gateway: %v", err)
+	}
+	if err = chatroomv1.RegisterChatroomGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
+		return fmt.Errorf("failed to register gateway: %v", err)
+	}
+	if err = accountv1.RegisterAccountGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
+		return fmt.Errorf("failed to register gateway: %v", err)
+	}
 
 	gatewayAddress := os.Getenv("GATEWAY")
 	//gatewayAddress := ":8090"
@@ -121,12 +134,12 @@ func Start() {
 	grpclog.SetLoggerV2(log)
 
 	addr := os.Getenv("GRPC")
-	//addr := ":8080"
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
 	//initiate dependencies for the server
+
 	lruCache := cache.New(1000)
 	authClient := client.NewAuthClient()
 	userClient := client.NewUserClient()
@@ -138,7 +151,12 @@ func Start() {
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
+
 	authv1.RegisterAuthGatewayServiceServer(s, dependencies)
+	messagev1.RegisterMessageGatewayServiceServer(s, dependencies)
+	userv1.RegisterUserGatewayServiceServer(s, dependencies)
+	chatroomv1.RegisterChatroomGatewayServiceServer(s, dependencies)
+	accountv1.RegisterAccountGatewayServiceServer(s, dependencies)
 
 	// Serve gRPC Server
 	log.Info("Serving gRPC on http://", addr)

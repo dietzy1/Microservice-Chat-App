@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	chatroomclientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
@@ -49,6 +50,7 @@ func (s *server) DeleteRoom(ctx context.Context, req *chatroomv1.DeleteRoomReque
 }
 
 func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*chatroomv1.GetRoomResponse, error) {
+	fmt.Println("GetRoom")
 	// Check if name is empty
 	if req.ChatroomUuid == "" {
 		return &chatroomv1.GetRoomResponse{}, status.Error(400, "RoomUuid cannot be empty")

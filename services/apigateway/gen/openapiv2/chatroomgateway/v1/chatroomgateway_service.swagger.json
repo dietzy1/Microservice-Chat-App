@@ -19,7 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/chatroom/adduser": {
+    "/chatroomgateway.v1.ChatroomGatewayService/AddUser": {
       "post": {
         "summary": "Add a user",
         "description": "GRPC gateway call to add a user.",
@@ -53,7 +53,7 @@
         ]
       }
     },
-    "/v1/chatroom/createchannel": {
+    "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel": {
       "post": {
         "summary": "Create a channel",
         "description": "GRPC gateway call to create a channel.",
@@ -87,7 +87,7 @@
         ]
       }
     },
-    "/v1/chatroom/createroom": {
+    "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom": {
       "post": {
         "summary": "Create a chatroom",
         "description": "GRPC gateway call to create a chatroom.",
@@ -121,7 +121,7 @@
         ]
       }
     },
-    "/v1/chatroom/deletechannel": {
+    "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel": {
       "post": {
         "summary": "Delete a channel",
         "description": "GRPC gateway call to delete a channel.",
@@ -155,7 +155,7 @@
         ]
       }
     },
-    "/v1/chatroom/deleteroom": {
+    "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom": {
       "post": {
         "summary": "Delete a chatroom",
         "description": "GRPC gateway call to delete a chatroom.",
@@ -189,8 +189,8 @@
         ]
       }
     },
-    "/v1/chatroom/getchannel/{chatroomUuid}/{channelUuid}": {
-      "get": {
+    "/chatroomgateway.v1.ChatroomGatewayService/GetChannel": {
+      "post": {
         "summary": "Get a channel",
         "description": "GRPC gateway call to get a channel.",
         "operationId": "ChatroomGatewayService_GetChannel",
@@ -210,16 +210,12 @@
         },
         "parameters": [
           {
-            "name": "chatroomUuid",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "channelUuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1GetChannelRequest"
+            }
           }
         ],
         "tags": [
@@ -227,8 +223,8 @@
         ]
       }
     },
-    "/v1/chatroom/getroom/{chatroomUuid}": {
-      "get": {
+    "/chatroomgateway.v1.ChatroomGatewayService/GetRoom": {
+      "post": {
         "summary": "Get a chatroom",
         "description": "GRPC gateway call to get a chatroom.",
         "operationId": "ChatroomGatewayService_GetRoom",
@@ -248,10 +244,12 @@
         },
         "parameters": [
           {
-            "name": "chatroomUuid",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/v1GetRoomRequest"
+            }
           }
         ],
         "tags": [
@@ -259,7 +257,7 @@
         ]
       }
     },
-    "/v1/chatroom/inviteuser": {
+    "/chatroomgateway.v1.ChatroomGatewayService/InviteUser": {
       "post": {
         "summary": "Invite a user",
         "description": "GRPC gateway call to invite a user.",
@@ -293,7 +291,7 @@
         ]
       }
     },
-    "/v1/chatroom/removeuser": {
+    "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser": {
       "post": {
         "summary": "Remove a user",
         "description": "GRPC gateway call to remove a user.",
@@ -435,6 +433,17 @@
     "v1DeleteRoomResponse": {
       "type": "object"
     },
+    "v1GetChannelRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "channelUuid": {
+          "type": "string"
+        }
+      }
+    },
     "v1GetChannelResponse": {
       "type": "object",
       "properties": {
@@ -445,6 +454,14 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetRoomRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuid": {
           "type": "string"
         }
       }

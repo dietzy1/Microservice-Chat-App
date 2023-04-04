@@ -11,6 +11,7 @@ import (
 )
 
 func NewUserClient() *userclientv1.UserServiceClient {
+	log.Println("Connecting to user service", os.Getenv("USERSERVICE"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("USERSERVICE"),

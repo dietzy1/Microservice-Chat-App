@@ -19,7 +19,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service ChatroomGatewayService {
   rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/createroom",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -31,7 +31,7 @@ service ChatroomGatewayService {
 
   rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/deleteroom",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -42,7 +42,10 @@ service ChatroomGatewayService {
   }
 
   rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {
-    option (google.api.http) = {get: "/v1/chatroom/getroom/{chatroom_uuid}"};
+    option (google.api.http) = {
+      post: "/chatroomgateway.v1.ChatroomGatewayService/GetRoom",
+      body: "*",
+    };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get a chatroom"
       description: "GRPC gateway call to get a chatroom."
@@ -52,7 +55,7 @@ service ChatroomGatewayService {
 
   rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/createchannel",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -64,7 +67,7 @@ service ChatroomGatewayService {
 
   rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/deletechannel",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -75,7 +78,9 @@ service ChatroomGatewayService {
   }
 
   rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {
-    option (google.api.http) = {get: "/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}"};
+    option (google.api.http) = {
+      post: "/chatroomgateway.v1.ChatroomGatewayService/GetChannel",
+      body: "*",};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get a channel"
       description: "GRPC gateway call to get a channel."
@@ -85,7 +90,7 @@ service ChatroomGatewayService {
 
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/inviteuser",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/InviteUser",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -97,7 +102,7 @@ service ChatroomGatewayService {
 
   rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/removeuser",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -109,7 +114,7 @@ service ChatroomGatewayService {
 
   rpc AddUser(AddUserRequest) returns (AddUserResponse) {
     option (google.api.http) = {
-      post: "/v1/chatroom/adduser",
+      post: "/chatroomgateway.v1.ChatroomGatewayService/AddUser",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

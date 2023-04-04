@@ -31,18 +31,15 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-var (
-	filter_MessageGatewayService_GetMessages_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_MessageGatewayService_GetMessages_0(ctx context.Context, marshaler runtime.Marshaler, client MessageGatewayServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetMessagesRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MessageGatewayService_GetMessages_0); err != nil {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -55,10 +52,11 @@ func local_request_MessageGatewayService_GetMessages_0(ctx context.Context, mars
 	var protoReq GetMessagesRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MessageGatewayService_GetMessages_0); err != nil {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -141,7 +139,7 @@ func local_request_MessageGatewayService_DeleteMessage_0(ctx context.Context, ma
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterMessageGatewayServiceHandlerFromEndpoint instead.
 func RegisterMessageGatewayServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server MessageGatewayServiceServer) error {
 
-	mux.Handle("GET", pattern_MessageGatewayService_GetMessages_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MessageGatewayService_GetMessages_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -149,7 +147,7 @@ func RegisterMessageGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/GetMessages", runtime.WithHTTPPathPattern("/v1/message/getmessages"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/GetMessages", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/GetMessages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -174,7 +172,7 @@ func RegisterMessageGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/v1/message/editmessage"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -199,7 +197,7 @@ func RegisterMessageGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/DeleteMessage", runtime.WithHTTPPathPattern("/v1/message/deletemessage"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/DeleteMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/DeleteMessage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -257,13 +255,13 @@ func RegisterMessageGatewayServiceHandler(ctx context.Context, mux *runtime.Serv
 // "MessageGatewayServiceClient" to call the correct interceptors.
 func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client MessageGatewayServiceClient) error {
 
-	mux.Handle("GET", pattern_MessageGatewayService_GetMessages_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MessageGatewayService_GetMessages_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/GetMessages", runtime.WithHTTPPathPattern("/v1/message/getmessages"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/GetMessages", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/GetMessages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -285,7 +283,7 @@ func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/v1/message/editmessage"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -307,7 +305,7 @@ func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/DeleteMessage", runtime.WithHTTPPathPattern("/v1/message/deletemessage"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/DeleteMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/DeleteMessage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -327,11 +325,11 @@ func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 }
 
 var (
-	pattern_MessageGatewayService_GetMessages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "message", "getmessages"}, ""))
+	pattern_MessageGatewayService_GetMessages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "GetMessages"}, ""))
 
-	pattern_MessageGatewayService_EditMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "message", "editmessage"}, ""))
+	pattern_MessageGatewayService_EditMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "EditMessages"}, ""))
 
-	pattern_MessageGatewayService_DeleteMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "message", "deletemessage"}, ""))
+	pattern_MessageGatewayService_DeleteMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "DeleteMessage"}, ""))
 )
 
 var (

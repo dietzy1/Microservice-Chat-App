@@ -12,6 +12,7 @@ import (
 )
 
 func NewMessageClient() *messageclientv1.MessageServiceClient {
+	log.Println("Connecting to message service", os.Getenv("MESSAGE"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("MESSAGE"),

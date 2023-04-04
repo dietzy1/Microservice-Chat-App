@@ -19,7 +19,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service UserGatewayService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-      post: "/v1/user",
+      post: "/usergateway.v1.UserGatewayService/GetUser",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -31,7 +31,7 @@ service UserGatewayService {
 
   rpc EditDescription(EditDescriptionRequest) returns (EditDescriptionResponse) {
     option (google.api.http) = {
-      post: "/v1/user/editdescription",
+      post: "/usergateway.v1.UserGatewayService/EditDescription",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -43,7 +43,7 @@ service UserGatewayService {
 
   rpc ChangeAvatar(ChangeAvatarRequest) returns (ChangeAvatarResponse) {
     option (google.api.http) = {
-      post: "/v1/user/changeavatar",
+      post: "/usergateway.v1.UserGatewayService/ChangeAvatar",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -54,7 +54,10 @@ service UserGatewayService {
   }
 
   rpc GetAvatars(GetAvatarsRequest) returns (GetAvatarsResponse) {
-    option (google.api.http) = {get: "/v1/user/getavatars"};
+    option (google.api.http) = {
+      post: "/usergateway.v1.UserGatewayService/GetAvatars",
+      body: "*",
+    };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get all avatars"
       description: "GRPC gateway call to get all avatars."

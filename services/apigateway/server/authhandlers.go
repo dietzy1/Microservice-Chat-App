@@ -163,3 +163,11 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 		Error:  "no error",
 	}, nil
 }
+
+//I think I know what is going wrong its because the other functions arent using the session token for anything
+//So some of the middleware functions are blocking because metadata is empty
+//I could make it so metadata should only be passed if an authentication route is being hit
+//but I still need to figure out how I want to secure all of the routes
+//Since it would be the most optimal to have a single middleware function that checks if the user is authenticated
+//And that single middleware function should very likely call the authentication service to check if the user is authenticated
+//So I need to figure out how I want to do that

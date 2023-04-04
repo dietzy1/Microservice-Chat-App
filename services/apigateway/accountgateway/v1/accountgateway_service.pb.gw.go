@@ -147,7 +147,7 @@ func RegisterAccountGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangeUsername", runtime.WithHTTPPathPattern("/v1/account/changeusername"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangeUsername", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/ChangeUsername"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -172,7 +172,7 @@ func RegisterAccountGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangePassword", runtime.WithHTTPPathPattern("/v1/account/changepassword"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangePassword", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/ChangePassword"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -197,7 +197,7 @@ func RegisterAccountGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/DeleteAccount", runtime.WithHTTPPathPattern("/v1/account/deleteaccount"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/DeleteAccount", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/DeleteAccount"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -261,7 +261,7 @@ func RegisterAccountGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangeUsername", runtime.WithHTTPPathPattern("/v1/account/changeusername"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangeUsername", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/ChangeUsername"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -283,7 +283,7 @@ func RegisterAccountGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangePassword", runtime.WithHTTPPathPattern("/v1/account/changepassword"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/ChangePassword", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/ChangePassword"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -305,7 +305,7 @@ func RegisterAccountGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/DeleteAccount", runtime.WithHTTPPathPattern("/v1/account/deleteaccount"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/accountgateway.v1.AccountGatewayService/DeleteAccount", runtime.WithHTTPPathPattern("/accountgateway.v1.AccountGatewayService/DeleteAccount"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -325,11 +325,11 @@ func RegisterAccountGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 }
 
 var (
-	pattern_AccountGatewayService_ChangeUsername_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "account", "changeusername"}, ""))
+	pattern_AccountGatewayService_ChangeUsername_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accountgateway.v1.AccountGatewayService", "ChangeUsername"}, ""))
 
-	pattern_AccountGatewayService_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "account", "changepassword"}, ""))
+	pattern_AccountGatewayService_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accountgateway.v1.AccountGatewayService", "ChangePassword"}, ""))
 
-	pattern_AccountGatewayService_DeleteAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "account", "deleteaccount"}, ""))
+	pattern_AccountGatewayService_DeleteAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accountgateway.v1.AccountGatewayService", "DeleteAccount"}, ""))
 )
 
 var (

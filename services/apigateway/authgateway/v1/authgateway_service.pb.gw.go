@@ -181,7 +181,7 @@ func RegisterAuthGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Login", runtime.WithHTTPPathPattern("/v1/auth/login"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Login", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -206,7 +206,7 @@ func RegisterAuthGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Register", runtime.WithHTTPPathPattern("/v1/auth/register"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Register", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -231,7 +231,7 @@ func RegisterAuthGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Logout", runtime.WithHTTPPathPattern("/v1/auth/logout"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Logout", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -256,7 +256,7 @@ func RegisterAuthGatewayServiceHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Authenticate", runtime.WithHTTPPathPattern("/v1/auth/authenticate"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Authenticate", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Authenticate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -320,7 +320,7 @@ func RegisterAuthGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Login", runtime.WithHTTPPathPattern("/v1/auth/login"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Login", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -342,7 +342,7 @@ func RegisterAuthGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Register", runtime.WithHTTPPathPattern("/v1/auth/register"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Register", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -364,7 +364,7 @@ func RegisterAuthGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Logout", runtime.WithHTTPPathPattern("/v1/auth/logout"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Logout", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -386,7 +386,7 @@ func RegisterAuthGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Authenticate", runtime.WithHTTPPathPattern("/v1/auth/authenticate"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/authgateway.v1.AuthGatewayService/Authenticate", runtime.WithHTTPPathPattern("/authgateway.v1.AuthGatewayService/Authenticate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -406,13 +406,13 @@ func RegisterAuthGatewayServiceHandlerClient(ctx context.Context, mux *runtime.S
 }
 
 var (
-	pattern_AuthGatewayService_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "auth", "login"}, ""))
+	pattern_AuthGatewayService_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"authgateway.v1.AuthGatewayService", "Login"}, ""))
 
-	pattern_AuthGatewayService_Register_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "auth", "register"}, ""))
+	pattern_AuthGatewayService_Register_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"authgateway.v1.AuthGatewayService", "Register"}, ""))
 
-	pattern_AuthGatewayService_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "auth", "logout"}, ""))
+	pattern_AuthGatewayService_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"authgateway.v1.AuthGatewayService", "Logout"}, ""))
 
-	pattern_AuthGatewayService_Authenticate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "auth", "authenticate"}, ""))
+	pattern_AuthGatewayService_Authenticate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"authgateway.v1.AuthGatewayService", "Authenticate"}, ""))
 )
 
 var (

@@ -103,21 +103,12 @@ func request_ChatroomGatewayService_GetRoom_0(ctx context.Context, marshaler run
 	var protoReq GetRoomRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chatroom_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chatroom_uuid")
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-
-	protoReq.ChatroomUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chatroom_uuid", err)
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetRoom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -129,21 +120,12 @@ func local_request_ChatroomGatewayService_GetRoom_0(ctx context.Context, marshal
 	var protoReq GetRoomRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chatroom_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chatroom_uuid")
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-
-	protoReq.ChatroomUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chatroom_uuid", err)
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetRoom(ctx, &protoReq)
@@ -223,31 +205,12 @@ func request_ChatroomGatewayService_GetChannel_0(ctx context.Context, marshaler 
 	var protoReq GetChannelRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chatroom_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chatroom_uuid")
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-
-	protoReq.ChatroomUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chatroom_uuid", err)
-	}
-
-	val, ok = pathParams["channel_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "channel_uuid")
-	}
-
-	protoReq.ChannelUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "channel_uuid", err)
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetChannel(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -259,31 +222,12 @@ func local_request_ChatroomGatewayService_GetChannel_0(ctx context.Context, mars
 	var protoReq GetChannelRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chatroom_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chatroom_uuid")
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-
-	protoReq.ChatroomUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chatroom_uuid", err)
-	}
-
-	val, ok = pathParams["channel_uuid"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "channel_uuid")
-	}
-
-	protoReq.ChannelUuid, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "channel_uuid", err)
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetChannel(ctx, &protoReq)
@@ -407,7 +351,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom", runtime.WithHTTPPathPattern("/v1/chatroom/createroom"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/CreateRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -432,7 +376,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom", runtime.WithHTTPPathPattern("/v1/chatroom/deleteroom"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -449,7 +393,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 
 	})
 
-	mux.Handle("GET", pattern_ChatroomGatewayService_GetRoom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ChatroomGatewayService_GetRoom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -457,7 +401,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", runtime.WithHTTPPathPattern("/v1/chatroom/getroom/{chatroom_uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/GetRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -482,7 +426,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel", runtime.WithHTTPPathPattern("/v1/chatroom/createchannel"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/CreateChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -507,7 +451,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel", runtime.WithHTTPPathPattern("/v1/chatroom/deletechannel"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -524,7 +468,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 
 	})
 
-	mux.Handle("GET", pattern_ChatroomGatewayService_GetChannel_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ChatroomGatewayService_GetChannel_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -532,7 +476,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetChannel", runtime.WithHTTPPathPattern("/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/GetChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -557,7 +501,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/InviteUser", runtime.WithHTTPPathPattern("/v1/chatroom/inviteuser"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/InviteUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/InviteUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -582,7 +526,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser", runtime.WithHTTPPathPattern("/v1/chatroom/removeuser"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/RemoveUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -607,7 +551,7 @@ func RegisterChatroomGatewayServiceHandlerServer(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/AddUser", runtime.WithHTTPPathPattern("/v1/chatroom/adduser"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/AddUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/AddUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -671,7 +615,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom", runtime.WithHTTPPathPattern("/v1/chatroom/createroom"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/CreateRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -693,7 +637,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom", runtime.WithHTTPPathPattern("/v1/chatroom/deleteroom"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/DeleteRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -709,13 +653,13 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 
 	})
 
-	mux.Handle("GET", pattern_ChatroomGatewayService_GetRoom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ChatroomGatewayService_GetRoom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", runtime.WithHTTPPathPattern("/v1/chatroom/getroom/{chatroom_uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/GetRoom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -737,7 +681,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel", runtime.WithHTTPPathPattern("/v1/chatroom/createchannel"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/CreateChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/CreateChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -759,7 +703,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel", runtime.WithHTTPPathPattern("/v1/chatroom/deletechannel"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/DeleteChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -775,13 +719,13 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 
 	})
 
-	mux.Handle("GET", pattern_ChatroomGatewayService_GetChannel_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ChatroomGatewayService_GetChannel_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetChannel", runtime.WithHTTPPathPattern("/v1/chatroom/getchannel/{chatroom_uuid}/{channel_uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/GetChannel", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/GetChannel"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -803,7 +747,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/InviteUser", runtime.WithHTTPPathPattern("/v1/chatroom/inviteuser"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/InviteUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/InviteUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -825,7 +769,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser", runtime.WithHTTPPathPattern("/v1/chatroom/removeuser"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/RemoveUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/RemoveUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -847,7 +791,7 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/AddUser", runtime.WithHTTPPathPattern("/v1/chatroom/adduser"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/chatroomgateway.v1.ChatroomGatewayService/AddUser", runtime.WithHTTPPathPattern("/chatroomgateway.v1.ChatroomGatewayService/AddUser"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -867,23 +811,23 @@ func RegisterChatroomGatewayServiceHandlerClient(ctx context.Context, mux *runti
 }
 
 var (
-	pattern_ChatroomGatewayService_CreateRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "createroom"}, ""))
+	pattern_ChatroomGatewayService_CreateRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "CreateRoom"}, ""))
 
-	pattern_ChatroomGatewayService_DeleteRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "deleteroom"}, ""))
+	pattern_ChatroomGatewayService_DeleteRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "DeleteRoom"}, ""))
 
-	pattern_ChatroomGatewayService_GetRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "chatroom", "getroom", "chatroom_uuid"}, ""))
+	pattern_ChatroomGatewayService_GetRoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "GetRoom"}, ""))
 
-	pattern_ChatroomGatewayService_CreateChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "createchannel"}, ""))
+	pattern_ChatroomGatewayService_CreateChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "CreateChannel"}, ""))
 
-	pattern_ChatroomGatewayService_DeleteChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "deletechannel"}, ""))
+	pattern_ChatroomGatewayService_DeleteChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "DeleteChannel"}, ""))
 
-	pattern_ChatroomGatewayService_GetChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "chatroom", "getchannel", "chatroom_uuid", "channel_uuid"}, ""))
+	pattern_ChatroomGatewayService_GetChannel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "GetChannel"}, ""))
 
-	pattern_ChatroomGatewayService_InviteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "inviteuser"}, ""))
+	pattern_ChatroomGatewayService_InviteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "InviteUser"}, ""))
 
-	pattern_ChatroomGatewayService_RemoveUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "removeuser"}, ""))
+	pattern_ChatroomGatewayService_RemoveUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "RemoveUser"}, ""))
 
-	pattern_ChatroomGatewayService_AddUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "chatroom", "adduser"}, ""))
+	pattern_ChatroomGatewayService_AddUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chatroomgateway.v1.ChatroomGatewayService", "AddUser"}, ""))
 )
 
 var (

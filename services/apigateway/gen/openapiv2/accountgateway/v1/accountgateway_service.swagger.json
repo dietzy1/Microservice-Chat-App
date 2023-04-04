@@ -19,7 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/account/changepassword": {
+    "/accountgateway.v1.AccountGatewayService/ChangePassword": {
       "post": {
         "summary": "Change password",
         "description": "Change password",
@@ -53,7 +53,7 @@
         ]
       }
     },
-    "/v1/account/changeusername": {
+    "/accountgateway.v1.AccountGatewayService/ChangeUsername": {
       "post": {
         "summary": "Change username",
         "description": "Change username",
@@ -87,7 +87,7 @@
         ]
       }
     },
-    "/v1/account/deleteaccount": {
+    "/accountgateway.v1.AccountGatewayService/DeleteAccount": {
       "post": {
         "summary": "Delete account",
         "description": "Delete account",

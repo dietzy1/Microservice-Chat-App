@@ -19,41 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/user": {
-      "post": {
-        "summary": "Get a user",
-        "description": "GRPC gateway call to get a user.",
-        "operationId": "UserGatewayService_GetUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetUserResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1GetUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "User"
-        ]
-      }
-    },
-    "/v1/user/changeavatar": {
+    "/usergateway.v1.UserGatewayService/ChangeAvatar": {
       "post": {
         "summary": "Change the avatar of a user",
         "description": "GRPC gateway call to change the avatar of a user.",
@@ -87,7 +53,7 @@
         ]
       }
     },
-    "/v1/user/editdescription": {
+    "/usergateway.v1.UserGatewayService/EditDescription": {
       "post": {
         "summary": "Edit the description of a user",
         "description": "GRPC gateway call to edit the description of a user.",
@@ -121,8 +87,8 @@
         ]
       }
     },
-    "/v1/user/getavatars": {
-      "get": {
+    "/usergateway.v1.UserGatewayService/GetAvatars": {
+      "post": {
         "summary": "Get all avatars",
         "description": "GRPC gateway call to get all avatars.",
         "operationId": "UserGatewayService_GetAvatars",
@@ -140,6 +106,50 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetAvatarsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/usergateway.v1.UserGatewayService/GetUser": {
+      "post": {
+        "summary": "Get a user",
+        "description": "GRPC gateway call to get a user.",
+        "operationId": "UserGatewayService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetUserRequest"
+            }
+          }
+        ],
         "tags": [
           "User"
         ]
@@ -200,6 +210,9 @@
       }
     },
     "v1EditDescriptionResponse": {
+      "type": "object"
+    },
+    "v1GetAvatarsRequest": {
       "type": "object"
     },
     "v1GetAvatarsResponse": {

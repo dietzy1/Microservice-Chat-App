@@ -14,6 +14,7 @@ import (
 // I need to generate a client somewhere around here
 // And use the client in the handlers file to call the authentication service
 func NewAuthClient() *authclientv1.AuthServiceClient {
+	log.Println("Connecting to auth service", os.Getenv("AUTH"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("AUTH"),
