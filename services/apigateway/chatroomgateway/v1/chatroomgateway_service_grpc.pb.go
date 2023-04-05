@@ -25,6 +25,7 @@ type ChatroomGatewayServiceClient interface {
 	CreateRoom(ctx context.Context, in *CreateRoomRequest, opts ...grpc.CallOption) (*CreateRoomResponse, error)
 	DeleteRoom(ctx context.Context, in *DeleteRoomRequest, opts ...grpc.CallOption) (*DeleteRoomResponse, error)
 	GetRoom(ctx context.Context, in *GetRoomRequest, opts ...grpc.CallOption) (*GetRoomResponse, error)
+	GetRooms(ctx context.Context, in *GetRoomsRequest, opts ...grpc.CallOption) (*GetRoomsResponse, error)
 	CreateChannel(ctx context.Context, in *CreateChannelRequest, opts ...grpc.CallOption) (*CreateChannelResponse, error)
 	DeleteChannel(ctx context.Context, in *DeleteChannelRequest, opts ...grpc.CallOption) (*DeleteChannelResponse, error)
 	GetChannel(ctx context.Context, in *GetChannelRequest, opts ...grpc.CallOption) (*GetChannelResponse, error)
@@ -62,6 +63,15 @@ func (c *chatroomGatewayServiceClient) DeleteRoom(ctx context.Context, in *Delet
 func (c *chatroomGatewayServiceClient) GetRoom(ctx context.Context, in *GetRoomRequest, opts ...grpc.CallOption) (*GetRoomResponse, error) {
 	out := new(GetRoomResponse)
 	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/GetRoom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatroomGatewayServiceClient) GetRooms(ctx context.Context, in *GetRoomsRequest, opts ...grpc.CallOption) (*GetRoomsResponse, error) {
+	out := new(GetRoomsResponse)
+	err := c.cc.Invoke(ctx, "/chatroomgateway.v1.ChatroomGatewayService/GetRooms", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +139,7 @@ type ChatroomGatewayServiceServer interface {
 	CreateRoom(context.Context, *CreateRoomRequest) (*CreateRoomResponse, error)
 	DeleteRoom(context.Context, *DeleteRoomRequest) (*DeleteRoomResponse, error)
 	GetRoom(context.Context, *GetRoomRequest) (*GetRoomResponse, error)
+	GetRooms(context.Context, *GetRoomsRequest) (*GetRoomsResponse, error)
 	CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error)
 	DeleteChannel(context.Context, *DeleteChannelRequest) (*DeleteChannelResponse, error)
 	GetChannel(context.Context, *GetChannelRequest) (*GetChannelResponse, error)
@@ -149,6 +160,9 @@ func (UnimplementedChatroomGatewayServiceServer) DeleteRoom(context.Context, *De
 }
 func (UnimplementedChatroomGatewayServiceServer) GetRoom(context.Context, *GetRoomRequest) (*GetRoomResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoom not implemented")
+}
+func (UnimplementedChatroomGatewayServiceServer) GetRooms(context.Context, *GetRoomsRequest) (*GetRoomsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRooms not implemented")
 }
 func (UnimplementedChatroomGatewayServiceServer) CreateChannel(context.Context, *CreateChannelRequest) (*CreateChannelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateChannel not implemented")
@@ -230,6 +244,24 @@ func _ChatroomGatewayService_GetRoom_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatroomGatewayServiceServer).GetRoom(ctx, req.(*GetRoomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatroomGatewayService_GetRooms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoomsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatroomGatewayServiceServer).GetRooms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatroomgateway.v1.ChatroomGatewayService/GetRooms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatroomGatewayServiceServer).GetRooms(ctx, req.(*GetRoomsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -360,6 +392,10 @@ var ChatroomGatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRoom",
 			Handler:    _ChatroomGatewayService_GetRoom_Handler,
+		},
+		{
+			MethodName: "GetRooms",
+			Handler:    _ChatroomGatewayService_GetRooms_Handler,
 		},
 		{
 			MethodName: "CreateChannel",

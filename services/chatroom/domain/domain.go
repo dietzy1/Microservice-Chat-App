@@ -20,8 +20,9 @@ func New(repo chatroom /* , cdn cdn */) *Domain {
 // this is the repository interface
 type chatroom interface {
 	CreateChatroom(ctx context.Context, chatroom Chatroom) error
-	GetChatroom(ctx context.Context, chatroomUuid string) (Chatroom, error)
 	DeleteChatroom(ctx context.Context, chatroomUuid string) error
+	GetChatroom(ctx context.Context, chatroomUuid string) (Chatroom, error)
+	GetChatrooms(ctx context.Context, chatroomUuids []string) ([]Chatroom, error)
 
 	CreateChannel(ctx context.Context, channel Channel) error
 	DeleteChannel(ctx context.Context, channelUuid string) error
@@ -33,19 +34,19 @@ type chatroom interface {
 }
 
 type Chatroom struct {
-	Name     string   `json:"name" bson:"name"`
-	Uuid     string   `json:"uuid" bson:"uuid"`
-	Icon     Icon     `json:"icon" bson:"icon"`
-	Owner    string   `json:"owner" bson:"owner"`
-	Users    []string `json:"users" bson:"users"`
-	Channels []string `json:"channels" bson:"channels"`
-	Invited  []string `json:"invited" bson:"invited"`
+	Name     string    `json:"name" bson:"name"`
+	Uuid     string    `json:"uuid" bson:"uuid"`
+	Icon     Icon      `json:"icon" bson:"icon"`
+	Owner    string    `json:"owner" bson:"owner"`
+	Users    []string  `json:"users" bson:"users"`
+	Channels []Channel `json:"channels" bson:"channels"`
+	Invited  []string  `json:"invited" bson:"invited"`
 }
 
 type Channel struct {
-	ChannelUuid  string `json:"uuid" bson:"uuid"`
+	ChannelUuid  string `json:"channeluuid" bson:"channeluuid"`
 	Name         string `json:"name" bson:"name"`
-	ChatroomUuid string `json:"chatroom" bson:"chatroom"`
+	ChatroomUuid string `json:"chatroomuuid" bson:"chatroomuuid"`
 	Owner        string `json:"owner" bson:"owner"`
 }
 
@@ -57,8 +58,8 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 
 	//Name is set
 	chatroom.Uuid = uuid.New().String()
-	chatroom.Icon.Link = "Some standart shit"
-	chatroom.Icon.Uuid = "Some other standart shit"
+	chatroom.Icon.Link = "https://ik.imagekit.io/imageAPI/user/a884bf0f-4b26-4a4f-a454-d0e0286882e4.png"
+	chatroom.Icon.Uuid = "a884bf0f-4b26-4a4f-a454-d0e0286882e4"
 	//Owner is set
 	chatroom.Users = append(chatroom.Users, chatroom.Owner)
 
@@ -69,7 +70,7 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 		ChatroomUuid: chatroom.Uuid,
 		Owner:        chatroom.Owner,
 	}
-	chatroom.Channels = append(chatroom.Channels, channel.ChannelUuid)
+	chatroom.Channels = append(chatroom.Channels, channel)
 
 	//Use the chatroom object to create a new chatroom in the database
 	err := d.repo.CreateChatroom(ctx, chatroom)
@@ -123,6 +124,17 @@ func (d *Domain) GetRoom(ctx context.Context, chatroom Chatroom) (Chatroom, erro
 	}
 
 	return room, nil
+}
+
+func (d *Domain) GetRooms(ctx context.Context, chatroomUuids []string) ([]Chatroom, error) {
+	log.Println(chatroomUuids)
+	rooms, err := d.repo.GetChatrooms(ctx, chatroomUuids)
+	if err != nil {
+		log.Println(err)
+		return []Chatroom{}, err
+	}
+
+	return rooms, nil
 }
 
 //---------------------------------------------------------------------------------

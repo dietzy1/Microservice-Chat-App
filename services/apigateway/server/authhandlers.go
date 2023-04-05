@@ -109,6 +109,7 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "no metadata")
 	}
 
+	//TODO: is potential bug here idk why the fuck it keeps on calling no session token on the 2nd request
 	//extract the token from the metadata
 	if len(md["session_token"]) == 0 || len(md["uuid_token"]) == 0 {
 		log.Println("no session token")

@@ -14,6 +14,7 @@ type chatroom interface {
 	CreateRoom(ctx context.Context, chatroom domain.Chatroom) (string, error)
 	DeleteRoom(ctx context.Context, chatroom domain.Chatroom) error
 	GetRoom(ctx context.Context, chatroom domain.Chatroom) (domain.Chatroom, error)
+	GetRooms(ctx context.Context, chatroomUuids []string) ([]domain.Chatroom, error)
 
 	CreateChannel(ctx context.Context, channel domain.Channel) (string, error)
 	DeleteChannel(ctx context.Context, channel domain.Channel) error
@@ -85,15 +86,76 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 	users = append(users, chatroom.Users...)
 
 	//Convert chatroom.channel_uuids to getroomresponse.channel_uuids
-	channels := make([]string, len(chatroom.Channels))
-	channels = append(channels, chatroom.Channels...)
+	//channels := make([]domain.Channel, len(chatroom.Channels))
+	//channels = append(channels, chatroom.Channels...)
+
+	//convert channel to []*chatroomv1.Channel
+	channels := make([]*chatroomv1.Channel, len(chatroom.Channels))
+	for i, channel := range chatroom.Channels {
+		channels[i] = &chatroomv1.Channel{
+			Uuid:         channel.ChannelUuid,
+			Name:         channel.Name,
+			ChatroomUuid: channel.ChatroomUuid,
+			OwnerUuid:    channel.Owner,
+		}
+	}
 
 	return &chatroomv1.GetRoomResponse{
 		Name:         chatroom.Name,
 		ChatroomUuid: chatroom.Uuid,
 		OwnerUuid:    chatroom.Owner,
 		UserUuids:    users,
-		ChannelUuids: channels,
+		Channels:     channels,
+	}, nil
+}
+
+func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) (*chatroomv1.GetRoomsResponse, error) {
+
+	log.Println("is the handler even fucking proccing or what?", req.ChatroomUuids)
+	// Perform check if array of uuids is empty
+	if req.ChatroomUuids == nil {
+		return &chatroomv1.GetRoomsResponse{}, status.Error(400, "Uuid cannot be empty")
+	}
+
+	chatrooms, err := s.chatroom.GetRooms(ctx, req.ChatroomUuids)
+	if err != nil {
+		return &chatroomv1.GetRoomsResponse{}, status.Error(500, "Internal Server Error")
+	}
+
+	//I have an array of chatrooms, I need to convert it to an array of getroomresponse
+	rooms := make([]*chatroomv1.GetRoomResponse, len(chatrooms))
+	for i, chatroom := range chatrooms {
+		//Convert chatroom.Users
+		users := make([]string, len(chatroom.Users))
+		users = append(users, chatroom.Users...)
+
+		//Convert chatroom.channel_uuids to getroomresponse.channel_uuids
+		/* channels := make([]string, len(chatroom.Channels))
+		channels = append(channels, chatroom.Channels...) */
+
+		channels := make([]*chatroomv1.Channel, len(chatroom.Channels))
+		for i, channel := range chatroom.Channels {
+			channels[i] = &chatroomv1.Channel{
+				Uuid:         channel.ChannelUuid,
+				Name:         channel.Name,
+				ChatroomUuid: channel.ChatroomUuid,
+				OwnerUuid:    channel.Owner,
+			}
+		}
+
+		rooms[i] = &chatroomv1.GetRoomResponse{
+			Name:         chatroom.Name,
+			Icon:         chatroom.Icon.Link,
+			ChatroomUuid: chatroom.Uuid,
+			OwnerUuid:    chatroom.Owner,
+			UserUuids:    users,
+			Channels:     channels,
+		}
+	}
+	log.Println(rooms)
+
+	return &chatroomv1.GetRoomsResponse{
+		Rooms: rooms,
 	}, nil
 }
 

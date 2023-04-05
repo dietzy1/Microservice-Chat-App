@@ -257,6 +257,40 @@
         ]
       }
     },
+    "/chatroomgateway.v1.ChatroomGatewayService/GetRooms": {
+      "post": {
+        "summary": "Get chatrooms",
+        "description": "GRPC gateway call to get chatrooms.",
+        "operationId": "ChatroomGatewayService_GetRooms",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetRoomsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetRoomsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Chatroom"
+        ]
+      }
+    },
     "/chatroomgateway.v1.ChatroomGatewayService/InviteUser": {
       "post": {
         "summary": "Invite a user",
@@ -371,6 +405,23 @@
     "v1AddUserResponse": {
       "type": "object"
     },
+    "v1Channel": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "chatroomUuid": {
+          "type": "string"
+        },
+        "ownerUuid": {
+          "type": "string"
+        }
+      }
+    },
     "v1CreateChannelRequest": {
       "type": "object",
       "properties": {
@@ -475,6 +526,9 @@
         "name": {
           "type": "string"
         },
+        "icon": {
+          "type": "string"
+        },
         "ownerUuid": {
           "type": "string"
         },
@@ -484,10 +538,32 @@
             "type": "string"
           }
         },
-        "channelUuids": {
+        "channel": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Channel"
+          }
+        }
+      }
+    },
+    "v1GetRoomsRequest": {
+      "type": "object",
+      "properties": {
+        "chatroomUuids": {
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "v1GetRoomsResponse": {
+      "type": "object",
+      "properties": {
+        "rooms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1GetRoomResponse"
           }
         }
       }

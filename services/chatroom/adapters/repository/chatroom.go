@@ -74,6 +74,8 @@ func (a *Db) DeleteChatroom(ctx context.Context, chatroomUuid string) error {
 }
 
 func (a *Db) GetChatroom(ctx context.Context, chatroomUuid string) (domain.Chatroom, error) {
+	log.Println(chatroomUuid)
+
 	collection := a.client.Database(database).Collection(collection)
 	var chatroom domain.Chatroom
 	err := collection.FindOne(ctx, bson.M{"uuid": chatroomUuid}).Decode(&chatroom)
@@ -81,6 +83,23 @@ func (a *Db) GetChatroom(ctx context.Context, chatroomUuid string) (domain.Chatr
 		return chatroom, err
 	}
 	return chatroom, nil
+}
+
+func (a *Db) GetChatrooms(ctx context.Context, chatroomUuids []string) ([]domain.Chatroom, error) {
+	collection := a.client.Database(database).Collection(collection)
+	var chatrooms []domain.Chatroom
+	//Retrieve all documents where uuid is in chatroomUuids
+	cursor, err := collection.Find(ctx, bson.M{"uuid": bson.M{"$in": chatroomUuids}})
+	if err != nil {
+		return chatrooms, err
+	}
+	//Decode all documents into chatrooms
+	err = cursor.All(ctx, &chatrooms)
+	if err != nil {
+		return chatrooms, err
+	}
+	return chatrooms, nil
+
 }
 
 // ---------------------------------------------------------------------------

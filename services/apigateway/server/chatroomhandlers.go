@@ -69,10 +69,62 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 	resp := &chatroomv1.GetRoomResponse{
 		ChatroomUuid: room.ChatroomUuid,
 		Name:         room.Name,
+		Icon:         room.Icon,
 		OwnerUuid:    room.OwnerUuid,
 	}
 	resp.UserUuids = append(resp.UserUuids, room.UserUuids...)
-	resp.ChannelUuids = append(resp.ChannelUuids, room.ChannelUuids...)
+
+	//Convert from []*chatroomv1.Channel to []*chatroomgatewayv1.Channel
+	for _, channel := range room.Channels {
+		resp.Channel = append(resp.Channel, &chatroomv1.Channel{
+			Uuid:         channel.Uuid,
+			Name:         channel.Name,
+			OwnerUuid:    channel.OwnerUuid,
+			ChatroomUuid: channel.ChatroomUuid,
+		})
+	}
+
+	return resp, nil
+}
+
+func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) (*chatroomv1.GetRoomsResponse, error) {
+
+	//Check if chatroomUuid is empty
+	if req.ChatroomUuids == nil {
+		return &chatroomv1.GetRoomsResponse{}, status.Error(400, "ChatroomUuid cannot be empty")
+	}
+
+	//Reroute object
+	rooms, err := s.chatroomClient.GetRooms(ctx, &chatroomclientv1.GetRoomsRequest{
+		ChatroomUuids: req.ChatroomUuids,
+	})
+	if err != nil {
+		return &chatroomv1.GetRoomsResponse{}, status.Error(500, "Internal Server Error")
+	}
+
+	resp := &chatroomv1.GetRoomsResponse{}
+	//Convert rooms to resp
+	for i, room := range rooms.Rooms {
+
+		resp.Rooms = append(resp.Rooms, &chatroomv1.GetRoomResponse{
+			ChatroomUuid: room.ChatroomUuid,
+			Name:         room.Name,
+			Icon:         room.Icon,
+			OwnerUuid:    room.OwnerUuid,
+			UserUuids:    room.UserUuids,
+		})
+
+		//Convert from []*chatroomv1.Channel to []*chatroomgatewayv1.Channel
+		for _, channel := range rooms.Rooms[i].Channels {
+			resp.Rooms[i].Channel = append(resp.Rooms[i].Channel, &chatroomv1.Channel{
+				Uuid:         channel.Uuid,
+				Name:         channel.Name,
+				OwnerUuid:    channel.OwnerUuid,
+				ChatroomUuid: channel.ChatroomUuid,
+			})
+		}
+
+	}
 
 	return resp, nil
 }

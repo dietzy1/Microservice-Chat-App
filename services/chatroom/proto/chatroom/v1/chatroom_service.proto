@@ -8,6 +8,7 @@ service ChatroomService {
   rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
   rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse) {}
   rpc GetRoom(GetRoomRequest) returns (GetRoomResponse) {}
+  rpc GetRooms(GetRoomsRequest) returns (GetRoomsResponse) {}
 
   rpc CreateChannel(CreateChannelRequest) returns (CreateChannelResponse) {}
   rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse) {}
@@ -39,9 +40,26 @@ message GetRoomRequest {
 message GetRoomResponse {
   string chatroom_uuid = 1;
   string name = 2;
-  string owner_uuid = 3;
-  repeated string user_uuids = 4;
-  repeated string channel_uuids = 5;
+  string icon = 3;
+  string owner_uuid = 4;
+  repeated string user_uuids = 5;
+  repeated Channel channels = 6;
+}
+
+message Channel  {
+  string uuid = 1;
+  string name = 2;
+  string chatroom_uuid = 3;
+  string owner_uuid = 4;
+}
+
+
+message GetRoomsRequest {
+  repeated string chatroom_uuids = 1;
+}
+
+message GetRoomsResponse {
+  repeated GetRoomResponse rooms = 1;
 }
 
 // -- ------------------------------------------------------------------------------
