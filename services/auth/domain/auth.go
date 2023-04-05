@@ -135,9 +135,13 @@ func (d domain) Logout(ctx context.Context, session string, userUuid string) err
 		}
 
 	}
+	log.Println("token: ", token)
+	log.Println("session: ", session)
+
+	//TODO: this part is really funky no clue why it works like it does
 	if token != session {
-		log.Println("invalid session token")
-		return errors.New("invalid session token")
+		log.Println("invalid session token when logging out")
+		return errors.New("invalid session token when logging out")
 	}
 
 	//delete session token from cache
@@ -167,7 +171,7 @@ func (d domain) Authenticate(ctx context.Context, session string, userUuid strin
 
 	//perform check to see if the token is the same as the one in the database
 	if token != session {
-		log.Println("invalid session token")
+		log.Println("invalid session token when authenticating")
 		return Credentials{}, errors.New("invalid session token")
 	}
 

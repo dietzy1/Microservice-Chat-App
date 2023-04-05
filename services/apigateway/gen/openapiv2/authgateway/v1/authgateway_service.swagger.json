@@ -38,16 +38,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1AuthenticateRequest"
-            }
-          }
-        ],
         "tags": [
           "Authentication"
         ]
@@ -106,16 +96,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1LogoutRequest"
-            }
-          }
-        ],
         "tags": [
           "Authentication"
         ]
@@ -184,9 +164,6 @@
         }
       }
     },
-    "v1AuthenticateRequest": {
-      "type": "object"
-    },
     "v1AuthenticateResponse": {
       "type": "object"
     },
@@ -203,14 +180,6 @@
     },
     "v1LoginResponse": {
       "type": "object"
-    },
-    "v1LogoutRequest": {
-      "type": "object",
-      "properties": {
-        "uuid": {
-          "type": "string"
-        }
-      }
     },
     "v1LogoutResponse": {
       "type": "object"

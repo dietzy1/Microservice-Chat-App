@@ -44,7 +44,6 @@ service AuthGatewayService {
   rpc Logout(LogoutRequest) returns (LogoutResponse) {
     option (google.api.http) = {
       post: "/authgateway.v1.AuthGatewayService/Logout",
-      body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Logout a user"
@@ -56,7 +55,6 @@ service AuthGatewayService {
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
     option (google.api.http) = {
       post: "/authgateway.v1.AuthGatewayService/Authenticate",
-      body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Authenticate a user"
@@ -83,7 +81,6 @@ message RegisterResponse {
 }
 
 message LogoutRequest {
-  string uuid = 1;
 }
 
 message LogoutResponse {

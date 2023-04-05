@@ -17,7 +17,6 @@ import (
 
 // CORS middleware wrapper that allows origins -- configured in ENV
 func cors(h http.Handler) http.Handler {
-	log.Println("CORS WAS HIT")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if allowedOrigin(r.Header.Get("Origin")) {
 			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
@@ -78,8 +77,7 @@ func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.
 
 			fmt.Println("request path: ", r.URL.Path)
 
-			//TODO: this prolly needs to be changed since the paths have changed
-			if r.URL.Path == "/authgateway.v1.AuthGatewayService/Login" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Register" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Authenticate" {
+			if r.URL.Path == "/authgateway.v1.AuthGatewayService/Login" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Register" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Authenticate" || r.URL.Path == "/authgateway.v1.AuthGatewayService/Logout" {
 				h.ServeHTTP(w, r)
 				return
 			}
@@ -142,19 +140,22 @@ func withForwardResponseOptionWrapper() runtime.ServeMuxOption {
 		}
 
 		//perform check if token is set to "logout" and if so, delete the cookie
-		if token[0] == "" {
+		if token[0] == "" || token1[0] == "" {
 			log.Println("Deleting cookie")
 			// Add the session token to the cookie header
 			http.SetCookie(w, &http.Cookie{
 				Name:   "session_token",
 				Value:  "",
 				MaxAge: -1,
+				Path:   "/",
 			})
 			http.SetCookie(w, &http.Cookie{
 				Name:   "uuid_token",
 				Value:  "",
 				MaxAge: -1,
+				Path:   "/",
 			})
+			log.Println("session and uuid token deleted")
 			return nil
 		}
 
@@ -200,17 +201,17 @@ func incomingHeaderMatcherWrapper() runtime.ServeMuxOption {
 	return ok
 }
 
-// Functuon that looks at the request and extracts the cookies into metadata
+// Function that looks at the request and extracts the cookies into metadata
 func withMetaDataWrapper() runtime.ServeMuxOption {
 	ok := runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
-		log.Println("withMetaData called")
+		log.Println("withMetaDataWrapper called")
 
 		cookie, err := req.Cookie("session_token")
 		if err != nil {
 			log.Println("session token:", err)
 			return nil
 		}
-		log.Println("METADATA COOKIE:", cookie)
+
 		cookie1, err := req.Cookie("uuid_token")
 		if err != nil {
 			log.Println("useruuid token:", err)
@@ -219,8 +220,6 @@ func withMetaDataWrapper() runtime.ServeMuxOption {
 		log.Println("METADATA COOKIE:", cookie1)
 
 		md := metadata.Pairs("session_token", cookie.Value, "uuid_token", cookie1.Value)
-
-		// ADD THE COOKIE TO THE METADATA
 
 		return md
 	})

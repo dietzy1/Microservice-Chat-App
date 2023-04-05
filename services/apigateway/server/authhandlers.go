@@ -77,15 +77,16 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	}
 
 	//extract the token from the metadata
-	if len(md["session_token"]) == 0 {
+	if len(md["session_token"]) == 0 || len(md["uuid_token"]) == 0 {
 		log.Println("no session token")
-		return &authv1.LogoutResponse{}, status.Errorf(codes.Unauthenticated, "no session token")
+		return &authv1.LogoutResponse{}, status.Errorf(codes.Unauthenticated, "no session or uuid token")
 	}
 	session := md["session_token"][0]
+	userUuid := md["uuid_token"][0]
 
 	logout, err := s.authClient.Logout(ctx, &authclientv1.LogoutRequest{
 		Session:  session,
-		UserUuid: req.Uuid,
+		UserUuid: userUuid,
 	})
 	if err != nil {
 		log.Println(err)
@@ -93,7 +94,7 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	}
 	log.Println(logout)
 
-	md = metadata.Pairs("session_token", "")
+	md = metadata.Pairs("session_token", "", "uuid_token", "")
 	grpc.SendHeader(ctx, md)
 
 	return &authv1.LogoutResponse{}, nil
@@ -111,7 +112,7 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 	//extract the token from the metadata
 	if len(md["session_token"]) == 0 || len(md["uuid_token"]) == 0 {
 		log.Println("no session token")
-		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "no session token")
+		return &authv1.AuthenticateResponse{}, status.Errorf(codes.Unauthenticated, "no session or uuid token")
 	}
 	session := md["session_token"][0]
 	uuid := md["uuid_token"][0]
