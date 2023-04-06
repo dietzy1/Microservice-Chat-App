@@ -25,6 +25,8 @@ type ConnectionManager struct {
 	broadcast  chan *messagev1.CreateMessageRequest //Before this was []byte
 	register   chan *ws
 	unregister chan *ws
+	//TODO: experimental
+	activeCheck chan *ws
 }
 
 // Initialize the connection manager
@@ -55,10 +57,12 @@ func Start() {
 // Might need to inject some dependencies here
 func NewConnectionManger() *ConnectionManager {
 	return &ConnectionManager{
-		broadcast:  make(chan *messagev1.CreateMessageRequest), //before this was []byte //Now it should actually be a slice of broadcast channels
+		broadcast:  make(chan *messagev1.CreateMessageRequest),
 		register:   make(chan *ws),
 		unregister: make(chan *ws),
 		clients:    make(map[*ws]bool),
+		//TODO: experimental
+		activeCheck: make(chan *ws),
 	}
 }
 
@@ -122,14 +126,30 @@ func (cm *ConnectionManager) Run() {
 			for client := range cm.clients {
 				select {
 				case client.send <- message:
-					//Perform call to application to store message in database
 
 				default:
 					close(client.send)
 					delete(cm.clients, client)
 				}
 			}
+			//Here I could add a case for state changes to the online/offline clients
+			//Ideally the state itself should be contained within the map itself since its a map of clients with a boolean value
+			/* case stateChange := <-cm.activeCheck:
+			//If stateChanged update the state of the client
+
+			//If an event is recieved here we should send a message to the client
+			for client := range cm.clients {
+				select {
+				case client.send <- message:
+
+				default:
+					close(client.send)
+					delete(cm.clients, client)
+				}
+
+			} */
 		}
+
 	}
 
 }

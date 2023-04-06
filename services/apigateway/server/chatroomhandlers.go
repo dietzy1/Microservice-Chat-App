@@ -77,7 +77,7 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 	//Convert from []*chatroomv1.Channel to []*chatroomgatewayv1.Channel
 	for _, channel := range room.Channels {
 		resp.Channel = append(resp.Channel, &chatroomv1.Channel{
-			Uuid:         channel.Uuid,
+			ChannelUuid:  channel.ChannelUuid,
 			Name:         channel.Name,
 			OwnerUuid:    channel.OwnerUuid,
 			ChatroomUuid: channel.ChatroomUuid,
@@ -117,7 +117,7 @@ func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) 
 		//Convert from []*chatroomv1.Channel to []*chatroomgatewayv1.Channel
 		for _, channel := range rooms.Rooms[i].Channels {
 			resp.Rooms[i].Channel = append(resp.Rooms[i].Channel, &chatroomv1.Channel{
-				Uuid:         channel.Uuid,
+				ChannelUuid:  channel.ChannelUuid,
 				Name:         channel.Name,
 				OwnerUuid:    channel.OwnerUuid,
 				ChatroomUuid: channel.ChatroomUuid,

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
@@ -12,6 +13,7 @@ import (
 
 func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequest) (*messagev1.GetMessagesResponse, error) {
 
+	log.Println("GetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessagesGetMessages")
 	//call message service
 
 	res, err := s.messageClient.GetMessages(ctx, &messageclientv1.GetMessagesRequest{
@@ -23,6 +25,7 @@ func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequ
 			Messages: nil,
 		}, status.Errorf(codes.Internal, "Error getting messages: %v", err)
 	}
+	log.Println(res)
 
 	resp := &messagev1.GetMessagesResponse{}
 
@@ -38,6 +41,7 @@ func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequ
 			Timestamp:    msg.Timestamp,
 		})
 	}
+	log.Println(resp)
 
 	return resp, nil
 

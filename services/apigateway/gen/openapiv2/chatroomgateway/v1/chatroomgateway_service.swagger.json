@@ -408,7 +408,7 @@
     "v1Channel": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "channelUuid": {
           "type": "string"
         },
         "name": {

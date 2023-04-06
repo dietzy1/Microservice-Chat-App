@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 
 	"github.com/dietzy1/chatapp/services/message/domain"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
@@ -84,6 +85,39 @@ func (s *server) GetMessage(ctx context.Context, req *messagev1.GetMessagesReque
 		},
 	}
 	return msgRes, nil
+}
+
+func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequest) (*messagev1.GetMessagesResponse, error) {
+	log.Println("GetMessages called")
+	//Check if message is empty
+	if req.ChatRoomUuid == "" || req.ChannelUuid == "" {
+		log.Println("Message is empty")
+		return nil, status.Error(codes.InvalidArgument, "Message is empty")
+	}
+
+	//Get the message
+	msg, err := s.domain.GetMessages(ctx, req.ChatRoomUuid, req.ChannelUuid)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+
+	//Create the response
+	resp := &messagev1.GetMessagesResponse{}
+
+	//Convert msg to []*Msg
+	for _, m := range msg {
+		resp.Messages = append(resp.Messages, &messagev1.Msg{
+			Author:       m.Author,
+			Content:      m.Content,
+			AuthorUuid:   m.AuthorUuid,
+			ChatRoomUuid: m.ChatRoomUuid,
+			ChannelUuid:  m.ChannelUuid,
+			MessageUuid:  m.MessageUuid,
+			Timestamp:    m.Timestamp,
+		})
+	}
+
+	return resp, nil
 }
 
 func (s *server) EditMessage(ctx context.Context, req *messagev1.EditMessageRequest) (*messagev1.EditMessageResponse, error) {

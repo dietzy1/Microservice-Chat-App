@@ -25,14 +25,15 @@ type MsgRepo interface {
 
 //Implement the methods for the domain layer and create the interface and inject it into the grpc layer
 
+// add bson annotations to the message struct
 type Message struct {
-	Author       string
-	Content      string
-	AuthorUuid   string
-	ChatRoomUuid string
-	ChannelUuid  string
-	MessageUuid  string
-	Timestamp    string
+	Author       string `json:"author" bson:"author"`
+	Content      string `json:"content" bson:"content"`
+	AuthorUuid   string `json:"authoruuid" bson:"authoruuid"`
+	ChatRoomUuid string `json:"chatroomuuid" bson:"chatroomuuid"`
+	ChannelUuid  string `json:"channeluuid" bson:"channeluuid"`
+	MessageUuid  string `json:"messageuuid" bson:"messageuuid"`
+	Timestamp    string `json:"timestamp" bson:"timestamp"`
 }
 
 func (d *Domain) CreateMessage(ctx context.Context, msg Message) (Message, error) {
@@ -53,6 +54,7 @@ func (d *Domain) CreateMessage(ctx context.Context, msg Message) (Message, error
 
 func (d *Domain) GetMessages(ctx context.Context, chatroomUuid string, channelUuid string) ([]Message, error) {
 
+	log.Println("Getting messages")
 	//Call the repository layer'
 	messages, err := d.repo.GetMessages(ctx, chatroomUuid, channelUuid)
 	if err != nil {

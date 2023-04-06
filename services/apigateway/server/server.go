@@ -124,6 +124,7 @@ func runGateway(authClient authclientv1.AuthServiceClient) error {
 
 	log.Info("Serving gRPC-Gateway", gatewayAddress)
 	log.Fatalln(gwServer.ListenAndServe())
+
 	return nil
 }
 
@@ -162,6 +163,7 @@ func Start() {
 	log.Info("Serving gRPC on http://", addr)
 	go func() {
 		log.Fatal(s.Serve(lis))
+
 	}()
 	//Run the GRPC gateway server
 	err = runGateway(*authClient)

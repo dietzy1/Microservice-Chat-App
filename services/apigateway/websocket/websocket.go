@@ -28,6 +28,9 @@ type ws struct {
 	messageClient messagev1.MessageServiceClient
 }
 
+//I could implement a write only here which is going to continuesly send updates to the client
+//About online // offline users
+
 // I need to implement some error handling so it doesn't crash the server on incorrect proto format
 func (ws *ws) readPump() {
 	defer func() {
@@ -119,7 +122,9 @@ func (ws *ws) writePump() {
 			if err := ws.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
+
 		}
+
 	}
 }
 

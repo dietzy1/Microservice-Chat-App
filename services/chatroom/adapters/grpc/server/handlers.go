@@ -93,7 +93,7 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 	channels := make([]*chatroomv1.Channel, len(chatroom.Channels))
 	for i, channel := range chatroom.Channels {
 		channels[i] = &chatroomv1.Channel{
-			Uuid:         channel.ChannelUuid,
+			ChannelUuid:  channel.ChannelUuid,
 			Name:         channel.Name,
 			ChatroomUuid: channel.ChatroomUuid,
 			OwnerUuid:    channel.Owner,
@@ -136,7 +136,7 @@ func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) 
 		channels := make([]*chatroomv1.Channel, len(chatroom.Channels))
 		for i, channel := range chatroom.Channels {
 			channels[i] = &chatroomv1.Channel{
-				Uuid:         channel.ChannelUuid,
+				ChannelUuid:  channel.ChannelUuid,
 				Name:         channel.Name,
 				ChatroomUuid: channel.ChatroomUuid,
 				OwnerUuid:    channel.Owner,
