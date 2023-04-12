@@ -13,6 +13,7 @@ service UserService {
 
   //External RPC
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
   rpc EditDescription(EditDescriptionRequest) returns (EditDescriptionResponse) {}
   rpc ChangeAvatar(ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 
@@ -54,6 +55,14 @@ message GetUserResponse {
   string description = 4;
   string join_date = 5;
   repeated string chat_servers = 6;
+}
+
+message GetUsersRequest {
+  repeated string user_uuids = 1;
+}
+
+message GetUsersResponse {
+  repeated GetUserResponse users = 1;
 }
 
 message EditDescriptionRequest {

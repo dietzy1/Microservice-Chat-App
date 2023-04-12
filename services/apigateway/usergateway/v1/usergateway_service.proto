@@ -29,6 +29,18 @@ service UserGatewayService {
     };
   }
 
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+    option (google.api.http) = {
+      post: "/usergateway.v1.UserGatewayService/GetUsers",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get multiple users"
+      description: "GRPC gateway call to get multiple users."
+      tags: "User"
+    };
+  }
+
   rpc EditDescription(EditDescriptionRequest) returns (EditDescriptionResponse) {
     option (google.api.http) = {
       post: "/usergateway.v1.UserGatewayService/EditDescription",
@@ -78,6 +90,17 @@ message GetUserResponse {
   string join_date = 5;
   repeated string chat_servers = 6;
 }
+
+message GetUsersRequest {
+  repeated string user_uuids = 1;
+}
+
+message GetUsersResponse {
+  repeated GetUserResponse users = 1;
+}
+
+
+
 
 message EditDescriptionRequest {
   string user_uuid = 1;

@@ -14,10 +14,9 @@ import (
 	accountv1 "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1"
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/clients"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
-
-	client "github.com/dietzy1/chatapp/services/apigateway/clients"
 
 	//import the generated protobuf code straight from their source
 	accountclientv1 "github.com/dietzy1/chatapp/services/account/proto/account/v1"
@@ -142,11 +141,11 @@ func Start() {
 	//initiate dependencies for the server
 
 	lruCache := cache.New(1000)
-	authClient := client.NewAuthClient()
-	userClient := client.NewUserClient()
-	chatroomClient := client.NewChatRoomClient()
-	messageClient := client.NewMessageClient()
-	accountClient := client.NewAccountClient()
+	authClient := clients.NewAuthClient()
+	userClient := clients.NewUserClient()
+	chatroomClient := clients.NewChatRoomClient()
+	messageClient := clients.NewMessageClient()
+	accountClient := clients.NewAccountClient()
 
 	dependencies := newServer(&lruCache, *authClient, *userClient, *messageClient, *chatroomClient, *accountClient)
 

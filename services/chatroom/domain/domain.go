@@ -31,6 +31,9 @@ type chatroom interface {
 	InviteUser(ctx context.Context, chatroomUuid string, userUuid string) error
 	RemoveUser(ctx context.Context, chatroomUuid string, userUuid string) error
 	AddUser(ctx context.Context, chatroomUuid string, userUuid string) error
+
+	//internal use
+	ForceAddUser(ctx context.Context, chatroomUuid string, userUuid string) error
 }
 
 type Chatroom struct {
@@ -262,5 +265,18 @@ func (d *Domain) AddUser(ctx context.Context, chatroom Chatroom, userUuid string
 		}
 	}
 
+	return nil
+}
+
+// internal use
+func (d *Domain) ForceAddUser(ctx context.Context, userUuid string) error {
+
+	const chatroomUuid = "5cd69ca7-7fbf-4693-99a7-62ceb4e6a395"
+
+	err := d.repo.ForceAddUser(ctx, chatroomUuid, userUuid)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }

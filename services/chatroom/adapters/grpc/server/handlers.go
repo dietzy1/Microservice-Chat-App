@@ -23,6 +23,8 @@ type chatroom interface {
 	InviteUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
 	RemoveUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
 	AddUser(ctx context.Context, chatroom domain.Chatroom, userUuid string) error
+
+	ForceAddUser(ctx context.Context, userUuid string) error
 }
 
 func (s *server) CreateRoom(ctx context.Context, req *chatroomv1.CreateRoomRequest) (*chatroomv1.CreateRoomResponse, error) {
@@ -289,4 +291,23 @@ func (s *server) AddUser(ctx context.Context, req *chatroomv1.AddUserRequest) (*
 	}
 
 	return &chatroomv1.AddUserResponse{}, nil
+}
+
+//---------------------------------------------------------------------------------
+
+// internal use only
+func (s *server) ForceAddUser(ctx context.Context, req *chatroomv1.ForceAddUserRequest) (*chatroomv1.ForceAddUserResponse, error) {
+
+	// Check if user_uuid, chatroomuuid and owner uuid is empty
+	if req.UserUuid == "" {
+		log.Println("UserUuid cannot be empty")
+		return &chatroomv1.ForceAddUserResponse{}, status.Error(400, "UserUuid cannot be empty")
+	}
+
+	err := s.chatroom.ForceAddUser(ctx, req.UserUuid)
+	if err != nil {
+		return &chatroomv1.ForceAddUserResponse{}, status.Error(500, "Internal Server Error")
+	}
+
+	return &chatroomv1.ForceAddUserResponse{}, nil
 }

@@ -33,6 +33,36 @@ func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*user
 
 }
 
+func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*userv1.GetUsersResponse, error) {
+
+	users, err := s.userClient.GetUsers(ctx, &userclientv1.GetUsersRequest{
+		UserUuids: req.UserUuids,
+	})
+	if err != nil {
+		return &userv1.GetUsersResponse{}, status.Errorf(codes.Internal, "Error getting users: %v", err)
+	}
+
+	//I need to convert the users.Users to a []*userv1.GetUserResponse type
+	resp := &userv1.GetUsersResponse{}
+
+	for _, u := range users.Users {
+		resp.Users = append(resp.Users, &userv1.GetUserResponse{
+			Name: u.Name,
+			Uuid: u.Uuid,
+			Icon: &userv1.Icon{
+				Uuid: u.Icon.Uuid,
+				Link: u.Icon.Link,
+			},
+			Description: u.Description,
+			JoinDate:    u.JoinDate,
+			ChatServers: u.ChatServers,
+		})
+	}
+
+	return resp, nil
+
+}
+
 func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptionRequest) (*userv1.EditDescriptionResponse, error) {
 
 	_, err := s.userClient.EditDescription(ctx, &userclientv1.EditDescriptionRequest{

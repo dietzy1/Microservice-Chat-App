@@ -63,6 +63,23 @@ func (a *Db) GetUser(ctx context.Context, uuid string) (domain.User, error) {
 	return user, nil
 }
 
+func (a *Db) GetUsers(ctx context.Context, uuids []string) ([]domain.User, error) {
+	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	users := []domain.User{}
+
+	cursor, err := collection.Find(ctx, bson.M{"uuid": bson.M{"$in": uuids}})
+	if err != nil {
+		return users, err
+	}
+
+	err = cursor.All(ctx, &users)
+	if err != nil {
+		return users, err
+	}
+
+	return users, nil
+}
+
 func (a *Db) ChangeAvatar(ctx context.Context, userUuid string, avatarUuid string) error {
 	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
 

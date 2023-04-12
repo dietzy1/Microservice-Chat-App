@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserGatewayServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error)
 	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
 	GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error)
@@ -39,6 +40,15 @@ func NewUserGatewayServiceClient(cc grpc.ClientConnInterface) UserGatewayService
 func (c *userGatewayServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
 	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/GetUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userGatewayServiceClient) GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error) {
+	out := new(GetUsersResponse)
+	err := c.cc.Invoke(ctx, "/usergateway.v1.UserGatewayService/GetUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +87,7 @@ func (c *userGatewayServiceClient) GetAvatars(ctx context.Context, in *GetAvatar
 // for forward compatibility
 type UserGatewayServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error)
 	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
 	GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error)
@@ -88,6 +99,9 @@ type UnimplementedUserGatewayServiceServer struct {
 
 func (UnimplementedUserGatewayServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserGatewayServiceServer) GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedUserGatewayServiceServer) EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDescription not implemented")
@@ -124,6 +138,24 @@ func _UserGatewayService_GetUser_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserGatewayServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserGatewayService_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserGatewayServiceServer).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usergateway.v1.UserGatewayService/GetUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserGatewayServiceServer).GetUsers(ctx, req.(*GetUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -192,6 +224,10 @@ var UserGatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _UserGatewayService_GetUser_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _UserGatewayService_GetUsers_Handler,
 		},
 		{
 			MethodName: "EditDescription",

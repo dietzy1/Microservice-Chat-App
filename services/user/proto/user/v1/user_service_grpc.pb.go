@@ -28,10 +28,12 @@ type UserServiceClient interface {
 	RemoveChatServer(ctx context.Context, in *RemoveChatServerRequest, opts ...grpc.CallOption) (*RemoveChatServerResponse, error)
 	// External RPC
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error)
 	EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error)
 	ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error)
-	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (UserService_UploadAvatarClient, error)
 	GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error)
+	// Sortof internal
+	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (UserService_UploadAvatarClient, error)
 }
 
 type userServiceClient struct {
@@ -78,6 +80,15 @@ func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 	return out, nil
 }
 
+func (c *userServiceClient) GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error) {
+	out := new(GetUsersResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/GetUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) EditDescription(ctx context.Context, in *EditDescriptionRequest, opts ...grpc.CallOption) (*EditDescriptionResponse, error) {
 	out := new(EditDescriptionResponse)
 	err := c.cc.Invoke(ctx, "/user.v1.UserService/EditDescription", in, out, opts...)
@@ -90,6 +101,15 @@ func (c *userServiceClient) EditDescription(ctx context.Context, in *EditDescrip
 func (c *userServiceClient) ChangeAvatar(ctx context.Context, in *ChangeAvatarRequest, opts ...grpc.CallOption) (*ChangeAvatarResponse, error) {
 	out := new(ChangeAvatarResponse)
 	err := c.cc.Invoke(ctx, "/user.v1.UserService/ChangeAvatar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error) {
+	out := new(GetAvatarsResponse)
+	err := c.cc.Invoke(ctx, "/user.v1.UserService/GetAvatars", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,15 +150,6 @@ func (x *userServiceUploadAvatarClient) CloseAndRecv() (*UploadAvatarResponse, e
 	return m, nil
 }
 
-func (c *userServiceClient) GetAvatars(ctx context.Context, in *GetAvatarsRequest, opts ...grpc.CallOption) (*GetAvatarsResponse, error) {
-	out := new(GetAvatarsResponse)
-	err := c.cc.Invoke(ctx, "/user.v1.UserService/GetAvatars", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -149,10 +160,12 @@ type UserServiceServer interface {
 	RemoveChatServer(context.Context, *RemoveChatServerRequest) (*RemoveChatServerResponse, error)
 	// External RPC
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error)
 	EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error)
 	ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error)
-	UploadAvatar(UserService_UploadAvatarServer) error
 	GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error)
+	// Sortof internal
+	UploadAvatar(UserService_UploadAvatarServer) error
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -171,17 +184,20 @@ func (UnimplementedUserServiceServer) RemoveChatServer(context.Context, *RemoveC
 func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
+func (UnimplementedUserServiceServer) GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
+}
 func (UnimplementedUserServiceServer) EditDescription(context.Context, *EditDescriptionRequest) (*EditDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditDescription not implemented")
 }
 func (UnimplementedUserServiceServer) ChangeAvatar(context.Context, *ChangeAvatarRequest) (*ChangeAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeAvatar not implemented")
 }
-func (UnimplementedUserServiceServer) UploadAvatar(UserService_UploadAvatarServer) error {
-	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
-}
 func (UnimplementedUserServiceServer) GetAvatars(context.Context, *GetAvatarsRequest) (*GetAvatarsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAvatars not implemented")
+}
+func (UnimplementedUserServiceServer) UploadAvatar(UserService_UploadAvatarServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -267,6 +283,24 @@ func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.UserService/GetUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUsers(ctx, req.(*GetUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_EditDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditDescriptionRequest)
 	if err := dec(in); err != nil {
@@ -303,6 +337,24 @@ func _UserService_ChangeAvatar_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetAvatars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvatarsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAvatars(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.v1.UserService/GetAvatars",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAvatars(ctx, req.(*GetAvatarsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_UploadAvatar_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(UserServiceServer).UploadAvatar(&userServiceUploadAvatarServer{stream})
 }
@@ -329,24 +381,6 @@ func (x *userServiceUploadAvatarServer) Recv() (*UploadAvatarRequest, error) {
 	return m, nil
 }
 
-func _UserService_GetAvatars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAvatarsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).GetAvatars(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.v1.UserService/GetAvatars",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetAvatars(ctx, req.(*GetAvatarsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -369,6 +403,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _UserService_GetUser_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _UserService_GetUsers_Handler,
 		},
 		{
 			MethodName: "EditDescription",

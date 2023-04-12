@@ -58,18 +58,6 @@ func logger(h http.Handler) http.Handler {
 	})
 }
 
-func recoverer(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Println(err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			}
-		}()
-		h.ServeHTTP(w, r)
-	})
-}
-
 func wrapperAuthMiddleware(authClient authclientv1.AuthServiceClient) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -225,3 +213,15 @@ func withMetaDataWrapper() runtime.ServeMuxOption {
 	})
 	return ok
 }
+
+/* func recoverer(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println(err)
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+		h.ServeHTTP(w, r)
+	})
+} */

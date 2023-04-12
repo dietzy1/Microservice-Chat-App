@@ -17,6 +17,9 @@ service ChatroomService {
   rpc InviteUser(InviteUserRequest) returns (InviteUserResponse) {}
   rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse) {}
   rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
+
+  //For internal use only
+  rpc ForceAddUser(ForceAddUserRequest) returns (ForceAddUserResponse) {}
 }
 
 message CreateRoomRequest {
@@ -118,3 +121,11 @@ message AddUserRequest {
 message AddUserResponse {}
 
 // -- ------------------------------------------------------------------------------
+
+
+//internal use
+message ForceAddUserRequest {
+  string user_uuid = 1;
+}
+
+message ForceAddUserResponse {}

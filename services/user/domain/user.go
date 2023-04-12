@@ -21,6 +21,7 @@ type user interface {
 	RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error
 	EditDescription(ctx context.Context, uuid string, description string) error
 	GetUser(ctx context.Context, uuid string) (User, error)
+	GetUsers(ctx context.Context, uuids []string) ([]User, error)
 	ChangeAvatar(ctx context.Context, userUuid string, avatarUuid string) error
 }
 
@@ -43,7 +44,7 @@ func (d Domain) CreateUser(ctx context.Context, username string, uuid string) er
 		},
 		Description: "No description",
 		JoinDate:    time.Now().Format("02 January 2006"),
-		ChatServers: []string{"MANUALLY INPUT THE STANDART CHAT SERVER"},
+		ChatServers: []string{"5cd69ca7-7fbf-4693-99a7-62ceb4e6a395"},
 	}
 
 	//Do call to database and request that the user is added to the database
@@ -92,6 +93,16 @@ func (d Domain) GetUser(ctx context.Context, uuid string) (User, error) {
 		return User{}, err
 	}
 	return user, nil
+}
+
+func (d Domain) GetUsers(ctx context.Context, uuids []string) ([]User, error) {
+
+	//Do call to database and request a full user struct based on the uuid
+	users, err := d.user.GetUsers(ctx, uuids)
+	if err != nil {
+		return []User{}, err
+	}
+	return users, nil
 }
 
 func (d Domain) ChangeAvatar(ctx context.Context, userUuid string, iconUuid string) error {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	chatroomClientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
 	userClientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 )
 
@@ -27,7 +28,8 @@ type domain struct {
 	auth  Auth
 	cache Cache
 
-	userClient userClientv1.UserServiceClient
+	userClient     userClientv1.UserServiceClient
+	chatroomClient chatroomClientv1.ChatroomServiceClient
 }
 
 type Credentials struct {
@@ -118,6 +120,24 @@ func (d domain) Register(ctx context.Context, cred Credentials) (Credentials, er
 			return Credentials{}, err
 		}
 		return Credentials{}, err
+	}
+
+	//Call the chatroom service to add the user to the default chatroom
+
+	_, err = d.chatroomClient.ForceAddUser(ctx, &chatroomClientv1.ForceAddUserRequest{
+		UserUuid: cred.Uuid,
+	})
+	if err != nil {
+		log.Println(err)
+
+		//if the chatroom service fails to create a user then the user should be deleted from the auth service
+		if err := d.auth.Unregister(ctx, cred.Uuid); err != nil {
+			log.Println(err)
+			return Credentials{}, err
+		}
+		return Credentials{}, err
+
+		//Potentially need to add delete user from user service
 	}
 
 	return Credentials{Session: session, Uuid: cred.Uuid}, nil

@@ -154,6 +154,40 @@
           "User"
         ]
       }
+    },
+    "/usergateway.v1.UserGatewayService/GetUsers": {
+      "post": {
+        "summary": "Get multiple users",
+        "description": "GRPC gateway call to get multiple users.",
+        "operationId": "UserGatewayService_GetUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetUsersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      }
     }
   },
   "definitions": {
@@ -256,6 +290,28 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "v1GetUsersRequest": {
+      "type": "object",
+      "properties": {
+        "userUuids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1GetUsersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1GetUserResponse"
           }
         }
       }

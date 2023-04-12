@@ -89,12 +89,14 @@ func (c *client) handleMessages() {
 			if !ok {
 				return
 			}
+
+			_ = active
 			//Send the array of active users to the client
-			err := c.conn.conn.WriteMessage(1, active)
+			/* err := c.conn.conn.WriteMessage(1, active)
 			if err != nil {
 				log.Println("Failed to write message to client")
 				return
-			}
+			} */
 
 		}
 	}

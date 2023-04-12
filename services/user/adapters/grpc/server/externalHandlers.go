@@ -34,6 +34,35 @@ func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*user
 
 }
 
+func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*userv1.GetUsersResponse, error) {
+
+	//data validation
+	if req.UserUuids == nil {
+		return &userv1.GetUsersResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
+	}
+
+	users, err := s.user.GetUsers(ctx, req.UserUuids)
+	if err != nil {
+		return &userv1.GetUsersResponse{}, status.Errorf(codes.Internal, "Error getting users: %v", err)
+	}
+
+	resp := &userv1.GetUsersResponse{}
+
+	for _, u := range users {
+		resp.Users = append(resp.Users, &userv1.GetUserResponse{
+			Name:        u.Name,
+			Uuid:        u.Uuid,
+			Icon:        &userv1.Icon{Uuid: u.Icon.Uuid, Link: u.Icon.Link},
+			Description: u.Description,
+			JoinDate:    u.JoinDate,
+			ChatServers: u.ChatServers,
+		})
+	}
+
+	return resp, nil
+
+}
+
 func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptionRequest) (*userv1.EditDescriptionResponse, error) {
 
 	//data validation

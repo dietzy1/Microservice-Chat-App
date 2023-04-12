@@ -172,3 +172,13 @@ func (a *Db) AddUser(ctx context.Context, chatroomUuid string, userUuid string) 
 	}
 	return nil
 }
+
+// Skips the check if user is in the invited array
+func (a *Db) ForceAddUser(ctx context.Context, chatroomUuid string, userUuid string) error {
+	collection := a.client.Database(database).Collection(collection)
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": chatroomUuid}, bson.M{"$push": bson.M{"users": userUuid}})
+	if err != nil {
+		return err
+	}
+	return nil
+}

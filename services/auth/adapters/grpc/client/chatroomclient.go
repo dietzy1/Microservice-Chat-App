@@ -1,20 +1,20 @@
-package clients
+package client
 
 import (
 	"context"
 	"log"
 	"os"
 
-	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
+	chatroomclientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewUserClient() *userclientv1.UserServiceClient {
-	log.Println("Connecting to user service", os.Getenv("USERSERVICE"))
+func NewChatroomClient() *chatroomclientv1.ChatroomServiceClient {
+
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"dns:///0.0.0.0"+os.Getenv("USERSERVICE"),
+		"dns:///0.0.0.0"+os.Getenv("CHATROOM"),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -22,7 +22,7 @@ func NewUserClient() *userclientv1.UserServiceClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := userclientv1.NewUserServiceClient(conn)
+	client := chatroomclientv1.NewChatroomServiceClient(conn)
 
 	return &client
 }
