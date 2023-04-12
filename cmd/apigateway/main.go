@@ -18,8 +18,6 @@ func main() {
 	log.Println("Starting API Gateway")
 	server.Start()
 
-	//Need to initate the websocket connection here aswell
-
 }
 
 //Currently I have a GRPC gateway server which calls a remote method
