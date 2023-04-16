@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
@@ -34,6 +35,7 @@ func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*user
 }
 
 func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*userv1.GetUsersResponse, error) {
+	log.Println("GetUsers called")
 
 	users, err := s.userClient.GetUsers(ctx, &userclientv1.GetUsersRequest{
 		UserUuids: req.UserUuids,

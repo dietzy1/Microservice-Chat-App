@@ -6,6 +6,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 )
 
@@ -30,4 +31,15 @@ func unmarshal(msg []byte) (*messagev1.CreateMessageRequest, error) {
 	}
 	log.Println(message)
 	return message, nil
+}
+
+func marshalActivity(activity *chatroomv1.Activity) ([]byte, error) {
+
+	msg, err := proto.Marshal(activity)
+	if err != nil {
+		log.Printf("Error marshalling activity: %v", err)
+		return nil, err
+	}
+	return msg, nil
+
 }

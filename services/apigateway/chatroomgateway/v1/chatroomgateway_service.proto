@@ -237,3 +237,9 @@ message AddUserRequest {
 message AddUserResponse {}
 
 // -- ------------------------------------------------------------------------------
+
+//Used for activity stream
+
+message Activity {
+  repeated string online_users = 1;
+}

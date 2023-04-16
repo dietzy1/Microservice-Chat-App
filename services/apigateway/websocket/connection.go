@@ -27,7 +27,7 @@ type conn struct {
 	conn           *websocket.Conn
 	sendChannel    chan []byte
 	receiveChannel chan []byte
-	activeChannel  chan []byte
+	activeChannel  chan []string
 	shutdown       chan any
 	cleanupOnce    *sync.Once
 	activity       *activity
@@ -43,7 +43,7 @@ func newConnection(o *connOptions) *conn {
 		conn:           o.conn,
 		sendChannel:    make(chan []byte, sendBufferSize),
 		receiveChannel: make(chan []byte, recieveBufferSize),
-		activeChannel:  make(chan []byte, recieveBufferSize),
+		activeChannel:  make(chan []string, recieveBufferSize),
 		shutdown:       make(chan interface{}),
 		cleanupOnce:    &sync.Once{},
 		activity:       o.activity,

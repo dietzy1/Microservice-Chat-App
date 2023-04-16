@@ -48,7 +48,7 @@ func newManager(broker Broker, messageClient messageclientv1.MessageServiceClien
 
 type activity struct {
 	active          map[string][]string
-	activityChannel chan []byte
+	activityChannel chan []string
 	mu              sync.RWMutex
 }
 
@@ -78,7 +78,7 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 
 	ac := &activity{
 		active:          m.active,
-		activityChannel: make(chan []byte),
+		activityChannel: make(chan []string),
 		mu:              sync.RWMutex{},
 	}
 
@@ -110,6 +110,7 @@ func (m *manager) addClient(c *client, id *id) {
 
 	m.clients[id.user] = c
 	m.active[id.chatroom] = append(m.active[id.chatroom], id.user)
+	m.clients[id.user].updateClientActivity(id.chatroom)
 
 	log.Println("Active Users: ", m.active)
 }
@@ -121,6 +122,7 @@ func (m *manager) removeClient(c *client, id *id) {
 	delete(m.clients, id.user)
 
 	ok := m.active[id.chatroom]
+	m.clients[id.user].updateClientActivity(id.chatroom)
 	//Remove element from slice that contains user id
 	//TODO: veryfy that this logic works
 	for i, v := range ok {
@@ -147,6 +149,7 @@ func Start() {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Websocket connection request received")
+		log.Println("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
 		m.upgradeHandler(w, r)
 	})
 

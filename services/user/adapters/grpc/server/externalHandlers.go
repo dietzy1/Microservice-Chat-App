@@ -58,6 +58,7 @@ func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*us
 			ChatServers: u.ChatServers,
 		})
 	}
+	log.Println(resp.Users)
 
 	return resp, nil
 

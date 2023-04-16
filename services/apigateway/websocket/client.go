@@ -4,7 +4,9 @@ import (
 	"context"
 	"log"
 
+	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
+	"github.com/gorilla/websocket"
 )
 
 type client struct {
@@ -90,13 +92,26 @@ func (c *client) handleMessages() {
 				return
 			}
 
-			_ = active
+			//convert active to slice of strings
+
+			//Construct a protobuf message of activity
+			activity := &chatroomv1.Activity{
+				OnlineUsers: active,
+			}
+
+			//Marshal the protobuf message
+			marshaled, err := marshalActivity(activity)
+			if err != nil {
+				log.Println("Failed to marshal activity")
+				return
+			}
+
 			//Send the array of active users to the client
-			/* err := c.conn.conn.WriteMessage(1, active)
+			err = c.conn.conn.WriteMessage(websocket.BinaryMessage, marshaled)
 			if err != nil {
 				log.Println("Failed to write message to client")
 				return
-			} */
+			}
 
 		}
 	}
@@ -107,8 +122,9 @@ func (c *client) updateClientActivity(chatroom string) {
 	// return array of who is active in the chatroom
 	active := c.conn.activity.active[chatroom]
 	//Take the slice and convert it to a byte array
+	log.Println("UPDATING CLIENT ACTIVITY")
 
-	c.conn.activeChannel <- []byte(active[0])
+	c.conn.activeChannel <- active
 
 }
 
