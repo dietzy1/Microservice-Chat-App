@@ -10,7 +10,8 @@ import (
 
 // PubSub is an interface for a Redis Pub/Sub client.
 type Broker interface {
-	Subscribe(ctx context.Context, channel string) (<-chan *redis.Message, error)
+	Subscribe(ctx context.Context, channel string) (*redis.PubSub, error)
+	unsubscribe(ctx context.Context, pubsub *redis.PubSub) error
 	Publish(ctx context.Context, channel string, message []byte) error
 }
 
@@ -28,6 +29,7 @@ func newBroker() *broker {
 	}
 	client := redis.NewClient(otps)
 	if _, err := client.Ping(context.Background()).Result(); err != nil {
+		log.Printf("Failed to ping redis: %v", err)
 		return nil
 	}
 
@@ -37,29 +39,27 @@ func newBroker() *broker {
 }
 
 // Subscribe subscribes to a channel and returns a PubSub instance for receiving messages.
-func (b *broker) Subscribe(ctx context.Context, channel string) (<-chan *redis.Message, error) {
+func (b *broker) Subscribe(ctx context.Context, channel string) (*redis.PubSub, error) {
 	pubsub := b.client.Subscribe(ctx, channel)
 	_, err := pubsub.Receive(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return pubsub.Channel(), nil
+	return pubsub, nil
 }
 
-// unsubscribe from a channel
-func (b *broker) Unsubscribe(ctx context.Context, channel string) error {
-	pubsub := b.client.Subscribe(ctx, channel)
-	_, err := pubsub.Receive(ctx)
+// Send message to channel
+func (b *broker) Publish(ctx context.Context, channel string, message []byte) error {
+	err := b.client.Publish(ctx, channel, message).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// Send message to channel
-func (b *broker) Publish(ctx context.Context, channel string, message []byte) error {
-	err := b.client.Publish(ctx, channel, message).Err()
+func (b *broker) unsubscribe(ctx context.Context, pubsub *redis.PubSub) error {
+	err := pubsub.Unsubscribe(ctx)
 	if err != nil {
 		return err
 	}

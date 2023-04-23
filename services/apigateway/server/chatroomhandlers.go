@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// FIXME: This function currently has a bug where it doesn't contact the user service and adds the user to the newly created chatroom
 func (s *server) CreateRoom(ctx context.Context, req *chatroomv1.CreateRoomRequest) (*chatroomv1.CreateRoomResponse, error) {
 	// Check if name is empty
 	if req.Name == "" || req.OwnerUuid == "" {

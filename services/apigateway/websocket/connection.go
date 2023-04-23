@@ -31,6 +31,7 @@ type conn struct {
 	shutdown       chan any
 	cleanupOnce    *sync.Once
 	activity       *activity
+	lastPongAt     time.Time
 }
 
 type connOptions struct {
@@ -98,6 +99,19 @@ func (c *conn) readPump() {
 		log.Println("Failed to set read deadline")
 	}
 
+	//Here I need to implement some sort of ping pong mechanism to keep the connection alive
+	c.conn.SetPongHandler(func(input string) error {
+		log.Println("Received pong", input)
+
+		c.lastPongAt = time.Now()
+		if err := c.conn.SetReadDeadline(time.Now().Add(idleTimeout)); err != nil {
+
+			log.Println("Failed to set read deadline", err)
+			c.cleanup()
+		}
+		return nil
+	})
+
 	errC := make(chan error, 1)
 
 	// Start reading the incoming messages from the websocket connection.
@@ -136,12 +150,44 @@ func (c *conn) readPump() {
 			} else {
 				// Otherwise we failed to read from the connection, increment metric for failure
 
+				log.Println("THIS ERROR IS IMPORTANT: ", err)
 				log.Println("Failed to read from connection")
 			}
 			return
 		}
 	}
 }
+
+func (c *conn) heartBeat() {
+
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		log.Println("Heartbeat stopped cleaning up the connection")
+		ticker.Stop()
+		c.cleanup()
+	}()
+
+	for {
+		select {
+		case <-ticker.C:
+
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeTimeout)); err != nil {
+				log.Println("Failed to set write deadline")
+				return
+			}
+
+			log.Println("conn: ", c.conn.RemoteAddr().String())
+			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				log.Println("Failed to write ping message")
+				return
+			}
+		case <-c.shutdown:
+			log.Println("Forcing shutdown")
+			return
+		}
+	}
+}
+
 func (c *conn) cleanup() {
 
 	c.cleanupOnce.Do(func() {
@@ -164,4 +210,6 @@ func (c *conn) run() {
 
 	go c.readPump()
 	go c.writePump()
+	go c.heartBeat()
+
 }

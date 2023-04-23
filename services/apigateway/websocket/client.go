@@ -6,6 +6,8 @@ import (
 
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
+	"github.com/go-redis/redis/v8"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -36,13 +38,15 @@ func newClient(o *clientOptions) *client {
 	}
 }
 
-func (c *client) handleMessages() {
+func (c *client) handleMessages(ch <-chan *redis.Message) {
 
-	ch, err := c.broker.Subscribe(context.TODO(), c.id.channel)
+	/* ch, err := c.broker.Subscribe(context.TODO(), c.id.channel)
 	if err != nil {
+
 		log.Println("Failed to subcribe to channelID:", c.id.channel)
+		log.Println(err)
 		return
-	}
+	} */
 
 	for {
 		select {
@@ -87,12 +91,12 @@ func (c *client) handleMessages() {
 			//convert msg.Payload to slice of bytes
 			c.conn.sendChannel <- []byte(msg.Payload)
 
+			//case active, ok := <-c.conn.activity.activityChannel:
 		case active, ok := <-c.conn.activeChannel:
 			if !ok {
 				return
 			}
-
-			//convert active to slice of strings
+			log.Println("ACTIVE CHANNEL", active)
 
 			//Construct a protobuf message of activity
 			activity := &chatroomv1.Activity{
@@ -106,6 +110,7 @@ func (c *client) handleMessages() {
 				return
 			}
 
+			log.Println("SENDING ACTIVITY", activity)
 			//Send the array of active users to the client
 			err = c.conn.conn.WriteMessage(websocket.BinaryMessage, marshaled)
 			if err != nil {
@@ -124,12 +129,26 @@ func (c *client) updateClientActivity(chatroom string) {
 	//Take the slice and convert it to a byte array
 	log.Println("UPDATING CLIENT ACTIVITY")
 
+	//c.conn.activity.activityChannel <- active
+
 	c.conn.activeChannel <- active
 
 }
 
 func (c *client) run() {
+	//Start read, write and heartbeat goroutines
 	c.conn.run()
 
-	c.handleMessages()
+	pubsub, err := c.broker.Subscribe(context.TODO(), c.id.channel)
+	if err != nil {
+		log.Println("Failed to subcribe to channelID:", c.id.channel)
+		log.Println(err)
+		return
+	}
+
+	//Blocking call to handle messages
+	c.handleMessages(pubsub.Channel())
+
+	//Close the pubsub channel
+	c.broker.unsubscribe(context.TODO(), pubsub)
 }

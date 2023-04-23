@@ -99,8 +99,6 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 
 	client.run()
 
-	//Right now I should have the active count for every chatroom+channel
-	//So that means I need to count the active users for each combination of chatroom+channel
 }
 
 func (m *manager) addClient(c *client, id *id) {
@@ -110,7 +108,6 @@ func (m *manager) addClient(c *client, id *id) {
 
 	m.clients[id.user] = c
 	m.active[id.chatroom] = append(m.active[id.chatroom], id.user)
-	m.clients[id.user].updateClientActivity(id.chatroom)
 
 	log.Println("Active Users: ", m.active)
 }
@@ -122,7 +119,7 @@ func (m *manager) removeClient(c *client, id *id) {
 	delete(m.clients, id.user)
 
 	ok := m.active[id.chatroom]
-	m.clients[id.user].updateClientActivity(id.chatroom)
+
 	//Remove element from slice that contains user id
 	//TODO: veryfy that this logic works
 	for i, v := range ok {
@@ -149,7 +146,6 @@ func Start() {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Websocket connection request received")
-		log.Println("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
 		m.upgradeHandler(w, r)
 	})
 
