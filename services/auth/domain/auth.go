@@ -39,8 +39,8 @@ type Credentials struct {
 	Session  string `json:"session" bson:"session"`
 }
 
-func New(auth Auth, cache Cache, userClient userClientv1.UserServiceClient) *domain {
-	return &domain{auth: auth, cache: cache, userClient: userClient}
+func New(auth Auth, cache Cache, userClient userClientv1.UserServiceClient, chatroomClient chatroomClientv1.ChatroomServiceClient) *domain {
+	return &domain{auth: auth, cache: cache, userClient: userClient, chatroomClient: chatroomClient}
 }
 
 // If someone is trying to login to the application the session token should be returned
@@ -121,8 +121,10 @@ func (d domain) Register(ctx context.Context, cred Credentials) (Credentials, er
 		}
 		return Credentials{}, err
 	}
+	log.Println("Everything went through fine until here")
 
 	//Call the chatroom service to add the user to the default chatroom
+	//TODO:this here is causing the issue
 
 	_, err = d.chatroomClient.ForceAddUser(ctx, &chatroomClientv1.ForceAddUserRequest{
 		UserUuid: cred.Uuid,

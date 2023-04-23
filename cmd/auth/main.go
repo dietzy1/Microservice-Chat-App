@@ -16,7 +16,9 @@ func main() {
 
 	userClient := client.NewUserClient()
 
-	domain := domain.New(repo.Auth, repo.Caching, *userClient)
+	chatroomClient := client.NewChatRoomClient()
+
+	domain := domain.New(repo.Auth, repo.Caching, *userClient, *chatroomClient)
 
 	//I prolly need to inject the domain into the GRPC server here
 

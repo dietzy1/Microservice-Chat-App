@@ -39,15 +39,6 @@ func newClient(o *clientOptions) *client {
 }
 
 func (c *client) handleMessages(ch <-chan *redis.Message) {
-
-	/* ch, err := c.broker.Subscribe(context.TODO(), c.id.channel)
-	if err != nil {
-
-		log.Println("Failed to subcribe to channelID:", c.id.channel)
-		log.Println(err)
-		return
-	} */
-
 	for {
 		select {
 		//Messages recieved from the recieve channel is from the user itself
@@ -128,8 +119,6 @@ func (c *client) updateClientActivity(chatroom string) {
 	active := c.conn.activity.active[chatroom]
 	//Take the slice and convert it to a byte array
 	log.Println("UPDATING CLIENT ACTIVITY")
-
-	//c.conn.activity.activityChannel <- active
 
 	c.conn.activeChannel <- active
 

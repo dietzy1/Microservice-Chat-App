@@ -46,10 +46,10 @@ func newManager(broker Broker, messageClient messageclientv1.MessageServiceClien
 	}
 }
 
+// FIXME:
+// This is potentially a race condition that needs to be fixed
 type activity struct {
-	active          map[string][]string
-	activityChannel chan []string
-	mu              sync.RWMutex
+	active map[string][]string
 }
 
 type id struct {
@@ -77,9 +77,7 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ac := &activity{
-		active:          m.active,
-		activityChannel: make(chan []string),
-		mu:              sync.RWMutex{},
+		active: m.active,
 	}
 
 	ws := newConnection(&connOptions{conn: conn, activity: ac})
