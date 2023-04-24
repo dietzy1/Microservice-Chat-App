@@ -11,26 +11,29 @@ import (
 
 const database = "Message-Database"
 
-// TODO: Verify validaty
 func (a *Db) GetMessages(ctx context.Context, chatroomUuid string, channelUuid string) ([]domain.Message, error) {
 	collection := a.client.Database(database).Collection(chatroomUuid)
 
 	messages := []domain.Message{}
-	//Find latest 10 messages
-	opts := options.Find().SetLimit(50)
 
 	//I need to look into the collection and find the latests messages that matches the channel uuid
 	log.Println("channelUuid: ", channelUuid)
 
-	cursor, err := collection.Find(ctx, bson.M{"channeluuid": channelUuid}, opts)
+	//find 50 latests messages based on entry to database
+	//Use sort and setlimit operator
+	cursor, err := collection.Find(ctx, bson.M{"channeluuid": channelUuid}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(50))
 	if err != nil {
+
 		return messages, err
 	}
 
 	if err = cursor.All(ctx, &messages); err != nil {
 		return messages, err
 	}
-	log.Println(messages)
+	//Swap the order of the messages
+	for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+		messages[i], messages[j] = messages[j], messages[i]
+	}
 
 	return messages, nil
 

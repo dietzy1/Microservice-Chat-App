@@ -105,6 +105,18 @@ func (m *manager) addClient(c *client, id *id) {
 	log.Println(id)
 
 	m.clients[id.user] = c
+
+	//Perform check to see if id.user is already contained in the string array
+	ok := m.active[id.chatroom]
+	//Check if user is already in the active slice
+	for _, v := range ok {
+		if v == id.user {
+
+			log.Println("THIS IS NOT SUPPOSED TO HAPPEN FIND OUT WHAT THE UNDERLYING ISSUE IS 😡😡😡😡😡  Active Users: ", m.active)
+			return
+		}
+	}
+
 	m.active[id.chatroom] = append(m.active[id.chatroom], id.user)
 
 	log.Println("Active Users: ", m.active)
