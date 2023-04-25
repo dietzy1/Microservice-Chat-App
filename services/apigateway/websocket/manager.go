@@ -11,6 +11,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+//The bug could be related to when the websocket crashes unexpectedly and everything is cleaned up incorrectly
+//for example some state change could be sent on the channel after the client is removed from the manager
+//Maybe the solution is to make sure that the activity channel also is cleaned up like the rest of them
+
+//There is currently a database
+//The issue might be that I dont currently restrict myself to one concurrent reader and writer per connection
+//So I need to look into if the client also is sending messages to the server
+//And if that is the case then I need to create more channels to ensure that only the connection writer is allowed to write to the connection
+
 type manager struct {
 	//Key is userID
 	clients map[string]*client

@@ -4,11 +4,8 @@ import (
 	"context"
 	"log"
 
-	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/go-redis/redis/v8"
-
-	"github.com/gorilla/websocket"
 )
 
 type client struct {
@@ -83,32 +80,45 @@ func (c *client) handleMessages(ch <-chan *redis.Message) {
 			c.conn.sendChannel <- []byte(msg.Payload)
 
 			//case active, ok := <-c.conn.activity.activityChannel:
-		case active, ok := <-c.conn.activeChannel:
-			if !ok {
-				return
-			}
-			log.Println("ACTIVE CHANNEL", active)
+			/* case active, ok := <-c.conn.activeChannel:
+				if !ok {
+					return
+				}
+				log.Println("ACTIVE CHANNEL", active)
 
-			//Construct a protobuf message of activity
-			activity := &chatroomv1.Activity{
-				OnlineUsers: active,
-			}
+				//Construct a protobuf message of activity
+				activity := &chatroomv1.Activity{
+					OnlineUsers: active,
+				}
 
-			//Marshal the protobuf message
-			marshaled, err := marshalActivity(activity)
-			if err != nil {
-				log.Println("Failed to marshal activity")
-				return
-			}
+				//Marshal the protobuf message
+				marshaled, err := marshalActivity(activity)
+				if err != nil {
+					log.Println("Failed to marshal activity")
+					return
+				}
 
-			log.Println("SENDING ACTIVITY", activity)
-			//Send the array of active users to the client
-			err = c.conn.conn.WriteMessage(websocket.BinaryMessage, marshaled)
-			if err != nil {
-				log.Println("Failed to write message to client")
-				return
-			}
+				log.Println("SENDING ACTIVITY", activity)
+				//Send the array of active users to the client
 
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				//FIXME: THIS IS CAUSING A DATARACE
+				err = c.conn.conn.WriteMessage(websocket.BinaryMessage, marshaled)
+				if err != nil {
+					log.Println("Failed to write message to client")
+					return
+				}
+
+			} */
 		}
 	}
 

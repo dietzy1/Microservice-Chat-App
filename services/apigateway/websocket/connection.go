@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	"github.com/gorilla/websocket"
 )
 
@@ -24,14 +25,15 @@ const (
 )
 
 type conn struct {
-	conn           *websocket.Conn
-	sendChannel    chan []byte
-	receiveChannel chan []byte
-	activeChannel  chan []string
-	shutdown       chan any
-	cleanupOnce    *sync.Once
-	activity       *activity
-	lastPongAt     time.Time
+	conn             *websocket.Conn
+	sendChannel      chan []byte
+	receiveChannel   chan []byte
+	activeChannel    chan []string
+	heartbeatChannel chan []byte
+	shutdown         chan any
+	cleanupOnce      *sync.Once
+	activity         *activity
+	lastPongAt       time.Time
 }
 
 type connOptions struct {
@@ -41,13 +43,14 @@ type connOptions struct {
 
 func newConnection(o *connOptions) *conn {
 	return &conn{
-		conn:           o.conn,
-		sendChannel:    make(chan []byte, sendBufferSize),
-		receiveChannel: make(chan []byte, recieveBufferSize),
-		activeChannel:  make(chan []string, recieveBufferSize),
-		shutdown:       make(chan interface{}),
-		cleanupOnce:    &sync.Once{},
-		activity:       o.activity,
+		conn:             o.conn,
+		sendChannel:      make(chan []byte, sendBufferSize),
+		receiveChannel:   make(chan []byte, recieveBufferSize),
+		activeChannel:    make(chan []string, recieveBufferSize),
+		heartbeatChannel: make(chan []byte, recieveBufferSize),
+		shutdown:         make(chan interface{}),
+		cleanupOnce:      &sync.Once{},
+		activity:         o.activity,
 	}
 }
 
@@ -81,6 +84,59 @@ func (c *conn) writePump() {
 				return
 			}
 			log.Println("Sent message")
+
+		case active, ok := <-c.activeChannel:
+			if !ok {
+				return
+			}
+			log.Println("ACTIVE CHANNEL", active)
+
+			//Construct a protobuf message of activity
+			activity := &chatroomv1.Activity{
+				OnlineUsers: active,
+			}
+
+			//Marshal the protobuf message
+			marshaled, err := marshalActivity(activity)
+			if err != nil {
+				log.Println("Failed to marshal activity")
+				return
+			}
+
+			log.Println("SENDING ACTIVITY", activity)
+			//Send the array of active users to the client
+
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			//FIXME: THIS IS CAUSING A DATARACE
+			err = c.conn.WriteMessage(websocket.BinaryMessage, marshaled)
+			if err != nil {
+				log.Println("Failed to write message to client")
+				return
+			}
+
+		case _, ok := <-c.heartbeatChannel:
+			if !ok {
+				return
+			}
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeTimeout)); err != nil {
+				log.Println("Failed to set write deadline")
+				return
+			}
+
+			log.Println("conn: ", c.conn.RemoteAddr().String())
+			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				log.Println("Failed to write ping message")
+				return
+			}
 
 		}
 	}
@@ -170,17 +226,9 @@ func (c *conn) heartBeat() {
 	for {
 		select {
 		case <-ticker.C:
+			log.Println("Sending heartbeat")
+			c.heartbeatChannel <- []byte{}
 
-			if err := c.conn.SetWriteDeadline(time.Now().Add(writeTimeout)); err != nil {
-				log.Println("Failed to set write deadline")
-				return
-			}
-
-			log.Println("conn: ", c.conn.RemoteAddr().String())
-			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-				log.Println("Failed to write ping message")
-				return
-			}
 		case <-c.shutdown:
 			log.Println("Forcing shutdown")
 			return
@@ -194,6 +242,8 @@ func (c *conn) cleanup() {
 		close(c.shutdown)
 		close(c.receiveChannel)
 		close(c.sendChannel)
+		//FIXME: maybe this
+		close(c.activeChannel)
 
 		// Close the underlying websocket connection.
 		err := c.conn.Close()
