@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func loggingMiddleware(
+func LoggingMiddleware(
 	ctx context.Context,
 	req interface{},
 	info *grpc.UnaryServerInfo,

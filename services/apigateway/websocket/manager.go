@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/dietzy1/chatapp/services/apigateway/clients"
+	"github.com/dietzy1/chatapp/pkg/clients"
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/gorilla/websocket"
 )

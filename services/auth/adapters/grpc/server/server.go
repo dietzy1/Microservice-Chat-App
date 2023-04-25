@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/dietzy1/chatapp/pkg/middleware"
 	authv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 )
 
@@ -34,7 +35,7 @@ func Start(auth Auth) {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(loggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware),
 	)
 
 	//Inject dependencies into the server

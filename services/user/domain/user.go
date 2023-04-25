@@ -114,3 +114,4 @@ func (d Domain) ChangeAvatar(ctx context.Context, userUuid string, iconUuid stri
 
 	return nil
 }
+

@@ -1,4 +1,4 @@
-package client
+package clients
 
 import (
 	"context"
@@ -10,8 +10,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// returns a pointer to a client that can be used to call the user service
 func NewUserClient() *userclientv1.UserServiceClient {
-
+	log.Println("Connecting to user service", os.Getenv("USERSERVICE"))
 	conn, err := grpc.DialContext(
 		context.Background(),
 		"dns:///0.0.0.0"+os.Getenv("USERSERVICE"),

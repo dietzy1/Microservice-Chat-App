@@ -99,9 +99,6 @@ message GetUsersResponse {
   repeated GetUserResponse users = 1;
 }
 
-
-
-
 message EditDescriptionRequest {
   string user_uuid = 1;
   string description = 2;

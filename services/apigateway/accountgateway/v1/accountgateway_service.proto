@@ -51,6 +51,42 @@ service AccountGatewayService {
       description: "Delete account";
     };
   }
+
+  rpc RegisterAccount(RegisterAccountRequest) returns (RegisterAccountResponse) {
+    option (google.api.http) = {
+      post: "/accountgateway.v1.AccountGatewayService/RegisterAccount"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "Account";
+      summary: "Register account";
+      description: "Register account";
+    };
+  }
+
+  rpc DemoUserRegister(DemoUserRegisterRequest) returns (DemoUserRegisterResponse) {
+    option (google.api.http) = {
+      post: "/accountgateway.v1.AccountGatewayService/DemoUserRegister"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "Account";
+      summary: "Register demo user";
+      description: "Register demo user";
+    };
+  }
+
+  rpc UpgradeDemoUser(UpgradeDemoUserRequest) returns (UpgradeDemoUserResponse) {
+    option (google.api.http) = {
+      post: "/accountgateway.v1.AccountGatewayService/UpgradeDemoUser"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      tags: "Account";
+      summary: "Upgrade demo user";
+      description: "Upgrade demo user";
+    };
+  }
 }
 
 message ChangeUsernameRequest {
@@ -74,3 +110,28 @@ message DeleteAccountRequest {
 }
 
 message DeleteAccountResponse {}
+
+message RegisterAccountRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterAccountResponse {
+  string session = 1;
+  string user_uuid = 2;
+}
+
+message DemoUserRegisterRequest {}
+
+message DemoUserRegisterResponse {
+  string session = 1;
+  string user_uuid = 2;
+}
+
+message UpgradeDemoUserRequest {
+  string user_uuid = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message UpgradeDemoUserResponse {}

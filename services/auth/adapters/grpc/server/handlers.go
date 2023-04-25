@@ -14,7 +14,6 @@ import (
 
 type Auth interface {
 	Login(ctx context.Context, cred domain.Credentials) (domain.Credentials, error)
-	Register(ctx context.Context, cred domain.Credentials) (domain.Credentials, error)
 	Logout(ctx context.Context, session string, useruuid string) error
 	Authenticate(ctx context.Context, session string, useruuid string) (domain.Credentials, error)
 	Invalidate(ctx context.Context, userUUid string) error
@@ -48,36 +47,6 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 	}
 
 	return &authv1.LoginResponse{
-		Session:  creds.Session,
-		UserUuid: creds.Uuid,
-	}, nil
-}
-
-func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	cred := domain.Credentials{
-		Username: req.Username,
-		Password: req.Password,
-	}
-
-	//Validate that the fields aren't empty
-	if req.Username == "" || req.Password == "" {
-		return &authv1.RegisterResponse{
-			Session:  "",
-			UserUuid: "",
-		}, status.Errorf(http.StatusBadRequest, "username or password is empty")
-	}
-
-	//perform client side call to the authentication service
-	creds, err := s.auth.Register(ctx, cred)
-	if err != nil {
-		log.Println(err)
-		return &authv1.RegisterResponse{
-			Session:  "",
-			UserUuid: "",
-		}, status.Errorf(http.StatusBadRequest, err.Error())
-	}
-
-	return &authv1.RegisterResponse{
 		Session:  creds.Session,
 		UserUuid: creds.Uuid,
 	}, nil

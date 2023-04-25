@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+//returns a pointer to a client that can be used to call the account service
 func NewAccountClient() *accountclientv1.AccountServiceClient {
 	log.Println("Connecting to account service", os.Getenv("ACCOUNT"))
 	conn, err := grpc.DialContext(

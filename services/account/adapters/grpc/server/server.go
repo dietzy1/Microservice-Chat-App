@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/dietzy1/chatapp/pkg/middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
@@ -14,14 +15,14 @@ import (
 
 type server struct {
 	accountv1.UnimplementedAccountServiceServer
-	account Account
+	domain Account
 }
 
-func newServer(account Account) *server {
-	return &server{account: account}
+func newServer(a Account) *server {
+	return &server{domain: a}
 }
 
-func Start(account Account) {
+func Start(a Account) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
@@ -33,10 +34,10 @@ func Start(account Account) {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(loggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware),
 	)
 	//Inject dependencies into the server
-	dependencies := newServer(account)
+	dependencies := newServer(a)
 
 	//Register the server
 	accountv1.RegisterAccountServiceServer(s, dependencies)

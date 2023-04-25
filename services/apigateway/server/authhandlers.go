@@ -45,29 +45,6 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 
 }
 
-func (s *server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-
-	creds := authclientv1.RegisterRequest{
-		Username: req.Username,
-		Password: req.Password,
-	}
-
-	//perform client side call to the authentication service
-	register, err := s.authClient.Register(ctx, &creds)
-	if err != nil {
-		log.Println(err)
-		//return error code
-		return &authv1.RegisterResponse{}, status.Errorf(codes.Unauthenticated, "invalid credentials")
-	}
-	log.Println("Register object", register)
-
-	//Return a session token to the client so the client is authenticated and logged in
-	md := metadata.Pairs("session_token", register.Session)
-	grpc.SendHeader(ctx, md)
-
-	return &authv1.RegisterResponse{}, nil
-}
-
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

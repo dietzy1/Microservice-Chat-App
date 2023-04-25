@@ -92,7 +92,8 @@ service ChatroomGatewayService {
   rpc GetChannel(GetChannelRequest) returns (GetChannelResponse) {
     option (google.api.http) = {
       post: "/chatroomgateway.v1.ChatroomGatewayService/GetChannel",
-      body: "*",};
+      body: "*",
+    };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get a channel"
       description: "GRPC gateway call to get a channel."
@@ -164,7 +165,7 @@ message GetRoomResponse {
   repeated Channel channel = 6;
 }
 
-message Channel  {
+message Channel {
   string channel_uuid = 1;
   string name = 2;
   string chatroom_uuid = 3;
@@ -178,8 +179,6 @@ message GetRoomsRequest {
 message GetRoomsResponse {
   repeated GetRoomResponse rooms = 1;
 }
-
-
 
 // -- ------------------------------------------------------------------------------
 

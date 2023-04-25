@@ -25,7 +25,11 @@ type AccountServiceClient interface {
 	// External RPC
 	ChangeUsername(ctx context.Context, in *ChangeUsernameRequest, opts ...grpc.CallOption) (*ChangeUsernameResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	// External RPC
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
+	RegisterAccount(ctx context.Context, in *RegisterAccountRequest, opts ...grpc.CallOption) (*RegisterAccountResponse, error)
+	DemoUserRegister(ctx context.Context, in *DemoUserRegisterRequest, opts ...grpc.CallOption) (*DemoUserRegisterResponse, error)
+	UpgradeDemoUser(ctx context.Context, in *UpgradeDemoUserRequest, opts ...grpc.CallOption) (*UpgradeDemoUserResponse, error)
 }
 
 type accountServiceClient struct {
@@ -63,6 +67,33 @@ func (c *accountServiceClient) DeleteAccount(ctx context.Context, in *DeleteAcco
 	return out, nil
 }
 
+func (c *accountServiceClient) RegisterAccount(ctx context.Context, in *RegisterAccountRequest, opts ...grpc.CallOption) (*RegisterAccountResponse, error) {
+	out := new(RegisterAccountResponse)
+	err := c.cc.Invoke(ctx, "/account.v1.AccountService/RegisterAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) DemoUserRegister(ctx context.Context, in *DemoUserRegisterRequest, opts ...grpc.CallOption) (*DemoUserRegisterResponse, error) {
+	out := new(DemoUserRegisterResponse)
+	err := c.cc.Invoke(ctx, "/account.v1.AccountService/DemoUserRegister", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpgradeDemoUser(ctx context.Context, in *UpgradeDemoUserRequest, opts ...grpc.CallOption) (*UpgradeDemoUserResponse, error) {
+	out := new(UpgradeDemoUserResponse)
+	err := c.cc.Invoke(ctx, "/account.v1.AccountService/UpgradeDemoUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServiceServer is the server API for AccountService service.
 // All implementations should embed UnimplementedAccountServiceServer
 // for forward compatibility
@@ -70,7 +101,11 @@ type AccountServiceServer interface {
 	// External RPC
 	ChangeUsername(context.Context, *ChangeUsernameRequest) (*ChangeUsernameResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	// External RPC
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
+	RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error)
+	DemoUserRegister(context.Context, *DemoUserRegisterRequest) (*DemoUserRegisterResponse, error)
+	UpgradeDemoUser(context.Context, *UpgradeDemoUserRequest) (*UpgradeDemoUserResponse, error)
 }
 
 // UnimplementedAccountServiceServer should be embedded to have forward compatible implementations.
@@ -85,6 +120,15 @@ func (UnimplementedAccountServiceServer) ChangePassword(context.Context, *Change
 }
 func (UnimplementedAccountServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) DemoUserRegister(context.Context, *DemoUserRegisterRequest) (*DemoUserRegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DemoUserRegister not implemented")
+}
+func (UnimplementedAccountServiceServer) UpgradeDemoUser(context.Context, *UpgradeDemoUserRequest) (*UpgradeDemoUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpgradeDemoUser not implemented")
 }
 
 // UnsafeAccountServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -152,6 +196,60 @@ func _AccountService_DeleteAccount_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_RegisterAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).RegisterAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.v1.AccountService/RegisterAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).RegisterAccount(ctx, req.(*RegisterAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_DemoUserRegister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DemoUserRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).DemoUserRegister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.v1.AccountService/DemoUserRegister",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).DemoUserRegister(ctx, req.(*DemoUserRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpgradeDemoUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpgradeDemoUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpgradeDemoUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/account.v1.AccountService/UpgradeDemoUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpgradeDemoUser(ctx, req.(*UpgradeDemoUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +268,18 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAccount",
 			Handler:    _AccountService_DeleteAccount_Handler,
+		},
+		{
+			MethodName: "RegisterAccount",
+			Handler:    _AccountService_RegisterAccount_Handler,
+		},
+		{
+			MethodName: "DemoUserRegister",
+			Handler:    _AccountService_DemoUserRegister_Handler,
+		},
+		{
+			MethodName: "UpgradeDemoUser",
+			Handler:    _AccountService_UpgradeDemoUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

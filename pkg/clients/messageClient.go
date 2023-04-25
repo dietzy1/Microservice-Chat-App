@@ -11,6 +11,7 @@ import (
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 )
 
+// returns a pointer to a client that can be used to call the message service
 func NewMessageClient() *messageclientv1.MessageServiceClient {
 	log.Println("Connecting to message service", os.Getenv("MESSAGE"))
 	conn, err := grpc.DialContext(

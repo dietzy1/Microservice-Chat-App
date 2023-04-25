@@ -6,14 +6,11 @@ import (
 	"fmt"
 	"log"
 
-	chatroomClientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
-	userClientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
+	"github.com/dietzy1/chatapp/pkg/hashing"
 )
 
 type Auth interface {
 	Login(ctx context.Context, username string) (string, error)
-	Register(ctx context.Context, cred Credentials) (string, error)
-	Unregister(ctx context.Context, userUuid string) error
 	Logout(ctx context.Context, userUuid string) error
 	Authenticate(ctx context.Context, userUuid string) (string, error)
 	UpdateToken(ctx context.Context, username string, token string) (string, error)
@@ -27,9 +24,6 @@ type Cache interface {
 type domain struct {
 	auth  Auth
 	cache Cache
-
-	userClient     userClientv1.UserServiceClient
-	chatroomClient chatroomClientv1.ChatroomServiceClient
 }
 
 type Credentials struct {
@@ -37,10 +31,11 @@ type Credentials struct {
 	Password string `json:"password " bson:"password"`
 	Uuid     string `json:"uuid" bson:"uuid"`
 	Session  string `json:"session" bson:"session"`
+	Demo     bool   `json:"demo" bson:"demo"`
 }
 
-func New(auth Auth, cache Cache, userClient userClientv1.UserServiceClient, chatroomClient chatroomClientv1.ChatroomServiceClient) *domain {
-	return &domain{auth: auth, cache: cache, userClient: userClient, chatroomClient: chatroomClient}
+func New(auth Auth, cache Cache) *domain {
+	return &domain{auth: auth, cache: cache}
 }
 
 // If someone is trying to login to the application the session token should be returned
@@ -53,12 +48,12 @@ func (d domain) Login(ctx context.Context, cred Credentials) (Credentials, error
 	}
 
 	//Perform bcrypt check to see if password is correct
-	if err = CompareHash(password, cred.Password); err != nil {
+	if err = hashing.CompareHash(password, cred.Password); err != nil {
 		log.Println(err)
 		return Credentials{}, err
 	}
 	//if someone logins then the session token should be regenerated and returned
-	token := GenerateToken()
+	token := hashing.GenerateToken()
 
 	uuid, err := d.auth.UpdateToken(ctx, cred.Username, token)
 	if err != nil {
@@ -75,74 +70,6 @@ func (d domain) Login(ctx context.Context, cred Credentials) (Credentials, error
 	log.Println("UUID: ", uuid)
 
 	return Credentials{Session: token, Uuid: uuid}, nil
-}
-
-func (d domain) Register(ctx context.Context, cred Credentials) (Credentials, error) {
-	//check if username is in database
-	_, err := d.auth.Login(ctx, cred.Username)
-	if err == nil {
-		log.Printf("username %s already exists", cred.Username)
-		return Credentials{}, errors.New("username already exists")
-	}
-
-	//perform check if password is of atleast 8 characters
-	if len(cred.Password) < 8 {
-		log.Println("password is too short")
-		return Credentials{}, errors.New("password is too short")
-	}
-
-	//hash password
-	cred.Password, err = GenerateHash(cred.Password)
-	if err != nil {
-		return Credentials{}, err
-	}
-
-	cred.Uuid = GenerateToken()
-	cred.Session = GenerateToken()
-	//add user to database
-	session, err := d.auth.Register(ctx, cred)
-	if err != nil {
-		return Credentials{}, err
-	}
-
-	//Call the user service to create a user
-
-	_, err = d.userClient.CreateUser(ctx, &userClientv1.CreateUserRequest{
-		Username: cred.Username,
-		UserUuid: cred.Uuid,
-	})
-	if err != nil {
-		log.Println(err)
-
-		//if the user service fails to create a user then the user should be deleted from the auth service
-		if err := d.auth.Unregister(ctx, cred.Uuid); err != nil {
-			log.Println(err)
-			return Credentials{}, err
-		}
-		return Credentials{}, err
-	}
-	log.Println("Everything went through fine until here")
-
-	//Call the chatroom service to add the user to the default chatroom
-	//TODO:this here is causing the issue
-
-	_, err = d.chatroomClient.ForceAddUser(ctx, &chatroomClientv1.ForceAddUserRequest{
-		UserUuid: cred.Uuid,
-	})
-	if err != nil {
-		log.Println(err)
-
-		//if the chatroom service fails to create a user then the user should be deleted from the auth service
-		if err := d.auth.Unregister(ctx, cred.Uuid); err != nil {
-			log.Println(err)
-			return Credentials{}, err
-		}
-		return Credentials{}, err
-
-		//Potentially need to add delete user from user service
-	}
-
-	return Credentials{Session: session, Uuid: cred.Uuid}, nil
 }
 
 // For now I am unsure if I actually need to do anything with the session token

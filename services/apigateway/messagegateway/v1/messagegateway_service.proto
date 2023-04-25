@@ -22,8 +22,9 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service MessageGatewayService {
   rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse) {
     option (google.api.http) = {
-    post: "/messagegateway.v1.MessageGatewayService/GetMessages",
-    body: "*",};
+      post: "/messagegateway.v1.MessageGatewayService/GetMessages",
+      body: "*",
+    };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "get messages from a chatroom"
       description: "GRPC gateway call to retrieve a set amount of messages from a chatroom."

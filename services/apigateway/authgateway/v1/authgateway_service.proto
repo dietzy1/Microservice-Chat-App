@@ -29,22 +29,8 @@ service AuthGatewayService {
     };
   }
 
-  rpc Register(RegisterRequest) returns (RegisterResponse) {
-    option (google.api.http) = {
-      post: "/authgateway.v1.AuthGatewayService/Register",
-      body: "*",
-    };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      summary: "Register a user"
-      description: "GRPC gateway call to register a user."
-      tags: "Authentication"
-    };
-  }
-
   rpc Logout(LogoutRequest) returns (LogoutResponse) {
-    option (google.api.http) = {
-      post: "/authgateway.v1.AuthGatewayService/Logout",
-    };
+    option (google.api.http) = {post: "/authgateway.v1.AuthGatewayService/Logout"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Logout a user"
       description: "GRPC gateway call to logout a user."
@@ -53,9 +39,7 @@ service AuthGatewayService {
   }
 
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
-    option (google.api.http) = {
-      post: "/authgateway.v1.AuthGatewayService/Authenticate",
-    };
+    option (google.api.http) = {post: "/authgateway.v1.AuthGatewayService/Authenticate"};
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Authenticate a user"
       description: "GRPC gateway call to authenticate a user."
@@ -69,25 +53,12 @@ message LoginRequest {
   string password = 2;
 }
 
-message LoginResponse {
-}
+message LoginResponse {}
 
-message RegisterRequest {
-  string username = 1;
-  string password = 2;
-}
+message LogoutRequest {}
 
-message RegisterResponse { 
-}
+message LogoutResponse {}
 
-message LogoutRequest {
-}
+message AuthenticateRequest {}
 
-message LogoutResponse {
-}
-
-message AuthenticateRequest {
-}
-
-message AuthenticateResponse {
-}
+message AuthenticateResponse {}
