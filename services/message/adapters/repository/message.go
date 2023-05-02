@@ -54,7 +54,7 @@ func (a *Db) AddMessage(ctx context.Context, msg domain.Message) error {
 // This is probaly incorrect needs to be fixed
 func (a *Db) UpdateMessage(ctx context.Context, msg domain.Message) error {
 	collection := a.client.Database(database).Collection(msg.ChatRoomUuid)
-	_, err := collection.UpdateOne(ctx, bson.M{"messageUuid": msg.MessageUuid}, bson.M{"$set": msg})
+	_, err := collection.UpdateOne(ctx, bson.M{"messageuuid": msg.MessageUuid}, bson.M{"$set": msg})
 	if err != nil {
 		return err
 	}

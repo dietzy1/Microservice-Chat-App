@@ -50,6 +50,9 @@ func (s *server) EditMessage(ctx context.Context, req *messagev1.EditMessageRequ
 		ChannelUuid:  req.ChannelUuid,
 		MessageUuid:  req.MessageUuid,
 		Content:      req.Content,
+		Author:       req.Author,
+		AuthorUuid:   req.AuthorUuid,
+		Timestamp:    req.Timestamp,
 	})
 	if err != nil {
 		return &messagev1.EditMessageResponse{}, status.Errorf(codes.Internal, "Error editing message: %v", err)

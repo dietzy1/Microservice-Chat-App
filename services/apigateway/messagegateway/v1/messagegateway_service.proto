@@ -34,7 +34,7 @@ service MessageGatewayService {
 
   rpc EditMessage(EditMessageRequest) returns (EditMessageResponse) {
     option (google.api.http) = {
-      post: "/messagegateway.v1.MessageGatewayService/EditMessages",
+      post: "/messagegateway.v1.MessageGatewayService/EditMessage",
       body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

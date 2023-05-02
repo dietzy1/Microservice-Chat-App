@@ -79,57 +79,14 @@ func (c *client) handleMessages(ch <-chan *redis.Message) {
 			//convert msg.Payload to slice of bytes
 			c.conn.sendChannel <- []byte(msg.Payload)
 
-			//case active, ok := <-c.conn.activity.activityChannel:
-			/* case active, ok := <-c.conn.activeChannel:
-				if !ok {
-					return
-				}
-				log.Println("ACTIVE CHANNEL", active)
-
-				//Construct a protobuf message of activity
-				activity := &chatroomv1.Activity{
-					OnlineUsers: active,
-				}
-
-				//Marshal the protobuf message
-				marshaled, err := marshalActivity(activity)
-				if err != nil {
-					log.Println("Failed to marshal activity")
-					return
-				}
-
-				log.Println("SENDING ACTIVITY", activity)
-				//Send the array of active users to the client
-
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				//FIXME: THIS IS CAUSING A DATARACE
-				err = c.conn.conn.WriteMessage(websocket.BinaryMessage, marshaled)
-				if err != nil {
-					log.Println("Failed to write message to client")
-					return
-				}
-
-			} */
 		}
 	}
 
 }
 
-func (c *client) updateClientActivity(chatroom string) {
-	// return array of who is active in the chatroom
-	active := c.conn.activity.active[chatroom]
-	//Take the slice and convert it to a byte array
-	log.Println("UPDATING CLIENT ACTIVITY")
+func (c *client) updateClientActivity(chatroom string, active []string) {
 
+	log.Println("UPDATING CLIENT ACTIVITY")
 	c.conn.activeChannel <- active
 
 }

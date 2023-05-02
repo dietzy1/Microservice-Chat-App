@@ -53,7 +53,7 @@
         ]
       }
     },
-    "/messagegateway.v1.MessageGatewayService/EditMessages": {
+    "/messagegateway.v1.MessageGatewayService/EditMessage": {
       "post": {
         "summary": "Edit a message in a chatroom",
         "description": "GRPC gateway call to edit an existing message in a chatroom.",

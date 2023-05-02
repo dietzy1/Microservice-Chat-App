@@ -122,6 +122,7 @@ func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequ
 
 func (s *server) EditMessage(ctx context.Context, req *messagev1.EditMessageRequest) (*messagev1.EditMessageResponse, error) {
 	//Check if message is empty
+
 	if req.Author == "" || req.Content == "" || req.AuthorUuid == "" || req.ChatRoomUuid == "" || req.ChannelUuid == "" || req.MessageUuid == "" {
 		return nil, status.Error(codes.InvalidArgument, "Message is empty")
 	}

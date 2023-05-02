@@ -67,6 +67,7 @@ func (d *Domain) GetMessages(ctx context.Context, chatroomUuid string, channelUu
 
 func (d *Domain) EditMessage(ctx context.Context, msg Message) (Message, error) {
 
+	log.Println("domain got hit")
 	//The logic here is simple it we simply need to go in and replace the content of the message IDs stay the same
 	err := d.repo.UpdateMessage(ctx, msg)
 	if err != nil {

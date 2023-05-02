@@ -32,13 +32,12 @@ type conn struct {
 	heartbeatChannel chan []byte
 	shutdown         chan any
 	cleanupOnce      *sync.Once
-	activity         *activity
-	lastPongAt       time.Time
+
+	lastPongAt time.Time
 }
 
 type connOptions struct {
-	conn     *websocket.Conn
-	activity *activity
+	conn *websocket.Conn
 }
 
 func newConnection(o *connOptions) *conn {
@@ -50,7 +49,6 @@ func newConnection(o *connOptions) *conn {
 		heartbeatChannel: make(chan []byte, recieveBufferSize),
 		shutdown:         make(chan interface{}),
 		cleanupOnce:      &sync.Once{},
-		activity:         o.activity,
 	}
 }
 
@@ -106,17 +104,6 @@ func (c *conn) writePump() {
 			log.Println("SENDING ACTIVITY", activity)
 			//Send the array of active users to the client
 
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
-			//FIXME: THIS IS CAUSING A DATARACE
 			err = c.conn.WriteMessage(websocket.BinaryMessage, marshaled)
 			if err != nil {
 				log.Println("Failed to write message to client")
@@ -244,6 +231,7 @@ func (c *conn) cleanup() {
 		close(c.sendChannel)
 		//FIXME: maybe this
 		close(c.activeChannel)
+		close(c.heartbeatChannel)
 
 		// Close the underlying websocket connection.
 		err := c.conn.Close()

@@ -24,7 +24,7 @@ type manager struct {
 	//Key is userID
 	clients map[string]*client
 
-	//Key is chadroomID
+	//Key is chatroomID
 	active map[string][]string
 
 	upgrader websocket.Upgrader
@@ -55,12 +55,6 @@ func newManager(broker Broker, messageClient messageclientv1.MessageServiceClien
 	}
 }
 
-// FIXME:
-// This is potentially a race condition that needs to be fixed
-type activity struct {
-	active map[string][]string
-}
-
 type id struct {
 	chatroom string
 	channel  string
@@ -85,11 +79,7 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ac := &activity{
-		active: m.active,
-	}
-
-	ws := newConnection(&connOptions{conn: conn, activity: ac})
+	ws := newConnection(&connOptions{conn: conn})
 
 	client := newClient(&clientOptions{
 		conn:          ws,
@@ -100,9 +90,10 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	m.addClient(client, &id)
-	client.updateClientActivity(id.chatroom)
+	client.updateClientActivity(id.chatroom, m.active[id.chatroom])
 	defer m.removeClient(client, &id)
-	defer client.updateClientActivity(id.chatroom)
+
+	defer client.updateClientActivity(id.chatroom, m.active[id.chatroom])
 
 	client.run()
 

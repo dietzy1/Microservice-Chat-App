@@ -172,7 +172,7 @@ func RegisterMessageGatewayServiceHandlerServer(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessages"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -283,7 +283,7 @@ func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessages"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/messagegateway.v1.MessageGatewayService/EditMessage", runtime.WithHTTPPathPattern("/messagegateway.v1.MessageGatewayService/EditMessage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -327,7 +327,7 @@ func RegisterMessageGatewayServiceHandlerClient(ctx context.Context, mux *runtim
 var (
 	pattern_MessageGatewayService_GetMessages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "GetMessages"}, ""))
 
-	pattern_MessageGatewayService_EditMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "EditMessages"}, ""))
+	pattern_MessageGatewayService_EditMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "EditMessage"}, ""))
 
 	pattern_MessageGatewayService_DeleteMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"messagegateway.v1.MessageGatewayService", "DeleteMessage"}, ""))
 )
