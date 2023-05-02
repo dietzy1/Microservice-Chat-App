@@ -63,5 +63,7 @@ func (b *broker) unsubscribe(ctx context.Context, pubsub *redis.PubSub) error {
 	if err != nil {
 		return err
 	}
+	log.Println("Unsubscribed from channel")
 	return nil
+
 }

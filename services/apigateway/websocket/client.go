@@ -105,6 +105,8 @@ func (c *client) run() {
 	//Blocking call to handle messages
 	c.handleMessages(pubsub.Channel())
 
+	log.Println("Client run stopped")
+
 	//Close the pubsub channel
 	c.broker.unsubscribe(context.TODO(), pubsub)
 }

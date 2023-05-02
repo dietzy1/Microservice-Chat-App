@@ -5,16 +5,19 @@ import (
 	"errors"
 	"log"
 
+	userClientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 	"github.com/google/uuid"
 )
 
 type Domain struct {
-	repo chatroom
+	repo       chatroom
+	userClient userClientv1.UserServiceClient
 	//cdn  cdn
+
 }
 
-func New(repo chatroom /* , cdn cdn */) *Domain {
-	return &Domain{repo: repo /* , cdn: cdn */}
+func New(repo chatroom, userClient userClientv1.UserServiceClient /* , cdn cdn */) *Domain {
+	return &Domain{repo: repo, userClient: userClient /* , cdn: cdn */}
 }
 
 // this is the repository interface
@@ -61,6 +64,8 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 
 	//Name is set
 	chatroom.Uuid = uuid.New().String()
+
+	//THIS PART WE NEED TO FIX
 	chatroom.Icon.Link = "https://ik.imagekit.io/imageAPI/user/a884bf0f-4b26-4a4f-a454-d0e0286882e4.png"
 	chatroom.Icon.Uuid = "a884bf0f-4b26-4a4f-a454-d0e0286882e4"
 	//Owner is set
@@ -83,6 +88,16 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 	}
 
 	err = d.repo.CreateChannel(ctx, channel)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	//if everything passed then we need to contact the user service and add the chatroom to the owner
+	_, err = d.userClient.AddChatServer(ctx, &userClientv1.AddChatServerRequest{
+		UserUuid:       chatroom.Owner,
+		ChatserverUuid: chatroom.Uuid,
+	})
 	if err != nil {
 		log.Println(err)
 		return "", err

@@ -11,8 +11,8 @@ type User struct {
 	Uuid        string   `bson:"uuid"`
 	Icon        Icon     `bson:"icon"`
 	Description string   `bson:"description"`
-	JoinDate    string   `bson:"joinDate"`
-	ChatServers []string `bson:"chatServers"`
+	JoinDate    string   `bson:"joindate"`
+	ChatServers []string `bson:"chatservers"`
 }
 
 type user interface {
@@ -114,4 +114,3 @@ func (d Domain) ChangeAvatar(ctx context.Context, userUuid string, iconUuid stri
 
 	return nil
 }
-
