@@ -9,6 +9,7 @@ import (
 	"github.com/dietzy1/chatapp/pkg/clients"
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/gorilla/websocket"
+	"go.uber.org/zap"
 )
 
 //The bug could be related to when the websocket crashes unexpectedly and everything is cleaned up incorrectly
@@ -30,6 +31,8 @@ type manager struct {
 	upgrader websocket.Upgrader
 	mu       sync.RWMutex
 
+	logger *zap.Logger
+
 	//Redis pubsub service
 	broker Broker
 
@@ -37,13 +40,14 @@ type manager struct {
 	messageClient messageclientv1.MessageServiceClient
 }
 
-func newManager(broker Broker, messageClient messageclientv1.MessageServiceClient) *manager {
+func newManager(broker Broker, messageClient messageclientv1.MessageServiceClient, l *zap.Logger) *manager {
 	return &manager{
 		clients:       make(map[string]*client),
 		active:        make(map[string][]string),
 		mu:            sync.RWMutex{},
 		broker:        broker,
 		messageClient: messageClient,
+		logger:        l,
 
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  1024,
@@ -62,20 +66,21 @@ type id struct {
 }
 
 func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Websocket connection established")
+
+	m.logger.Info("Websocket connection established")
 	id := id{
 		chatroom: r.URL.Query().Get("chatroom"),
 		channel:  r.URL.Query().Get("channel"),
 		user:     r.URL.Query().Get("user"),
 	}
 	if id.chatroom == "" || id.channel == "" || id.user == "" {
-		log.Println("Missing chatroom, user or channel")
+		m.logger.Error("Missing chatroom, user or channel")
 		return
 	}
 
 	conn, err := m.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Failed to upgrade connection", err)
+		m.logger.Error("Failed to upgrade connection", zap.Error(err))
 		return
 	}
 
@@ -86,14 +91,14 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 		id:            id,
 		broker:        m.broker,
 		messageClient: m.messageClient,
+		logger:        m.logger,
 	},
 	)
 
 	m.addClient(client, &id)
 	client.updateClientActivity(id.chatroom, m.active[id.chatroom])
-	defer m.removeClient(client, &id)
-
 	defer client.updateClientActivity(id.chatroom, m.active[id.chatroom])
+	defer m.removeClient(client, &id)
 
 	client.run()
 
@@ -144,25 +149,24 @@ func (m *manager) removeClient(c *client, id *id) {
 
 }
 
-func Start() {
+func Start(logger *zap.Logger) {
 
-	broker := newBroker()
+	broker := newBroker(logger)
 
 	//New messageService
 	messageClient := clients.NewMessageClient()
 
 	//manager should accept the broker interface
-	m := newManager(broker, *messageClient)
+	m := newManager(broker, *messageClient, logger)
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Websocket connection request received")
+		logger.Info("Websocket connection request received")
 		m.upgradeHandler(w, r)
 	})
 
 	err := http.ListenAndServe(os.Getenv("WS"), nil)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		logger.Fatal("Failed to start websocket server", zap.Error(err))
 	}
-
-	log.Println("Websocket server started on port " + os.Getenv("WS"))
+	logger.Info("Websocket server started on port " + os.Getenv("WS"))
 }

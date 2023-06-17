@@ -2,10 +2,10 @@ package websocket
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/go-redis/redis/v8"
+	"go.uber.org/zap"
 )
 
 // PubSub is an interface for a Redis Pub/Sub client.
@@ -18,18 +18,21 @@ type Broker interface {
 // RedisPubSub is an implementation of the PubSub interface using the go-redis library.
 type broker struct {
 	client *redis.Client
+	logger *zap.Logger
 }
 
 // NewRedisPubSub creates a new RedisPubSub instance.
-func newBroker() *broker {
+func newBroker(logger *zap.Logger) *broker {
 	otps, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 	if err != nil {
-		log.Fatalf("Failed to parse redis url: %v", err)
+
+		logger.Fatal("Failed to parse redis url", zap.Error(err))
 		return nil
 	}
 	client := redis.NewClient(otps)
 	if _, err := client.Ping(context.Background()).Result(); err != nil {
-		log.Printf("Failed to ping redis: %v", err)
+
+		logger.Fatal("Failed to ping redis", zap.Error(err))
 		return nil
 	}
 
@@ -43,6 +46,7 @@ func (b *broker) Subscribe(ctx context.Context, channel string) (*redis.PubSub, 
 	pubsub := b.client.Subscribe(ctx, channel)
 	_, err := pubsub.Receive(ctx)
 	if err != nil {
+		b.logger.Error("Failed to subscribe to channel", zap.String("channel", channel))
 		return nil, err
 	}
 
@@ -53,6 +57,7 @@ func (b *broker) Subscribe(ctx context.Context, channel string) (*redis.PubSub, 
 func (b *broker) Publish(ctx context.Context, channel string, message []byte) error {
 	err := b.client.Publish(ctx, channel, message).Err()
 	if err != nil {
+		b.logger.Error("Failed to publish message to channel", zap.String("channel", channel))
 		return err
 	}
 	return nil
@@ -61,9 +66,10 @@ func (b *broker) Publish(ctx context.Context, channel string, message []byte) er
 func (b *broker) unsubscribe(ctx context.Context, pubsub *redis.PubSub) error {
 	err := pubsub.Unsubscribe(ctx)
 	if err != nil {
+		b.logger.Error("Failed to unsubscribe from channel")
 		return err
 	}
-	log.Println("Unsubscribed from channel")
+	b.logger.Info("Unsubscribed from channel", zap.String("channel", pubsub.String()))
 	return nil
 
 }

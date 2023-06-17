@@ -7,6 +7,7 @@ import (
 
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	"github.com/gorilla/websocket"
+	"go.uber.org/zap"
 )
 
 const (
@@ -33,6 +34,8 @@ type conn struct {
 	shutdown         chan any
 	cleanupOnce      *sync.Once
 
+	logger *zap.Logger
+
 	lastPongAt time.Time
 }
 
@@ -53,10 +56,11 @@ func newConnection(o *connOptions) *conn {
 }
 
 func (c *conn) writePump() {
-	log.Println("Write pump started")
+	c.logger.Info("Write pump started")
+
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
-		log.Println("Write pump stopped")
+		c.logger.Info("Write pump stopped")
 		ticker.Stop()
 		c.cleanup()
 	}()
@@ -68,26 +72,28 @@ func (c *conn) writePump() {
 		case msg, ok := <-c.sendChannel:
 			// If the channel is closed, we should stop the goroutine.
 			if !ok {
-				log.Println("Send channel closed")
+
+				c.logger.Info("Send channel closed")
 				return
 			}
 
 			if err := c.conn.SetWriteDeadline(time.Now().Add(writeTimeout)); err != nil {
-				log.Println("Failed to set write deadline")
+				c.logger.Error("Failed to set write deadline", zap.Error(err))
 				return
 			}
 
 			if err := c.conn.WriteMessage(websocket.BinaryMessage, msg); err != nil {
-				log.Println("Failed to write message")
+
+				c.logger.Error("Failed to write message", zap.Error(err))
 				return
 			}
-			log.Println("Sent message")
+			c.logger.Info("Message sent")
 
 		case active, ok := <-c.activeChannel:
 			if !ok {
 				return
 			}
-			log.Println("ACTIVE CHANNEL", active)
+			c.logger.Info("Active channel received", zap.Any("active", active))
 
 			//Construct a protobuf message of activity
 			activity := &chatroomv1.Activity{
@@ -97,16 +103,16 @@ func (c *conn) writePump() {
 			//Marshal the protobuf message
 			marshaled, err := marshalActivity(activity)
 			if err != nil {
-				log.Println("Failed to marshal activity")
+				c.logger.Error("Failed to marshal activity", zap.Error(err))
 				return
 			}
 
-			log.Println("SENDING ACTIVITY", activity)
+			c.logger.Info("Activity marshaled", zap.Any("marshaled", marshaled))
 			//Send the array of active users to the client
 
 			err = c.conn.WriteMessage(websocket.BinaryMessage, marshaled)
 			if err != nil {
-				log.Println("Failed to write message to client")
+				c.logger.Error("Failed to write message to client", zap.Error(err))
 				return
 			}
 
@@ -115,13 +121,13 @@ func (c *conn) writePump() {
 				return
 			}
 			if err := c.conn.SetWriteDeadline(time.Now().Add(writeTimeout)); err != nil {
-				log.Println("Failed to set write deadline")
+				c.logger.Error("Failed to set write deadline", zap.Error(err))
 				return
 			}
 
 			log.Println("conn: ", c.conn.RemoteAddr().String())
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-				log.Println("Failed to write ping message")
+				c.logger.Error("Failed to write ping message", zap.Error(err))
 				return
 			}
 
@@ -130,26 +136,25 @@ func (c *conn) writePump() {
 }
 
 func (c *conn) readPump() {
-
-	log.Println("Read pump started")
+	c.logger.Info("Read pump started")
 	defer func() {
-		log.Println("Read pump stopped")
+		c.logger.Info("Read pump stopped")
 		c.cleanup()
 	}()
 
 	c.conn.SetReadLimit(maxInboundMessageSize)
 	if err := c.conn.SetReadDeadline(time.Now().Add(idleTimeout)); err != nil {
-		log.Println("Failed to set read deadline")
+		c.logger.Error("Failed to set read deadline", zap.Error(err))
 	}
 
 	//Here I need to implement some sort of ping pong mechanism to keep the connection alive
 	c.conn.SetPongHandler(func(input string) error {
-		log.Println("Received pong", input)
+
+		c.logger.Info("Received pong", zap.String("input", input))
 
 		c.lastPongAt = time.Now()
 		if err := c.conn.SetReadDeadline(time.Now().Add(idleTimeout)); err != nil {
-
-			log.Println("Failed to set read deadline", err)
+			c.logger.Error("Failed to set read deadline", zap.Error(err))
 			c.cleanup()
 		}
 		return nil
@@ -166,14 +171,14 @@ func (c *conn) readPump() {
 				return
 			}
 
-			log.Println("Received message")
+			c.logger.Info("Received message", zap.Any("message", bs))
 			select {
 			case c.receiveChannel <- bs:
 
 			default:
 				// If the receive channel is full, we should assume the client is disconnected
 				// and close the connection.
-				log.Println("Receive channel full")
+				c.logger.Info("Receive channel full")
 				go c.cleanup()
 				return
 			}
@@ -189,12 +194,10 @@ func (c *conn) readPump() {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
 				// If the connection is closed, increment metric for closing
 
-				log.Println("Websocket connection closed unexpectedly")
+				c.logger.Info("Websocket connection closed unexpectedly")
 			} else {
 				// Otherwise we failed to read from the connection, increment metric for failure
-
-				log.Println("THIS ERROR IS IMPORTANT: ", err)
-				log.Println("Failed to read from connection")
+				c.logger.Error("Failed to read from connection", zap.Error(err))
 			}
 			return
 		}
@@ -205,7 +208,7 @@ func (c *conn) heartBeat() {
 
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
-		log.Println("Heartbeat stopped cleaning up the connection")
+		c.logger.Info("Heartbeat stopped cleaning up the connection")
 		ticker.Stop()
 		c.cleanup()
 	}()
@@ -213,11 +216,12 @@ func (c *conn) heartBeat() {
 	for {
 		select {
 		case <-ticker.C:
-			log.Println("Sending heartbeat")
+			c.logger.Info("Sending heartbeat")
 			c.heartbeatChannel <- []byte{}
 
 		case <-c.shutdown:
-			log.Println("Forcing shutdown")
+
+			c.logger.Info("Forcing shutdown")
 			return
 		}
 	}
@@ -226,25 +230,28 @@ func (c *conn) heartBeat() {
 func (c *conn) cleanup() {
 
 	c.cleanupOnce.Do(func() {
+
+		c.activeChannel <- []string{}
 		close(c.shutdown)
 		close(c.receiveChannel)
 		close(c.sendChannel)
 		//FIXME: maybe this
-		close(c.activeChannel)
+		//close(c.activeChannel)
 		close(c.heartbeatChannel)
 
 		// Close the underlying websocket connection.
 		err := c.conn.Close()
 		if err != nil {
-			log.Println("Failed to close connection")
+
+			c.logger.Error("Failed to close connection", zap.Error(err))
 		}
-		log.Println("Connection closed")
+		c.logger.Info("Connection closed")
 	})
 
 }
 
 func (c *conn) run() {
-	log.Println("New connection")
+	c.logger.Info("New connection starting read, write and heartbeat pumps")
 
 	go c.readPump()
 	go c.writePump()

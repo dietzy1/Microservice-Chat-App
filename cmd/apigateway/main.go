@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/dietzy1/chatapp/config"
+	"github.com/dietzy1/chatapp/pkg/logger"
 	"github.com/dietzy1/chatapp/services/apigateway/server"
 	"github.com/dietzy1/chatapp/services/apigateway/websocket"
 )
@@ -12,11 +11,14 @@ func main() {
 
 	config.ReadEnvfile()
 
-	log.Println("Starting Websocket Server")
-	go websocket.Start()
+	log := logger.New()
 
-	log.Println("Starting API Gateway")
-	server.Start()
+	log.Info("Starting Websocket Server")
+
+	go websocket.Start(log)
+
+	log.Info("Starting GRPC Gateway Server")
+	server.Start(log)
 
 }
 
