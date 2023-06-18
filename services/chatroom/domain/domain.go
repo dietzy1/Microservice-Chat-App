@@ -56,10 +56,18 @@ type Channel struct {
 	Owner        string `json:"owner" bson:"owner"`
 }
 
+type Icon struct {
+	Link      string `json:"link" bson:"link"`
+	Uuid      string `json:"uuid" bson:"uuid"`
+	Kindof    string `json:"kindof" bson:"kindof"`
+	OwnerUUid string `json:"owneruuid" bson:"owneruuid"`
+}
+
 // Need to pass in owner uuid
 // Name of the chatroom
 // Description of the chatroom
 // Tags of the chatroom
+// FIXME:
 func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, error) {
 
 	//Name is set
@@ -68,6 +76,7 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 	//THIS PART WE NEED TO FIX
 	chatroom.Icon.Link = "https://ik.imagekit.io/imageAPI/user/a884bf0f-4b26-4a4f-a454-d0e0286882e4.png"
 	chatroom.Icon.Uuid = "a884bf0f-4b26-4a4f-a454-d0e0286882e4"
+	chatroom.Icon.Kindof = "/avatar/"
 	//Owner is set
 	chatroom.Users = append(chatroom.Users, chatroom.Owner)
 
@@ -80,6 +89,8 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 	}
 	chatroom.Channels = append(chatroom.Channels, channel)
 
+	log.Println("Creating chatroom with these values:", chatroom)
+
 	//Use the chatroom object to create a new chatroom in the database
 	err := d.repo.CreateChatroom(ctx, chatroom)
 	if err != nil {
@@ -87,11 +98,11 @@ func (d *Domain) CreateRoom(ctx context.Context, chatroom Chatroom) (string, err
 		return "", err
 	}
 
-	err = d.repo.CreateChannel(ctx, channel)
+	/* err = d.repo.CreateChannel(ctx, channel)
 	if err != nil {
 		log.Println(err)
 		return "", err
-	}
+	} */
 
 	//if everything passed then we need to contact the user service and add the chatroom to the owner
 	_, err = d.userClient.AddChatServer(ctx, &userClientv1.AddChatServerRequest{
@@ -145,7 +156,7 @@ func (d *Domain) GetRoom(ctx context.Context, chatroom Chatroom) (Chatroom, erro
 }
 
 func (d *Domain) GetRooms(ctx context.Context, chatroomUuids []string) ([]Chatroom, error) {
-	log.Println(chatroomUuids)
+	log.Println("Requesting with these chatroom uuids:", chatroomUuids)
 	rooms, err := d.repo.GetChatrooms(ctx, chatroomUuids)
 	if err != nil {
 		log.Println(err)

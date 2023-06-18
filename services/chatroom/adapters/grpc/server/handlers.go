@@ -113,7 +113,6 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 
 func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) (*chatroomv1.GetRoomsResponse, error) {
 
-	log.Println("is the handler even fucking proccing or what?", req.ChatroomUuids)
 	// Perform check if array of uuids is empty
 	if req.ChatroomUuids == nil {
 		return &chatroomv1.GetRoomsResponse{}, status.Error(400, "Uuid cannot be empty")
