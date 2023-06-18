@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package icon.v1;
+
+option go_package = "github.com/dietzy1/chatapp/services/icon/proto/icon/v1;iconv1";
+
+service IconService {
+  rpc GetIcon(GetIconRequest) returns (GetIconResponse) {}
+
+  rpc DeleteIcon(DeleteIconRequest) returns (DeleteIconResponse) {}
+}
+
+message Icon {
+  string link = 1;
+  string uuid = 2;
+  string kindof = 3;
+  string owneruuid = 4;
+}
+
+message GetIconRequest {
+  string uuid = 1;
+}
+
+message GetIconResponse {
+  Icon icon = 1;
+}
+
+message DeleteIconRequest {
+  string uuid = 1;
+  string owneruuid = 2;
+}
+
+message DeleteIconResponse {}
