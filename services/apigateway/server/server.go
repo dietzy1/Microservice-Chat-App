@@ -17,6 +17,7 @@ import (
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
+	"go.uber.org/zap"
 
 	//import the generated protobuf code straight from their source
 	accountclientv1 "github.com/dietzy1/chatapp/services/account/proto/account/v1"
@@ -50,11 +51,13 @@ type server struct {
 	chatroomClient chatroomclientv1.ChatroomServiceClient
 
 	accountClient accountclientv1.AccountServiceClient
+
+	logger *zap.Logger
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient, messageClient messageclientv1.MessageServiceClient, chatroomClient chatroomclientv1.ChatroomServiceClient, accountClient accountclientv1.AccountServiceClient) *server {
-	return &server{authClient: authClient, userClient: userClient, messageClient: messageClient, chatroomClient: chatroomClient, accountClient: accountClient}
+func newServer(authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient, messageClient messageclientv1.MessageServiceClient, chatroomClient chatroomclientv1.ChatroomServiceClient, accountClient accountclientv1.AccountServiceClient, logger *zap.Logger) *server {
+	return &server{authClient: authClient, userClient: userClient, messageClient: messageClient, chatroomClient: chatroomClient, accountClient: accountClient, logger: logger}
 }
 
 // run the generated GRPC gateway server
@@ -124,7 +127,7 @@ func runGateway(authClient authclientv1.AuthServiceClient) error {
 }
 
 // This is the function called in main.go
-func Start() {
+func Start(logger *zap.Logger) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
@@ -132,7 +135,7 @@ func Start() {
 	addr := os.Getenv("GRPC")
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalln("Failed to listen:", err)
+		logger.Fatal("Failed to listen", zap.Error(err))
 	}
 	//initiate dependencies for the server
 
@@ -142,7 +145,7 @@ func Start() {
 	messageClient := clients.NewMessageClient()
 	accountClient := clients.NewAccountClient()
 
-	dependencies := newServer(*authClient, *userClient, *messageClient, *chatroomClient, *accountClient)
+	dependencies := newServer(*authClient, *userClient, *messageClient, *chatroomClient, *accountClient, logger)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
@@ -154,7 +157,7 @@ func Start() {
 	accountv1.RegisterAccountGatewayServiceServer(s, dependencies)
 
 	// Serve gRPC Server
-	log.Info("Serving gRPC on http://", addr)
+	logger.Info("Serving gRPC on http://", zap.String("address", addr))
 	go func() {
 		log.Fatal(s.Serve(lis))
 

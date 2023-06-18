@@ -29,11 +29,6 @@ func cors(h http.Handler) http.Handler {
 		}
 		h.ServeHTTP(w, r)
 
-		//the following are some prior configurations used in production
-		/* w.Header().Set("Access-Control-Allow-Origin", "https://pepe-api.vercel.app")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
-		w.Header().Set("Access-Control-Allow-Credentials", "true") */
 	})
 }
 
