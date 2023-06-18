@@ -20,7 +20,9 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	IconService_GetIcon_FullMethodName    = "/icon.v1.IconService/GetIcon"
+	IconService_GetIcons_FullMethodName   = "/icon.v1.IconService/GetIcons"
 	IconService_DeleteIcon_FullMethodName = "/icon.v1.IconService/DeleteIcon"
+	IconService_UploadIcon_FullMethodName = "/icon.v1.IconService/UploadIcon"
 )
 
 // IconServiceClient is the client API for IconService service.
@@ -28,7 +30,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IconServiceClient interface {
 	GetIcon(ctx context.Context, in *GetIconRequest, opts ...grpc.CallOption) (*GetIconResponse, error)
+	GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error)
 	DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error)
+	UploadIcon(ctx context.Context, opts ...grpc.CallOption) (IconService_UploadIconClient, error)
 }
 
 type iconServiceClient struct {
@@ -48,6 +52,15 @@ func (c *iconServiceClient) GetIcon(ctx context.Context, in *GetIconRequest, opt
 	return out, nil
 }
 
+func (c *iconServiceClient) GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error) {
+	out := new(GetIconsResponse)
+	err := c.cc.Invoke(ctx, IconService_GetIcons_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *iconServiceClient) DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error) {
 	out := new(DeleteIconResponse)
 	err := c.cc.Invoke(ctx, IconService_DeleteIcon_FullMethodName, in, out, opts...)
@@ -57,12 +70,48 @@ func (c *iconServiceClient) DeleteIcon(ctx context.Context, in *DeleteIconReques
 	return out, nil
 }
 
+func (c *iconServiceClient) UploadIcon(ctx context.Context, opts ...grpc.CallOption) (IconService_UploadIconClient, error) {
+	stream, err := c.cc.NewStream(ctx, &IconService_ServiceDesc.Streams[0], IconService_UploadIcon_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &iconServiceUploadIconClient{stream}
+	return x, nil
+}
+
+type IconService_UploadIconClient interface {
+	Send(*UploadIconRequest) error
+	CloseAndRecv() (*UploadIconResponse, error)
+	grpc.ClientStream
+}
+
+type iconServiceUploadIconClient struct {
+	grpc.ClientStream
+}
+
+func (x *iconServiceUploadIconClient) Send(m *UploadIconRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *iconServiceUploadIconClient) CloseAndRecv() (*UploadIconResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadIconResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // IconServiceServer is the server API for IconService service.
 // All implementations should embed UnimplementedIconServiceServer
 // for forward compatibility
 type IconServiceServer interface {
 	GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error)
+	GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error)
 	DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error)
+	UploadIcon(IconService_UploadIconServer) error
 }
 
 // UnimplementedIconServiceServer should be embedded to have forward compatible implementations.
@@ -72,8 +121,14 @@ type UnimplementedIconServiceServer struct {
 func (UnimplementedIconServiceServer) GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIcon not implemented")
 }
+func (UnimplementedIconServiceServer) GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIcons not implemented")
+}
 func (UnimplementedIconServiceServer) DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteIcon not implemented")
+}
+func (UnimplementedIconServiceServer) UploadIcon(IconService_UploadIconServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadIcon not implemented")
 }
 
 // UnsafeIconServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -105,6 +160,24 @@ func _IconService_GetIcon_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IconService_GetIcons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIconsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IconServiceServer).GetIcons(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IconService_GetIcons_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IconServiceServer).GetIcons(ctx, req.(*GetIconsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IconService_DeleteIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteIconRequest)
 	if err := dec(in); err != nil {
@@ -123,6 +196,32 @@ func _IconService_DeleteIcon_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IconService_UploadIcon_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(IconServiceServer).UploadIcon(&iconServiceUploadIconServer{stream})
+}
+
+type IconService_UploadIconServer interface {
+	SendAndClose(*UploadIconResponse) error
+	Recv() (*UploadIconRequest, error)
+	grpc.ServerStream
+}
+
+type iconServiceUploadIconServer struct {
+	grpc.ServerStream
+}
+
+func (x *iconServiceUploadIconServer) SendAndClose(m *UploadIconResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *iconServiceUploadIconServer) Recv() (*UploadIconRequest, error) {
+	m := new(UploadIconRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // IconService_ServiceDesc is the grpc.ServiceDesc for IconService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,10 +234,20 @@ var IconService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IconService_GetIcon_Handler,
 		},
 		{
+			MethodName: "GetIcons",
+			Handler:    _IconService_GetIcons_Handler,
+		},
+		{
 			MethodName: "DeleteIcon",
 			Handler:    _IconService_DeleteIcon_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadIcon",
+			Handler:       _IconService_UploadIcon_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "icon/v1/icon_service.proto",
 }

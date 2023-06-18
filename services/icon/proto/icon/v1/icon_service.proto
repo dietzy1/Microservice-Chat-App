@@ -6,15 +6,19 @@ option go_package = "github.com/dietzy1/chatapp/services/icon/proto/icon/v1;icon
 
 service IconService {
   rpc GetIcon(GetIconRequest) returns (GetIconResponse) {}
+  rpc GetIcons(GetIconsRequest) returns (GetIconsResponse) {}
 
   rpc DeleteIcon(DeleteIconRequest) returns (DeleteIconResponse) {}
+
+  
+  rpc UploadIcon(stream UploadIconRequest) returns (UploadIconResponse) {}
 }
 
 message Icon {
   string link = 1;
   string uuid = 2;
   string kindof = 3;
-  string owneruuid = 4;
+  string owner_uuid = 4;
 }
 
 message GetIconRequest {
@@ -25,9 +29,40 @@ message GetIconResponse {
   Icon icon = 1;
 }
 
+message GetIconsRequest {
+  string owner_uuid = 1;
+}
+
+message GetIconsResponse {
+  repeated Icon icons = 1;
+}
+
 message DeleteIconRequest {
   string uuid = 1;
-  string owneruuid = 2;
+  string owner_uuid = 2;
 }
 
 message DeleteIconResponse {}
+
+message UploadIconRequest {
+    oneof data {
+      ImageInfo info = 1;
+      bytes chunk_data = 2;
+    }
+  }
+  
+  message UploadIconResponse {
+    string link = 1;
+    string uuid = 2;
+  }
+  
+  message ImageInfo {
+    string kindof = 1;
+    string owner_uuid = 2;
+  }
+  
+  message GetAvatarsRequest {}
+  
+  message GetAvatarsResponse {
+    repeated Icon icons = 1;
+  }
