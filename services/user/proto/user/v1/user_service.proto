@@ -17,10 +17,6 @@ service UserService {
   rpc EditDescription(EditDescriptionRequest) returns (EditDescriptionResponse) {}
   rpc ChangeAvatar(ChangeAvatarRequest) returns (ChangeAvatarResponse) {}
 
-  rpc GetAvatars(GetAvatarsRequest) returns (GetAvatarsResponse) {}
-
-  //Sortof internal
-  rpc UploadAvatar(stream UploadAvatarRequest) returns (UploadAvatarResponse) {}
 }
 
 message CreateUserRequest {
