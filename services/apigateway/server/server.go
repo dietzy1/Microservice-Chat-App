@@ -1,6 +1,5 @@
 package server
 
-//	authv1 "github.com/dietzy1/chatapp/services/apigateway/gen/go/auth/v1"
 import (
 	"context"
 	"fmt"
@@ -8,8 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
-
-	//authv1 "github.com/dietzy1/chatapp/services/apigateway/gen/go/auth/v1"
+	"time"
 
 	"github.com/dietzy1/chatapp/pkg/clients"
 	accountv1 "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1"
@@ -17,16 +15,18 @@ import (
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
-	"go.uber.org/zap"
+	iconv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 
 	//import the generated protobuf code straight from their source
 	accountclientv1 "github.com/dietzy1/chatapp/services/account/proto/account/v1"
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 	chatroomclientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
+	iconclientv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/grpclog"
@@ -38,6 +38,7 @@ type server struct {
 	userv1.UnimplementedUserGatewayServiceServer
 	chatroomv1.UnimplementedChatroomGatewayServiceServer
 	accountclientv1.UnimplementedAccountServiceServer
+	iconclientv1.UnimplementedIconServiceServer
 
 	//authClient client.AuthServiceClient
 	authClient authclientv1.AuthServiceClient
@@ -52,12 +53,14 @@ type server struct {
 
 	accountClient accountclientv1.AccountServiceClient
 
+	iconClient iconclientv1.IconServiceClient
+
 	logger *zap.Logger
 }
 
 // Create a new server object and inject the cache and clients
-func newServer(authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient, messageClient messageclientv1.MessageServiceClient, chatroomClient chatroomclientv1.ChatroomServiceClient, accountClient accountclientv1.AccountServiceClient, logger *zap.Logger) *server {
-	return &server{authClient: authClient, userClient: userClient, messageClient: messageClient, chatroomClient: chatroomClient, accountClient: accountClient, logger: logger}
+func newServer(authClient authclientv1.AuthServiceClient, userClient userclientv1.UserServiceClient, messageClient messageclientv1.MessageServiceClient, chatroomClient chatroomclientv1.ChatroomServiceClient, accountClient accountclientv1.AccountServiceClient, iconClient iconclientv1.IconServiceClient, logger *zap.Logger) *server {
+	return &server{authClient: authClient, userClient: userClient, messageClient: messageClient, chatroomClient: chatroomClient, accountClient: accountClient, iconClient: iconClient, logger: logger}
 }
 
 // run the generated GRPC gateway server
@@ -105,6 +108,9 @@ func runGateway(authClient authclientv1.AuthServiceClient) error {
 	if err = accountv1.RegisterAccountGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
 		return fmt.Errorf("failed to register gateway: %v", err)
 	}
+	if err = iconv1.RegisterIconGatewayServiceHandler(context.Background(), gwmux, conn); err != nil {
+		return fmt.Errorf("failed to register gateway: %v", err)
+	}
 
 	gatewayAddress := os.Getenv("GATEWAY")
 	//gatewayAddress := ":8090"
@@ -144,8 +150,9 @@ func Start(logger *zap.Logger) {
 	chatroomClient := clients.NewChatRoomClient()
 	messageClient := clients.NewMessageClient()
 	accountClient := clients.NewAccountClient()
+	iconClient := clients.NewIconClient()
 
-	dependencies := newServer(*authClient, *userClient, *messageClient, *chatroomClient, *accountClient, logger)
+	dependencies := newServer(*authClient, *userClient, *messageClient, *chatroomClient, *accountClient, *iconClient, logger)
 
 	//Inject dependencies into the server
 	s := grpc.NewServer()
@@ -162,6 +169,27 @@ func Start(logger *zap.Logger) {
 		log.Fatal(s.Serve(lis))
 
 	}()
+
+	//create new stdlib mux
+	r := http.DefaultServeMux
+
+	//Attach REST endpoints to the mux
+	r.HandleFunc("/api/v1/icons", dependencies.uploadIconHandler)
+	//r.Handle("/swagger-ui/", serveSwaggerUI())
+
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         os.Getenv("ADDR") + os.Getenv("PORT"), //Required addr for railway.app deployment.
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	//Serve the REST Server
+	go func() {
+		log.Fatal(srv.ListenAndServe())
+	}()
+
 	//Run the GRPC gateway server
 	err = runGateway(*authClient)
 	log.Fatalln(err)
