@@ -12,7 +12,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/dietzy1/chatapp/services/chatroom/domain"
+	"github.com/dietzy1/chatapp/services/icon/domain"
 	"github.com/imagekit-developer/imagekit-go"
 	"github.com/imagekit-developer/imagekit-go/api/media"
 	"github.com/imagekit-developer/imagekit-go/api/uploader"
@@ -39,11 +39,11 @@ func New() *cdn {
 }
 
 // sends a POST http request that stores the image bytes with a path of uuid.jpg at the CDN.
-func (f *cdn) UploadFile(ctx context.Context, icon domain.Icon, buf bytes.Buffer) (string, error) {
+func (f *cdn) UploadIcon(ctx context.Context, icon domain.Icon, buf bytes.Buffer, folder string) (string, error) {
 	params := uploader.UploadParam{
-		FileName:          icon.Uuid + ".jpg",
+		FileName:          icon.Uuid + ".png",
 		UseUniqueFileName: newFalse(),
-		Folder:            "/chatroom/",
+		Folder:            folder,
 		IsPrivateFile:     newFalse(),
 		ResponseFields:    "filepath",
 	}
@@ -55,8 +55,8 @@ func (f *cdn) UploadFile(ctx context.Context, icon domain.Icon, buf bytes.Buffer
 }
 
 // Sends a DELETE http request that deletes the image bytes at the CDN.
-func (f *cdn) DeleteFile(ctx context.Context, uuid string) error {
-	fileid, err := f.GetFile(ctx, uuid)
+func (f *cdn) DeleteIcon(ctx context.Context, uuid string) error {
+	fileid, err := f.GetIcon(ctx, uuid)
 	if err != nil {
 		return err
 	}
@@ -68,8 +68,8 @@ func (f *cdn) DeleteFile(ctx context.Context, uuid string) error {
 }
 
 // helper function to enable deletefile and update file. Sends a GET request that locates the image bytes at the CDN.
-func (f *cdn) GetFile(ctx context.Context, uuid string) (string, error) {
-	query := fmt.Sprintf(`name = "%s"`, uuid+".jpg")
+func (f *cdn) GetIcon(ctx context.Context, uuid string) (string, error) {
+	query := fmt.Sprintf(`name = "%s"`, uuid+".png")
 	res, err := f.client.Media.Files(ctx, media.FilesParam{
 		SearchQuery: query,
 	})
