@@ -6,21 +6,20 @@ import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/dietzy1/chatapp/services/apigateway/icongateway/v1;icongatewayv1";
-
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
-    info: {version: "1.0"};
-    external_docs: {
-      url: "https://github.com/dietzy1/Microservice-Chat-App";
-      description: "Backend GRPC chatapp microservice";
-    }
-    schemes: HTTPS;
-  };
+  info: {version: "1.0"};
+  external_docs: {
+    url: "https://github.com/dietzy1/Microservice-Chat-App";
+    description: "Backend GRPC chatapp microservice";
+  }
+  schemes: HTTPS;
+};
 
-service IconService {
+service IconGatewayService {
   rpc GetIcon(GetIconRequest) returns (GetIconResponse) {
     option (google.api.http) = {
-        post: "/icongateway.v1.IconService/GetIcon",
-        body: "*",
+      post: "/icongateway.v1.IconService/GetIcon",
+      body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get an icon"
@@ -30,8 +29,8 @@ service IconService {
   }
   rpc GetIcons(GetIconsRequest) returns (GetIconsResponse) {
     option (google.api.http) = {
-        post: "/icongateway.v1.IconService/GetIcons",
-        body: "*",
+      post: "/icongateway.v1.IconService/GetIcons",
+      body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Get icons"
@@ -42,8 +41,8 @@ service IconService {
 
   rpc DeleteIcon(DeleteIconRequest) returns (DeleteIconResponse) {
     option (google.api.http) = {
-        post: "/icongateway.v1.IconService/DeleteIcon",
-        body: "*",
+      post: "/icongateway.v1.IconService/DeleteIcon",
+      body: "*",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "Delete an icon"
@@ -51,12 +50,7 @@ service IconService {
       tags: "Icon"
     };
   }
-
 }
-
-
-
-
 
 message Icon {
   string link = 1;
@@ -87,9 +81,9 @@ message DeleteIconRequest {
 }
 
 message DeleteIconResponse {}
-  
-  message GetAvatarsRequest {}
-  
-  message GetAvatarsResponse {
-    repeated Icon icons = 1;
-  }
+
+message GetAvatarsRequest {}
+
+message GetAvatarsResponse {
+  repeated Icon icons = 1;
+}

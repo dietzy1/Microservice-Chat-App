@@ -31,7 +31,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_IconService_GetIcon_0(ctx context.Context, marshaler runtime.Marshaler, client IconServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_IconGatewayService_GetIcon_0(ctx context.Context, marshaler runtime.Marshaler, client IconGatewayServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetIconRequest
 	var metadata runtime.ServerMetadata
 
@@ -48,7 +48,7 @@ func request_IconService_GetIcon_0(ctx context.Context, marshaler runtime.Marsha
 
 }
 
-func local_request_IconService_GetIcon_0(ctx context.Context, marshaler runtime.Marshaler, server IconServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_IconGatewayService_GetIcon_0(ctx context.Context, marshaler runtime.Marshaler, server IconGatewayServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetIconRequest
 	var metadata runtime.ServerMetadata
 
@@ -65,7 +65,7 @@ func local_request_IconService_GetIcon_0(ctx context.Context, marshaler runtime.
 
 }
 
-func request_IconService_GetIcons_0(ctx context.Context, marshaler runtime.Marshaler, client IconServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_IconGatewayService_GetIcons_0(ctx context.Context, marshaler runtime.Marshaler, client IconGatewayServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetIconsRequest
 	var metadata runtime.ServerMetadata
 
@@ -82,7 +82,7 @@ func request_IconService_GetIcons_0(ctx context.Context, marshaler runtime.Marsh
 
 }
 
-func local_request_IconService_GetIcons_0(ctx context.Context, marshaler runtime.Marshaler, server IconServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_IconGatewayService_GetIcons_0(ctx context.Context, marshaler runtime.Marshaler, server IconGatewayServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetIconsRequest
 	var metadata runtime.ServerMetadata
 
@@ -99,7 +99,7 @@ func local_request_IconService_GetIcons_0(ctx context.Context, marshaler runtime
 
 }
 
-func request_IconService_DeleteIcon_0(ctx context.Context, marshaler runtime.Marshaler, client IconServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_IconGatewayService_DeleteIcon_0(ctx context.Context, marshaler runtime.Marshaler, client IconGatewayServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DeleteIconRequest
 	var metadata runtime.ServerMetadata
 
@@ -116,7 +116,7 @@ func request_IconService_DeleteIcon_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-func local_request_IconService_DeleteIcon_0(ctx context.Context, marshaler runtime.Marshaler, server IconServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_IconGatewayService_DeleteIcon_0(ctx context.Context, marshaler runtime.Marshaler, server IconGatewayServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DeleteIconRequest
 	var metadata runtime.ServerMetadata
 
@@ -133,13 +133,13 @@ func local_request_IconService_DeleteIcon_0(ctx context.Context, marshaler runti
 
 }
 
-// RegisterIconServiceHandlerServer registers the http handlers for service IconService to "mux".
-// UnaryRPC     :call IconServiceServer directly.
+// RegisterIconGatewayServiceHandlerServer registers the http handlers for service IconGatewayService to "mux".
+// UnaryRPC     :call IconGatewayServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterIconServiceHandlerFromEndpoint instead.
-func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server IconServiceServer) error {
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterIconGatewayServiceHandlerFromEndpoint instead.
+func RegisterIconGatewayServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server IconGatewayServiceServer) error {
 
-	mux.Handle("POST", pattern_IconService_GetIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_GetIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -147,12 +147,12 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconService/GetIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcon"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/GetIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcon"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_IconService_GetIcon_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_IconGatewayService_GetIcon_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -160,11 +160,11 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_IconService_GetIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_GetIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_IconService_GetIcons_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_GetIcons_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -172,12 +172,12 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconService/GetIcons", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcons"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/GetIcons", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcons"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_IconService_GetIcons_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_IconGatewayService_GetIcons_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -185,11 +185,11 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_IconService_GetIcons_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_GetIcons_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_IconService_DeleteIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_DeleteIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -197,12 +197,12 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconService/DeleteIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/DeleteIcon"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/DeleteIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/DeleteIcon"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_IconService_DeleteIcon_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_IconGatewayService_DeleteIcon_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -210,16 +210,16 @@ func RegisterIconServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_IconService_DeleteIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_DeleteIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterIconServiceHandlerFromEndpoint is same as RegisterIconServiceHandler but
+// RegisterIconGatewayServiceHandlerFromEndpoint is same as RegisterIconGatewayServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterIconServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterIconGatewayServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.DialContext(ctx, endpoint, opts...)
 	if err != nil {
 		return err
@@ -239,85 +239,85 @@ func RegisterIconServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.Se
 		}()
 	}()
 
-	return RegisterIconServiceHandler(ctx, mux, conn)
+	return RegisterIconGatewayServiceHandler(ctx, mux, conn)
 }
 
-// RegisterIconServiceHandler registers the http handlers for service IconService to "mux".
+// RegisterIconGatewayServiceHandler registers the http handlers for service IconGatewayService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterIconServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterIconServiceHandlerClient(ctx, mux, NewIconServiceClient(conn))
+func RegisterIconGatewayServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterIconGatewayServiceHandlerClient(ctx, mux, NewIconGatewayServiceClient(conn))
 }
 
-// RegisterIconServiceHandlerClient registers the http handlers for service IconService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "IconServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "IconServiceClient"
+// RegisterIconGatewayServiceHandlerClient registers the http handlers for service IconGatewayService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "IconGatewayServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "IconGatewayServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "IconServiceClient" to call the correct interceptors.
-func RegisterIconServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client IconServiceClient) error {
+// "IconGatewayServiceClient" to call the correct interceptors.
+func RegisterIconGatewayServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client IconGatewayServiceClient) error {
 
-	mux.Handle("POST", pattern_IconService_GetIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_GetIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconService/GetIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcon"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/GetIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcon"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_IconService_GetIcon_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_IconGatewayService_GetIcon_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_IconService_GetIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_GetIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_IconService_GetIcons_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_GetIcons_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconService/GetIcons", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcons"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/GetIcons", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/GetIcons"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_IconService_GetIcons_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_IconGatewayService_GetIcons_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_IconService_GetIcons_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_GetIcons_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_IconService_DeleteIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_IconGatewayService_DeleteIcon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconService/DeleteIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/DeleteIcon"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/icongateway.v1.IconGatewayService/DeleteIcon", runtime.WithHTTPPathPattern("/icongateway.v1.IconService/DeleteIcon"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_IconService_DeleteIcon_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_IconGatewayService_DeleteIcon_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_IconService_DeleteIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_IconGatewayService_DeleteIcon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -325,17 +325,17 @@ func RegisterIconServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_IconService_GetIcon_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "GetIcon"}, ""))
+	pattern_IconGatewayService_GetIcon_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "GetIcon"}, ""))
 
-	pattern_IconService_GetIcons_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "GetIcons"}, ""))
+	pattern_IconGatewayService_GetIcons_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "GetIcons"}, ""))
 
-	pattern_IconService_DeleteIcon_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "DeleteIcon"}, ""))
+	pattern_IconGatewayService_DeleteIcon_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"icongateway.v1.IconService", "DeleteIcon"}, ""))
 )
 
 var (
-	forward_IconService_GetIcon_0 = runtime.ForwardResponseMessage
+	forward_IconGatewayService_GetIcon_0 = runtime.ForwardResponseMessage
 
-	forward_IconService_GetIcons_0 = runtime.ForwardResponseMessage
+	forward_IconGatewayService_GetIcons_0 = runtime.ForwardResponseMessage
 
-	forward_IconService_DeleteIcon_0 = runtime.ForwardResponseMessage
+	forward_IconGatewayService_DeleteIcon_0 = runtime.ForwardResponseMessage
 )

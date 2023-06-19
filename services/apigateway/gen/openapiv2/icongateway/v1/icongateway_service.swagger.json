@@ -6,7 +6,7 @@
   },
   "tags": [
     {
-      "name": "IconService"
+      "name": "IconGatewayService"
     }
   ],
   "schemes": [
@@ -23,7 +23,7 @@
       "post": {
         "summary": "Delete an icon",
         "description": "GRPC gateway call to delete an icon.",
-        "operationId": "IconService_DeleteIcon",
+        "operationId": "IconGatewayService_DeleteIcon",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -57,7 +57,7 @@
       "post": {
         "summary": "Get an icon",
         "description": "GRPC gateway call to get an icon.",
-        "operationId": "IconService_GetIcon",
+        "operationId": "IconGatewayService_GetIcon",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -91,7 +91,7 @@
       "post": {
         "summary": "Get icons",
         "description": "GRPC gateway call to get icons.",
-        "operationId": "IconService_GetIcons",
+        "operationId": "IconGatewayService_GetIcons",
         "responses": {
           "200": {
             "description": "A successful response.",

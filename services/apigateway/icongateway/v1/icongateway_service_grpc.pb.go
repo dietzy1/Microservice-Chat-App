@@ -19,161 +19,161 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IconService_GetIcon_FullMethodName    = "/icongateway.v1.IconService/GetIcon"
-	IconService_GetIcons_FullMethodName   = "/icongateway.v1.IconService/GetIcons"
-	IconService_DeleteIcon_FullMethodName = "/icongateway.v1.IconService/DeleteIcon"
+	IconGatewayService_GetIcon_FullMethodName    = "/icongateway.v1.IconGatewayService/GetIcon"
+	IconGatewayService_GetIcons_FullMethodName   = "/icongateway.v1.IconGatewayService/GetIcons"
+	IconGatewayService_DeleteIcon_FullMethodName = "/icongateway.v1.IconGatewayService/DeleteIcon"
 )
 
-// IconServiceClient is the client API for IconService service.
+// IconGatewayServiceClient is the client API for IconGatewayService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type IconServiceClient interface {
+type IconGatewayServiceClient interface {
 	GetIcon(ctx context.Context, in *GetIconRequest, opts ...grpc.CallOption) (*GetIconResponse, error)
 	GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error)
 	DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error)
 }
 
-type iconServiceClient struct {
+type iconGatewayServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewIconServiceClient(cc grpc.ClientConnInterface) IconServiceClient {
-	return &iconServiceClient{cc}
+func NewIconGatewayServiceClient(cc grpc.ClientConnInterface) IconGatewayServiceClient {
+	return &iconGatewayServiceClient{cc}
 }
 
-func (c *iconServiceClient) GetIcon(ctx context.Context, in *GetIconRequest, opts ...grpc.CallOption) (*GetIconResponse, error) {
+func (c *iconGatewayServiceClient) GetIcon(ctx context.Context, in *GetIconRequest, opts ...grpc.CallOption) (*GetIconResponse, error) {
 	out := new(GetIconResponse)
-	err := c.cc.Invoke(ctx, IconService_GetIcon_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IconGatewayService_GetIcon_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *iconServiceClient) GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error) {
+func (c *iconGatewayServiceClient) GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error) {
 	out := new(GetIconsResponse)
-	err := c.cc.Invoke(ctx, IconService_GetIcons_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IconGatewayService_GetIcons_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *iconServiceClient) DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error) {
+func (c *iconGatewayServiceClient) DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error) {
 	out := new(DeleteIconResponse)
-	err := c.cc.Invoke(ctx, IconService_DeleteIcon_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IconGatewayService_DeleteIcon_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// IconServiceServer is the server API for IconService service.
-// All implementations should embed UnimplementedIconServiceServer
+// IconGatewayServiceServer is the server API for IconGatewayService service.
+// All implementations should embed UnimplementedIconGatewayServiceServer
 // for forward compatibility
-type IconServiceServer interface {
+type IconGatewayServiceServer interface {
 	GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error)
 	GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error)
 	DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error)
 }
 
-// UnimplementedIconServiceServer should be embedded to have forward compatible implementations.
-type UnimplementedIconServiceServer struct {
+// UnimplementedIconGatewayServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedIconGatewayServiceServer struct {
 }
 
-func (UnimplementedIconServiceServer) GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error) {
+func (UnimplementedIconGatewayServiceServer) GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIcon not implemented")
 }
-func (UnimplementedIconServiceServer) GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error) {
+func (UnimplementedIconGatewayServiceServer) GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIcons not implemented")
 }
-func (UnimplementedIconServiceServer) DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error) {
+func (UnimplementedIconGatewayServiceServer) DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteIcon not implemented")
 }
 
-// UnsafeIconServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to IconServiceServer will
+// UnsafeIconGatewayServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to IconGatewayServiceServer will
 // result in compilation errors.
-type UnsafeIconServiceServer interface {
-	mustEmbedUnimplementedIconServiceServer()
+type UnsafeIconGatewayServiceServer interface {
+	mustEmbedUnimplementedIconGatewayServiceServer()
 }
 
-func RegisterIconServiceServer(s grpc.ServiceRegistrar, srv IconServiceServer) {
-	s.RegisterService(&IconService_ServiceDesc, srv)
+func RegisterIconGatewayServiceServer(s grpc.ServiceRegistrar, srv IconGatewayServiceServer) {
+	s.RegisterService(&IconGatewayService_ServiceDesc, srv)
 }
 
-func _IconService_GetIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IconGatewayService_GetIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetIconRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IconServiceServer).GetIcon(ctx, in)
+		return srv.(IconGatewayServiceServer).GetIcon(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IconService_GetIcon_FullMethodName,
+		FullMethod: IconGatewayService_GetIcon_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IconServiceServer).GetIcon(ctx, req.(*GetIconRequest))
+		return srv.(IconGatewayServiceServer).GetIcon(ctx, req.(*GetIconRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IconService_GetIcons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IconGatewayService_GetIcons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetIconsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IconServiceServer).GetIcons(ctx, in)
+		return srv.(IconGatewayServiceServer).GetIcons(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IconService_GetIcons_FullMethodName,
+		FullMethod: IconGatewayService_GetIcons_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IconServiceServer).GetIcons(ctx, req.(*GetIconsRequest))
+		return srv.(IconGatewayServiceServer).GetIcons(ctx, req.(*GetIconsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IconService_DeleteIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IconGatewayService_DeleteIcon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteIconRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IconServiceServer).DeleteIcon(ctx, in)
+		return srv.(IconGatewayServiceServer).DeleteIcon(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IconService_DeleteIcon_FullMethodName,
+		FullMethod: IconGatewayService_DeleteIcon_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IconServiceServer).DeleteIcon(ctx, req.(*DeleteIconRequest))
+		return srv.(IconGatewayServiceServer).DeleteIcon(ctx, req.(*DeleteIconRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// IconService_ServiceDesc is the grpc.ServiceDesc for IconService service.
+// IconGatewayService_ServiceDesc is the grpc.ServiceDesc for IconGatewayService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var IconService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "icongateway.v1.IconService",
-	HandlerType: (*IconServiceServer)(nil),
+var IconGatewayService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "icongateway.v1.IconGatewayService",
+	HandlerType: (*IconGatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetIcon",
-			Handler:    _IconService_GetIcon_Handler,
+			Handler:    _IconGatewayService_GetIcon_Handler,
 		},
 		{
 			MethodName: "GetIcons",
-			Handler:    _IconService_GetIcons_Handler,
+			Handler:    _IconGatewayService_GetIcons_Handler,
 		},
 		{
 			MethodName: "DeleteIcon",
-			Handler:    _IconService_DeleteIcon_Handler,
+			Handler:    _IconGatewayService_DeleteIcon_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
