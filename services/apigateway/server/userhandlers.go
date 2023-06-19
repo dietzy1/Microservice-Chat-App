@@ -5,6 +5,7 @@ import (
 	"log"
 
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
+	iconclientv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -95,7 +96,7 @@ func (s *server) ChangeAvatar(ctx context.Context, req *userv1.ChangeAvatarReque
 
 func (s *server) GetAvatars(ctx context.Context, req *userv1.GetAvatarsRequest) (*userv1.GetAvatarsResponse, error) {
 
-	avatars, err := s.userClient.GetAvatars(ctx, &userclientv1.GetAvatarsRequest{})
+	avatars, err := s.iconClient.GetIcons(ctx, &iconclientv1.GetIconsRequest{})
 	if err != nil {
 		return &userv1.GetAvatarsResponse{}, status.Errorf(codes.Internal, "Error getting avatars: %v", err)
 	}

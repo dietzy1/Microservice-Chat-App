@@ -7,10 +7,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path/filepath"
 	"time"
 
-	iconclientv1 "github.com/dietzy1/"
+	iconv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 )
 
 // REST endpoint which accepts an image and contacts the icon service to upload it
@@ -40,13 +39,12 @@ func (s *server) uploadIconHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("cannot upload image: ", err)
 	}
 
-	log.Println(filepath.Ext(imagePath))
-
 	//Construct the singular request object
-	req := &iconclientv1.UploadAvatarRequest{
-		Data: &iconclientv1.UploadAvatarRequest_Info{
-			Info: &iconclientv1.ImageInfo{
-				ImageType: filepath.Ext(imagePath),
+	req := &iconv1.UploadIconRequest{
+		Data: &iconv1.UploadIconRequest_Info{
+			Info: &iconv1.ImageInfo{
+				Kindof:    r.Form.Get("kindof"),
+				OwnerUuid: r.Form.Get("owneruuid"),
 			},
 		},
 	}
@@ -70,8 +68,8 @@ func (s *server) uploadIconHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal("cannot read chunk to buffer: ", err)
 		}
 
-		req := &userclientv1.UploadAvatarRequest{
-			Data: &userclientv1.UploadAvatarRequest_ChunkData{
+		req := &iconv1.UploadIconRequest{
+			Data: &iconv1.UploadIconRequest_ChunkData{
 				ChunkData: buffer[:n],
 			},
 		}
@@ -87,8 +85,5 @@ func (s *server) uploadIconHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("cannot close stream: ", err)
 	}
-	log.Println("Upload avatar response: ", res)
-
-	return nil
-
+	log.Println("Upload icon response: ", res)
 }

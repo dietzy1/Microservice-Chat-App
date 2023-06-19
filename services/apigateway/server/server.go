@@ -13,9 +13,9 @@ import (
 	accountv1 "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1"
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	iconv1 "github.com/dietzy1/chatapp/services/apigateway/icongateway/v1"
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
-	iconv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 
 	//import the generated protobuf code straight from their source
 	accountclientv1 "github.com/dietzy1/chatapp/services/account/proto/account/v1"
@@ -40,12 +40,9 @@ type server struct {
 	accountclientv1.UnimplementedAccountServiceServer
 	iconclientv1.UnimplementedIconServiceServer
 
-	//authClient client.AuthServiceClient
 	authClient authclientv1.AuthServiceClient
 
-	//messageClient  client.MessageClient
 	userClient userclientv1.UserServiceClient
-	//chatroomClient client.ChatRoomClient
 
 	messageClient messageclientv1.MessageServiceClient
 
