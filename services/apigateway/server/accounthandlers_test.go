@@ -13,16 +13,17 @@ import (
 )
 
 type mockAccountClient struct {
-	accountclientv1.AccountClient
 	ChangeUsernameFunc   func(ctx context.Context, in *accountv1.ChangeUsernameRequest, opts ...grpc.CallOption) (*accountv1.ChangeUsernameResponse, error)
 	ChangePasswordFunc   func(ctx context.Context, in *accountv1.ChangePasswordRequest, opts ...grpc.CallOption) (*accountv1.ChangePasswordResponse, error)
 	DeleteAccountFunc    func(ctx context.Context, in *accountv1.DeleteAccountRequest, opts ...grpc.CallOption) (*accountv1.DeleteAccountResponse, error)
 	RegisterAccountFunc  func(ctx context.Context, in *accountv1.RegisterAccountRequest, opts ...grpc.CallOption) (*accountv1.RegisterAccountResponse, error)
 	DemoUserRegisterFunc func(ctx context.Context, in *accountv1.DemoUserRegisterRequest, opts ...grpc.CallOption) (*accountv1.DemoUserRegisterResponse, error)
+	UpgradeDemoUserFunc  func(ctx context.Context, in *accountv1.UpgradeDemoUserRequest, opts ...grpc.CallOption) (*accountv1.UpgradeDemoUserResponse, error)
 }
 
 func (m *mockAccountClient) ChangeUsername(ctx context.Context, in *accountv1.ChangeUsernameRequest, opts ...grpc.CallOption) (*accountv1.ChangeUsernameResponse, error) {
 	return m.ChangeUsernameFunc(ctx, in, opts...)
+
 }
 
 func (m *mockAccountClient) ChangePassword(ctx context.Context, in *accountv1.ChangePasswordRequest, opts ...grpc.CallOption) (*accountv1.ChangePasswordResponse, error) {
@@ -39,6 +40,10 @@ func (m *mockAccountClient) RegisterAccount(ctx context.Context, in *accountv1.R
 
 func (m *mockAccountClient) DemoUserRegister(ctx context.Context, in *accountv1.DemoUserRegisterRequest, opts ...grpc.CallOption) (*accountv1.DemoUserRegisterResponse, error) {
 	return m.DemoUserRegisterFunc(ctx, in, opts...)
+}
+
+func (m *mockAccountClient) UpgradeDemoUser(ctx context.Context, in *accountv1.UpgradeDemoUserRequest, opts ...grpc.CallOption) (*accountv1.UpgradeDemoUserResponse, error) {
+	return m.UpgradeDemoUserFunc(ctx, in, opts...)
 }
 
 func (m *mockAccountClient) ChangeUsernameCalls() int {
