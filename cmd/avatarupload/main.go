@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
+	iconclientv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 )
 
 //https://emojipedia.org/anxious-face-with-sweat/
@@ -67,7 +67,7 @@ func discoverFolder() []string {
 	return fileNames
 }
 
-func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error {
+func uploadAvatar(client iconclientv1.IconServiceClient, imagePath string) error {
 	//Open the image file in the upload folder
 
 	file, err := os.Open("upload/" + imagePath)
@@ -80,7 +80,7 @@ func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error
 	defer cancel()
 
 	//Retrieve the stream object from the server
-	stream, err := client.UploadAvatar(ctx)
+	stream, err := client.UploadIcon(ctx)
 	if err != nil {
 		log.Fatal("cannot upload image: ", err)
 	}
@@ -88,10 +88,11 @@ func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error
 	log.Println(filepath.Ext(imagePath))
 
 	//Construct the singular request object
-	req := &userclientv1.UploadAvatarRequest{
-		Data: &userclientv1.UploadAvatarRequest_Info{
-			Info: &userclientv1.ImageInfo{
-				ImageType: filepath.Ext(imagePath),
+	req := &iconclientv1.UploadIconRequest{
+		Data: &iconclientv1.UploadIconRequest_Info{
+			Info: &iconclientv1.ImageInfo{
+				OwnerUuid: "1234",
+				Kindof:    "avatar",
 			},
 		},
 	}
@@ -115,8 +116,8 @@ func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error
 			log.Fatal("cannot read chunk to buffer: ", err)
 		}
 
-		req := &userclientv1.UploadAvatarRequest{
-			Data: &userclientv1.UploadAvatarRequest_ChunkData{
+		req := &iconclientv1.UploadIconRequest{
+			Data: &iconclientv1.UploadIconRequest_ChunkData{
 				ChunkData: buffer[:n],
 			},
 		}
@@ -137,10 +138,10 @@ func uploadAvatar(client userclientv1.UserServiceClient, imagePath string) error
 	return nil
 }
 
-func connect() *userclientv1.UserServiceClient {
+func connect() *iconclientv1.IconServiceClient {
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"dns:///0.0.0.0"+os.Getenv("USERSERVICE"),
+		"dns:///0.0.0.0"+os.Getenv("ICONSERVICE"),
 		//"localhost:9000",
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -149,6 +150,6 @@ func connect() *userclientv1.UserServiceClient {
 		log.Fatalf("failed to dial: %v", err)
 	}
 
-	client := userclientv1.NewUserServiceClient(conn)
+	client := iconclientv1.NewIconServiceClient(conn)
 	return &client
 }
