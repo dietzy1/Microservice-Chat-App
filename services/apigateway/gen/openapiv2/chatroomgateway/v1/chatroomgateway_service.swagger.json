@@ -383,6 +383,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -541,6 +542,7 @@
         "channel": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1Channel"
           }
         }
@@ -563,6 +565,7 @@
         "rooms": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1GetRoomResponse"
           }
         }

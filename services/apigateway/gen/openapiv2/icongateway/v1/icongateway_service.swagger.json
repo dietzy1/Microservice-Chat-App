@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "messagegateway/v1/messagegateway_service.proto",
+    "title": "icongateway/v1/icongateway_service.proto",
     "version": "1.0"
   },
   "tags": [
     {
-      "name": "MessageGatewayService"
+      "name": "IconService"
     }
   ],
   "schemes": [
@@ -19,16 +19,16 @@
     "application/json"
   ],
   "paths": {
-    "/messagegateway.v1.MessageGatewayService/DeleteMessage": {
+    "/icongateway.v1.IconService/DeleteIcon": {
       "post": {
-        "summary": "Delete a message in a chatroom",
-        "description": "GRPC gateway call to delete an existing message in a chatroom.",
-        "operationId": "MessageGatewayService_DeleteMessage",
+        "summary": "Delete an icon",
+        "description": "GRPC gateway call to delete an icon.",
+        "operationId": "IconService_DeleteIcon",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1DeleteMessageResponse"
+              "$ref": "#/definitions/v1DeleteIconResponse"
             }
           },
           "default": {
@@ -44,25 +44,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1DeleteMessageRequest"
+              "$ref": "#/definitions/v1DeleteIconRequest"
             }
           }
         ],
         "tags": [
-          "Message"
+          "Icon"
         ]
       }
     },
-    "/messagegateway.v1.MessageGatewayService/EditMessage": {
+    "/icongateway.v1.IconService/GetIcon": {
       "post": {
-        "summary": "Edit a message in a chatroom",
-        "description": "GRPC gateway call to edit an existing message in a chatroom.",
-        "operationId": "MessageGatewayService_EditMessage",
+        "summary": "Get an icon",
+        "description": "GRPC gateway call to get an icon.",
+        "operationId": "IconService_GetIcon",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1EditMessageResponse"
+              "$ref": "#/definitions/v1GetIconResponse"
             }
           },
           "default": {
@@ -78,25 +78,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1EditMessageRequest"
+              "$ref": "#/definitions/v1GetIconRequest"
             }
           }
         ],
         "tags": [
-          "Message"
+          "Icon"
         ]
       }
     },
-    "/messagegateway.v1.MessageGatewayService/GetMessages": {
+    "/icongateway.v1.IconService/GetIcons": {
       "post": {
-        "summary": "get messages from a chatroom",
-        "description": "GRPC gateway call to retrieve a set amount of messages from a chatroom.",
-        "operationId": "MessageGatewayService_GetMessages",
+        "summary": "Get icons",
+        "description": "GRPC gateway call to get icons.",
+        "operationId": "IconService_GetIcons",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetMessagesResponse"
+              "$ref": "#/definitions/v1GetIconsResponse"
             }
           },
           "default": {
@@ -112,12 +112,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1GetMessagesRequest"
+              "$ref": "#/definitions/v1GetIconsRequest"
             }
           }
         ],
         "tags": [
-          "Message"
+          "Icon"
         ]
       }
     }
@@ -151,140 +151,69 @@
         }
       }
     },
-    "v1DeleteMessageRequest": {
+    "v1DeleteIconRequest": {
       "type": "object",
       "properties": {
-        "author": {
+        "uuid": {
           "type": "string"
         },
-        "content": {
-          "type": "string"
-        },
-        "authorUuid": {
-          "type": "string"
-        },
-        "chatRoomUuid": {
-          "type": "string"
-        },
-        "channelUuid": {
-          "type": "string"
-        },
-        "messageUuid": {
-          "type": "string"
-        },
-        "timestamp": {
+        "ownerUuid": {
           "type": "string"
         }
       }
     },
-    "v1DeleteMessageResponse": {
+    "v1DeleteIconResponse": {
+      "type": "object"
+    },
+    "v1GetIconRequest": {
       "type": "object",
       "properties": {
-        "status": {
-          "type": "string"
-        },
-        "error": {
+        "uuid": {
           "type": "string"
         }
       }
     },
-    "v1EditMessageRequest": {
+    "v1GetIconResponse": {
       "type": "object",
       "properties": {
-        "author": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "authorUuid": {
-          "type": "string"
-        },
-        "chatRoomUuid": {
-          "type": "string"
-        },
-        "channelUuid": {
-          "type": "string"
-        },
-        "messageUuid": {
-          "type": "string"
-        },
-        "timestamp": {
+        "icon": {
+          "$ref": "#/definitions/v1Icon"
+        }
+      }
+    },
+    "v1GetIconsRequest": {
+      "type": "object",
+      "properties": {
+        "ownerUuid": {
           "type": "string"
         }
       }
     },
-    "v1EditMessageResponse": {
+    "v1GetIconsResponse": {
       "type": "object",
       "properties": {
-        "author": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "authorUuid": {
-          "type": "string"
-        },
-        "chatRoomUuid": {
-          "type": "string"
-        },
-        "channelUuid": {
-          "type": "string"
-        },
-        "messageUuid": {
-          "type": "string"
-        },
-        "timestamp": {
-          "type": "string"
-        }
-      }
-    },
-    "v1GetMessagesRequest": {
-      "type": "object",
-      "properties": {
-        "chatRoomUuid": {
-          "type": "string"
-        },
-        "channelUuid": {
-          "type": "string"
-        }
-      }
-    },
-    "v1GetMessagesResponse": {
-      "type": "object",
-      "properties": {
-        "messages": {
+        "icons": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Msg"
+            "$ref": "#/definitions/v1Icon"
           }
         }
       }
     },
-    "v1Msg": {
+    "v1Icon": {
       "type": "object",
       "properties": {
-        "author": {
+        "link": {
           "type": "string"
         },
-        "content": {
+        "uuid": {
           "type": "string"
         },
-        "authorUuid": {
+        "kindof": {
           "type": "string"
         },
-        "chatRoomUuid": {
-          "type": "string"
-        },
-        "channelUuid": {
-          "type": "string"
-        },
-        "messageUuid": {
-          "type": "string"
-        },
-        "timestamp": {
+        "ownerUuid": {
           "type": "string"
         }
       }
