@@ -121,7 +121,7 @@ type mockDomain struct {
 	icons []domain.Icon
 }
 
-func (m *mockDomain) GetIcons(ctx context.Context) ([]domain.Icon, error) {
+func (m *mockDomain) GetIcons(ctx context.Context, str string) ([]domain.Icon, error) {
 	return m.icons, nil
 }
 

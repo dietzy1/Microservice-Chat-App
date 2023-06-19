@@ -4,10 +4,30 @@ import (
 	"bytes"
 	"context"
 	"image"
-	"image/jpeg"
+	"image/png"
 	"io"
+	"log"
 
-	"github.com/dietzy1/chatapp/services/user/domain"
+	_ "image/gif"
+	_ "image/jpeg"
+
+	"go.uber.org/zap"
+	_ "golang.org/x/image/webp"
+)
+
+//ok so I need to figure out exactly how this is going to work
+//There should be 3 different folders of icons on imagekit
+//1. User Icons
+//2. ServerIcons
+//3. Standart emoji icons which I have preuploaded
+
+//First step is probaly going in and editing the imagekit package so it supports these 3 different folders
+
+// Enum to manage the different types of icon folders
+const (
+	userIconFolder     = "/usericons/"
+	chatroomIconFolder = "/servericons/"
+	emojiIconFolder    = "/emojiicons/"
 )
 
 type Icon struct {
@@ -17,36 +37,43 @@ type Icon struct {
 	OwnerUuid string `json:"owneruuid" bson:"owneruuid"`
 }
 
-// Injected into domain struct
-type cdn interface {
-	UploadFile(ctx context.Context, icon domain.Icon, buf bytes.Buffer) (string, error)
-	DeleteFile(ctx context.Context, uuid string) error
-	GetFile(ctx context.Context, uuid string) (string, error)
+type Domain struct {
+	logger *zap.Logger
+	repo   repo
+	cdn    cdn
 }
 
-func ConvertToJPEG(w io.Writer, r io.Reader) error {
-	img, _, err := image.Decode(r)
+// Repository interface
+type repo interface {
+	StoreIcon(ctx context.Context, icon Icon) error
+	GetIcon(ctx context.Context, uuid string) (Icon, error)
+	GetIcons(ctx context.Context, ownerUuid string) ([]Icon, error)
+	GetEmojiIcons(ctx context.Context) ([]Icon, error)
+	DeleteIcon(ctx context.Context, uuid string) error
+}
+
+// Injected into domain struct
+type cdn interface {
+	UploadIcon(ctx context.Context, icon Icon, buf bytes.Buffer, folder string) (string, error)
+	DeleteIcon(ctx context.Context, uuid string) error
+	GetIcon(ctx context.Context, uuid string) (string, error)
+}
+
+// Constructor for the domain
+func New(logger *zap.Logger, repo repo, cdn cdn) Domain {
+	return Domain{
+		logger: logger,
+		repo:   repo,
+		cdn:    cdn,
+	}
+}
+
+// Accepts formats of webp, png, jpeg and gif
+func ConvertToPng(w io.Writer, r io.Reader) error {
+	img, imageType, err := image.Decode(r)
 	if err != nil {
 		return err
 	}
-	return jpeg.Encode(w, img, &jpeg.Options{Quality: 100})
+	log.Println("Encoding the image of type: ", imageType, " to png")
+	return png.Encode(w, img)
 }
-
-// I need to define the methods that takes in the file and converts it
-func (a Icon) StoreIcon(ctx context.Context, icon Icon) error {
-	return nil
-}
-
-func (a Icon) GetIcon(ctx context.Context, uuid string) (Icon, error) {
-	return Icon{}, nil
-}
-
-func (a Icon) UpdateIcon(ctx context.Context, icon Icon) error {
-	return nil
-}
-
-func (a Icon) DeleteIcon(ctx context.Context, uuid string) error {
-	return nil
-}
-
-// I need to add calls incase CDN or database fails

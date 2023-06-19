@@ -5,12 +5,17 @@ package icon.v1;
 option go_package = "github.com/dietzy1/chatapp/services/icon/proto/icon/v1;iconv1";
 
 service IconService {
+  //get by uuid
   rpc GetIcon(GetIconRequest) returns (GetIconResponse) {}
+
+  //get by owner uuid
   rpc GetIcons(GetIconsRequest) returns (GetIconsResponse) {}
+
+  //return all emoji icons
+  rpc GetEmojiIcons(GetEmojiIconsRequest) returns (GetEmojiIconsResponse) {}
 
   rpc DeleteIcon(DeleteIconRequest) returns (DeleteIconResponse) {}
 
-  
   rpc UploadIcon(stream UploadIconRequest) returns (UploadIconResponse) {}
 }
 
@@ -36,6 +41,13 @@ message GetIconsRequest {
 message GetIconsResponse {
   repeated Icon icons = 1;
 }
+
+message GetEmojiIconsRequest {}
+
+message GetEmojiIconsResponse {
+  repeated Icon icons = 1;
+}
+
 
 message DeleteIconRequest {
   string uuid = 1;

@@ -19,18 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IconService_GetIcon_FullMethodName    = "/icon.v1.IconService/GetIcon"
-	IconService_GetIcons_FullMethodName   = "/icon.v1.IconService/GetIcons"
-	IconService_DeleteIcon_FullMethodName = "/icon.v1.IconService/DeleteIcon"
-	IconService_UploadIcon_FullMethodName = "/icon.v1.IconService/UploadIcon"
+	IconService_GetIcon_FullMethodName       = "/icon.v1.IconService/GetIcon"
+	IconService_GetIcons_FullMethodName      = "/icon.v1.IconService/GetIcons"
+	IconService_GetEmojiIcons_FullMethodName = "/icon.v1.IconService/GetEmojiIcons"
+	IconService_DeleteIcon_FullMethodName    = "/icon.v1.IconService/DeleteIcon"
+	IconService_UploadIcon_FullMethodName    = "/icon.v1.IconService/UploadIcon"
 )
 
 // IconServiceClient is the client API for IconService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IconServiceClient interface {
+	// get by uuid
 	GetIcon(ctx context.Context, in *GetIconRequest, opts ...grpc.CallOption) (*GetIconResponse, error)
+	// get by owner uuid
 	GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error)
+	GetEmojiIcons(ctx context.Context, in *GetEmojiIconsRequest, opts ...grpc.CallOption) (*GetEmojiIconsResponse, error)
 	DeleteIcon(ctx context.Context, in *DeleteIconRequest, opts ...grpc.CallOption) (*DeleteIconResponse, error)
 	UploadIcon(ctx context.Context, opts ...grpc.CallOption) (IconService_UploadIconClient, error)
 }
@@ -55,6 +59,15 @@ func (c *iconServiceClient) GetIcon(ctx context.Context, in *GetIconRequest, opt
 func (c *iconServiceClient) GetIcons(ctx context.Context, in *GetIconsRequest, opts ...grpc.CallOption) (*GetIconsResponse, error) {
 	out := new(GetIconsResponse)
 	err := c.cc.Invoke(ctx, IconService_GetIcons_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *iconServiceClient) GetEmojiIcons(ctx context.Context, in *GetEmojiIconsRequest, opts ...grpc.CallOption) (*GetEmojiIconsResponse, error) {
+	out := new(GetEmojiIconsResponse)
+	err := c.cc.Invoke(ctx, IconService_GetEmojiIcons_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,8 +121,11 @@ func (x *iconServiceUploadIconClient) CloseAndRecv() (*UploadIconResponse, error
 // All implementations should embed UnimplementedIconServiceServer
 // for forward compatibility
 type IconServiceServer interface {
+	// get by uuid
 	GetIcon(context.Context, *GetIconRequest) (*GetIconResponse, error)
+	// get by owner uuid
 	GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error)
+	GetEmojiIcons(context.Context, *GetEmojiIconsRequest) (*GetEmojiIconsResponse, error)
 	DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error)
 	UploadIcon(IconService_UploadIconServer) error
 }
@@ -123,6 +139,9 @@ func (UnimplementedIconServiceServer) GetIcon(context.Context, *GetIconRequest) 
 }
 func (UnimplementedIconServiceServer) GetIcons(context.Context, *GetIconsRequest) (*GetIconsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetIcons not implemented")
+}
+func (UnimplementedIconServiceServer) GetEmojiIcons(context.Context, *GetEmojiIconsRequest) (*GetEmojiIconsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmojiIcons not implemented")
 }
 func (UnimplementedIconServiceServer) DeleteIcon(context.Context, *DeleteIconRequest) (*DeleteIconResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteIcon not implemented")
@@ -174,6 +193,24 @@ func _IconService_GetIcons_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IconServiceServer).GetIcons(ctx, req.(*GetIconsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IconService_GetEmojiIcons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEmojiIconsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IconServiceServer).GetEmojiIcons(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IconService_GetEmojiIcons_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IconServiceServer).GetEmojiIcons(ctx, req.(*GetEmojiIconsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -236,6 +273,10 @@ var IconService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetIcons",
 			Handler:    _IconService_GetIcons_Handler,
+		},
+		{
+			MethodName: "GetEmojiIcons",
+			Handler:    _IconService_GetEmojiIcons_Handler,
 		},
 		{
 			MethodName: "DeleteIcon",

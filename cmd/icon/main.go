@@ -2,22 +2,26 @@ package main
 
 import (
 	"github.com/dietzy1/chatapp/pkg/logger"
-	"github.com/dietzy1/chatapp/services/auth/domain"
 	"github.com/dietzy1/chatapp/services/icon/adapters/grpc/server"
 	"github.com/dietzy1/chatapp/services/icon/adapters/repository"
 	"github.com/dietzy1/chatapp/services/icon/adapters/rest/cdn"
+	"github.com/dietzy1/chatapp/services/icon/domain"
+	"go.uber.org/zap"
 )
 
 func main() {
 
-	log := logger.New()
+	logger := logger.New()
 
-	repo := repository.New()
+	repo, err := repository.New()
+	if err != nil {
+		logger.Fatal("failed to create repository", zap.Error(err))
+	}
 
 	cdn := cdn.New()
 
-	domain.New(log, repo, cdn)
+	domain := domain.New(logger, repo, cdn)
 
-	server.Start(log, domain)
+	server.Start(logger, domain)
 
 }
