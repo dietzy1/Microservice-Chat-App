@@ -91,23 +91,3 @@ func (a *Db) ChangeAvatar(ctx context.Context, userUuid string, icon domain.Icon
 
 	return nil
 }
-
-// Should take in field of what needs to be changed and the new value
-/* func (a *Db) ChangeUser(ctx context.Context, uuid string, key string, value string) error {
-	collection := a.mClient.Database(database).Collection(collection)
-	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$set": bson.M{key: value}})
-	if err != nil {
-		return err
-	}
-	return nil
-} */
-
-// Authentication is done prior so it should not be nessescary to do again
-/* func (a *Db) DeleteUser(ctx context.Context, uuid string) error {
-	collection := a.mClient.Database(database).Collection(collection)
-	_, err := collection.DeleteOne(ctx, bson.M{"uuid": uuid})
-	if err != nil {
-		return err
-	}
-	return nil
-} */

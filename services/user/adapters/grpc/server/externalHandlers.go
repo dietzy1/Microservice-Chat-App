@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"log"
 
 	userv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 	"google.golang.org/grpc/codes"
@@ -46,7 +45,6 @@ func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*us
 			ChatServers: u.ChatServers,
 		})
 	}
-	log.Println(resp.Users)
 
 	return resp, nil
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dietzy1/chatapp/config"
 	"github.com/dietzy1/chatapp/pkg/logger"
 	"github.com/dietzy1/chatapp/services/icon/adapters/grpc/server"
 	"github.com/dietzy1/chatapp/services/icon/adapters/repository"
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+
+	config.ReadEnvfile()
 
 	logger := logger.New()
 

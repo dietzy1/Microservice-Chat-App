@@ -16,7 +16,7 @@ func NewChatRoomClient() *chatroomclientv1.ChatroomServiceClient {
 	log.Println("Connecting to chatroom service", os.Getenv("CHATROOM"))
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"dns:///0.0.0.0"+os.Getenv("CHATROOM"),
+		"dns:///0.0.0.0"+os.Getenv("CHATROOMSERVICE"),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)

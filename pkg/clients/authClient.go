@@ -16,7 +16,7 @@ func NewAuthClient() *authclientv1.AuthServiceClient {
 	log.Println("Connecting to auth service", os.Getenv("AUTH"))
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"dns:///0.0.0.0"+os.Getenv("AUTH"),
+		"dns:///0.0.0.0"+os.Getenv("AUTHSERVICE"),
 		//"localhost:9000",
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
