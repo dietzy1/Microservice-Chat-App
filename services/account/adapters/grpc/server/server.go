@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/dietzy1/chatapp/pkg/middleware"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
@@ -22,19 +23,19 @@ func newServer(a Account) *server {
 	return &server{domain: a}
 }
 
-func Start(a Account) {
+func Start(logger *zap.Logger, a Account) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
 
-	addr := os.Getenv("ACCOUNT")
+	addr := os.Getenv("ACCOUNTSERVICE")
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.LoggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware(logger)),
 	)
 	//Inject dependencies into the server
 	dependencies := newServer(a)

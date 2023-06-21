@@ -21,15 +21,11 @@ type Account interface {
 }
 
 func (s *server) ChangeUsername(ctx context.Context, req *accountv1.ChangeUsernameRequest) (*accountv1.ChangeUsernameResponse, error) {
-	//Check if useruuid and username is empty
-	if req.UserUuid == "" || req.Username == "" {
-		return &accountv1.ChangeUsernameResponse{}, status.Error(400, "UserUuid or Username is empty")
-	}
 
 	//Call domain
 	err := s.domain.ChangeUsername(ctx, req.UserUuid, req.Username)
 	if err != nil {
-		return &accountv1.ChangeUsernameResponse{}, status.Error(400, "Error changing username")
+		return &accountv1.ChangeUsernameResponse{}, status.Errorf(400, "Error changing username %s", err.Error())
 	}
 
 	return &accountv1.ChangeUsernameResponse{}, nil
@@ -37,15 +33,11 @@ func (s *server) ChangeUsername(ctx context.Context, req *accountv1.ChangeUserna
 }
 
 func (s *server) ChangePassword(ctx context.Context, req *accountv1.ChangePasswordRequest) (*accountv1.ChangePasswordResponse, error) {
-	//Check if useruuid and password is empty
-	if req.UserUuid == "" || req.Password == "" {
-		return &accountv1.ChangePasswordResponse{}, status.Error(400, "UserUuid or Password is empty")
-	}
 
 	//Call domain
 	err := s.domain.ChangePassword(ctx, req.UserUuid, req.Password, req.NewPassword)
 	if err != nil {
-		return &accountv1.ChangePasswordResponse{}, status.Error(400, "Error changing password")
+		return &accountv1.ChangePasswordResponse{}, status.Errorf(400, "Error changing password %s", err.Error())
 	}
 
 	return &accountv1.ChangePasswordResponse{}, nil
@@ -53,38 +45,26 @@ func (s *server) ChangePassword(ctx context.Context, req *accountv1.ChangePasswo
 }
 
 func (s *server) DeleteAccount(ctx context.Context, req *accountv1.DeleteAccountRequest) (*accountv1.DeleteAccountResponse, error) {
-	//Check if useruuid and password is empty
-	if req.UserUuid == "" || req.Password == "" {
-		return &accountv1.DeleteAccountResponse{}, status.Error(400, "UserUuid or Password is empty")
-	}
 
 	//Call domain
 	err := s.domain.DeleteAccount(ctx, req.UserUuid, req.Password)
 	if err != nil {
-		return &accountv1.DeleteAccountResponse{}, status.Error(400, "Error deleting account")
+		return &accountv1.DeleteAccountResponse{}, status.Errorf(400, "Error deleting account %s", err.Error())
 	}
 
 	return &accountv1.DeleteAccountResponse{}, nil
 }
 
 func (s *server) RegisterAccount(ctx context.Context, req *accountv1.RegisterAccountRequest) (*accountv1.RegisterAccountResponse, error) {
+
 	cred := domain.Credentials{
 		Username: req.Username,
 		Password: req.Password,
 	}
 
-	//Validate that the fields aren't empty
-	if req.Username == "" || req.Password == "" {
-		return &accountv1.RegisterAccountResponse{
-			Session:  "",
-			UserUuid: "",
-		}, status.Errorf(http.StatusBadRequest, "username or password is empty")
-	}
-
 	//perform client side call to the authentication service
 	creds, err := s.domain.RegisterAccount(ctx, cred)
 	if err != nil {
-		log.Println(err)
 		return &accountv1.RegisterAccountResponse{
 			Session:  "",
 			UserUuid: "",
@@ -116,12 +96,6 @@ func (s *server) DemoUserRegister(ctx context.Context, req *accountv1.DemoUserRe
 
 func (s *server) UpgradeDemoUser(ctx context.Context, req *accountv1.UpgradeDemoUserRequest) (*accountv1.UpgradeDemoUserResponse, error) {
 
-	//Veryify fields aren't empty
-	if req.UserUuid == "" || req.Password == "" || req.Username == "" {
-
-		return &accountv1.UpgradeDemoUserResponse{}, status.Errorf(http.StatusBadRequest, "username, uuid or password is empty")
-	}
-
 	//Create credentials struct
 	creds := domain.Credentials{
 		Username: req.Username,
@@ -131,7 +105,6 @@ func (s *server) UpgradeDemoUser(ctx context.Context, req *accountv1.UpgradeDemo
 
 	err := s.domain.UpgradeDemoUser(ctx, creds)
 	if err != nil {
-		log.Println(err)
 		return &accountv1.UpgradeDemoUserResponse{}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
