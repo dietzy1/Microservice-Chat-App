@@ -17,7 +17,7 @@ import (
 )
 
 type Domain interface {
-	UploadIcon(ctx context.Context, imageData bytes.Buffer) (domain.Icon, error)
+	UploadIcon(ctx context.Context, imageData bytes.Buffer, icon domain.Icon) (domain.Icon, error)
 	GetIcon(ctx context.Context, uuid string) (domain.Icon, error)
 	GetIcons(ctx context.Context, ownerUuid string) ([]domain.Icon, error)
 	GetEmojiIcons(ctx context.Context) ([]domain.Icon, error)
@@ -51,7 +51,7 @@ func Start(logger *zap.Logger, domain Domain) {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.LoggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware(logger)),
 	)
 	//Inject dependencies into the server
 	dependencies := New(logger, domain)

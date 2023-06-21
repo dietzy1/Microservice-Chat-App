@@ -3,26 +3,12 @@ package domain
 import (
 	"bytes"
 	"context"
-
-	"log"
+	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
-
-/* service IconService {
-	//get by uuid
-	rpc GetIcon(GetIconRequest) returns (GetIconResponse) {}
-
-	//get by owner uuid
-	rpc GetIcons(GetIconsRequest) returns (GetIconsResponse) {}
-
-	//return all emoji icons
-	rpc GetEmojiIcons(GetEmojiIconsRequest) returns (GetEmojiIconsResponse) {}
-
-	rpc DeleteIcon(DeleteIconRequest) returns (DeleteIconResponse) {}
-
-	rpc UploadIcon(stream UploadIconRequest) returns (UploadIconResponse) {}
-  } */
 
 // Method which retrieves an icon based on uuid
 func (d Domain) GetIcon(ctx context.Context, uuid string) (Icon, error) {
@@ -35,9 +21,17 @@ func (d Domain) GetIcon(ctx context.Context, uuid string) (Icon, error) {
 
 // Method which retrieves all icons accociated with owner uuid
 func (d Domain) GetIcons(ctx context.Context, ownerUuid string) ([]Icon, error) {
+
+	//Validate data
+	if ownerUuid == "" {
+		d.logger.Info("ownerUuid is empty")
+		return []Icon{}, errors.New("ownerUuid is empty")
+	}
+
 	icons, err := d.repo.GetIcons(ctx, ownerUuid)
 	if err != nil {
-		return []Icon{}, err
+		d.logger.Info("error retrieving icons", zap.Error(err))
+		return []Icon{}, fmt.Errorf("error retrieving icons: %w", err)
 	}
 	return icons, nil
 }
@@ -45,7 +39,8 @@ func (d Domain) GetIcons(ctx context.Context, ownerUuid string) ([]Icon, error) 
 func (d Domain) GetEmojiIcons(ctx context.Context) ([]Icon, error) {
 	icons, err := d.repo.GetEmojiIcons(ctx)
 	if err != nil {
-		return []Icon{}, err
+		d.logger.Info("error retrieving icons", zap.Error(err))
+		return []Icon{}, fmt.Errorf("error retrieving emoji icons: %w", err)
 	}
 	return icons, nil
 }
@@ -55,7 +50,8 @@ func (d Domain) UploadIcon(ctx context.Context, image bytes.Buffer, info Icon) (
 	buf := bytes.Buffer{}
 	err := ConvertToPng(&buf, &image)
 	if err != nil {
-		return Icon{}, err
+		d.logger.Info("error converting image to png", zap.Error(err))
+		return Icon{}, fmt.Errorf("error converting image to png: %w", err)
 	}
 
 	icon := Icon{
@@ -74,36 +70,46 @@ func (d Domain) UploadIcon(ctx context.Context, image bytes.Buffer, info Icon) (
 	case "emoji":
 		folder = emojiIconFolder
 	default:
-		log.Println("Invalid icon type")
-		return Icon{}, nil
+		d.logger.Info("invalid kindof", zap.String("kindof", icon.Kindof))
+		return Icon{}, errors.New("invalid kindof")
 	}
 
 	//upload icon to CDN
 	icon.Link, err = d.cdn.UploadIcon(ctx, icon, buf, folder)
 	if err != nil {
-		return Icon{}, err
+		d.logger.Info("error uploading icon to cdn", zap.Error(err))
+		return Icon{}, fmt.Errorf("error uploading icon to cdn: %w", err)
 	}
 
 	//store icon in database
 	err = d.repo.StoreIcon(ctx, icon)
 	if err != nil {
-		return Icon{}, err
+		d.logger.Info("error storing icon in database", zap.Error(err))
+		return Icon{}, fmt.Errorf("error storing icon in database: %w", err)
 	}
 
 	return Icon{}, nil
 }
 
 func (d Domain) DeleteIcon(ctx context.Context, uuid string) error {
+
+	if uuid == "" {
+		d.logger.Info("uuid is empty")
+		return errors.New("uuid is empty")
+	}
+
 	//Delete icon from CDN
 	err := d.cdn.DeleteIcon(ctx, uuid)
 	if err != nil {
-		return err
+		d.logger.Info("error deleting icon from cdn", zap.Error(err))
+		return fmt.Errorf("error deleting icon from cdn: %w", err)
 	}
 
 	//Delete icon from database
 	err = d.repo.DeleteIcon(ctx, uuid)
 	if err != nil {
-		return err
+		d.logger.Info("error deleting icon from database", zap.Error(err))
+		return fmt.Errorf("error deleting icon from database: %w", err)
 	}
 	return nil
 }

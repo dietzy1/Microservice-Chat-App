@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/dietzy1/chatapp/services/icon/domain"
 	iconv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 )
 
@@ -29,12 +30,6 @@ import (
 
 func (s *server) GetIcon(ctx context.Context, req *iconv1.GetIconRequest) (*iconv1.GetIconResponse, error) {
 
-	//Veryfy that the uuid is not empty
-	if req.Uuid == "" {
-		s.logger.Error("Invalid uuid")
-		return &iconv1.GetIconResponse{}, status.Errorf(codes.InvalidArgument, "Invalid uuid")
-	}
-
 	icon, err := s.domain.GetIcon(ctx, req.Uuid)
 	if err != nil {
 		s.logger.Error("Error getting avatar %v", zap.Error(err))
@@ -53,12 +48,6 @@ func (s *server) GetIcon(ctx context.Context, req *iconv1.GetIconRequest) (*icon
 }
 
 func (s *server) GetIcons(ctx context.Context, req *iconv1.GetIconsRequest) (*iconv1.GetIconsResponse, error) {
-
-	//Verify that the owner uuid is not empty
-	if req.OwnerUuid == "" {
-		s.logger.Error("Invalid owner uuid")
-		return &iconv1.GetIconsResponse{}, status.Errorf(codes.InvalidArgument, "Invalid owner uuid")
-	}
 
 	icons, err := s.domain.GetIcons(ctx, req.OwnerUuid)
 	if err != nil {
@@ -110,12 +99,6 @@ func (s *server) GetEmojiIcons(ctx context.Context, req *iconv1.GetEmojiIconsReq
 
 func (s *server) DeleteIcon(ctx context.Context, req *iconv1.DeleteIconRequest) (*iconv1.DeleteIconResponse, error) {
 
-	//Verify that the uuid is not empty
-	if req.Uuid == "" {
-		s.logger.Error("Invalid uuid")
-		return &iconv1.DeleteIconResponse{}, status.Errorf(codes.InvalidArgument, "Invalid uuid")
-	}
-
 	err := s.domain.DeleteIcon(ctx, req.Uuid)
 	if err != nil {
 		s.logger.Error("Error deleting avatar %v", zap.Error(err))
@@ -165,7 +148,7 @@ func (s *server) UploadIcon(stream iconv1.IconService_UploadIconServer) error {
 	s.logger.Info("Image data received")
 
 	//send ImageData to domain
-	res, err := s.domain.UploadIcon(stream.Context(), imageData)
+	res, err := s.domain.UploadIcon(stream.Context(), imageData, domain.Icon{Kindof: iconType, OwnerUuid: req.GetInfo().OwnerUuid})
 	if err != nil {
 		s.logger.Error("Error uploading avatar")
 		return status.Errorf(codes.Internal, "Error uploading avatar: %v", err)

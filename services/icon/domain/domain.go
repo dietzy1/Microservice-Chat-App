@@ -3,10 +3,10 @@ package domain
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"image"
 	"image/png"
 	"io"
-	"log"
 
 	_ "image/gif"
 	_ "image/jpeg"
@@ -72,8 +72,7 @@ func New(logger *zap.Logger, repo repo, cdn cdn) Domain {
 func ConvertToPng(w io.Writer, r io.Reader) error {
 	img, imageType, err := image.Decode(r)
 	if err != nil {
-		return err
+		return fmt.Errorf("error decoding image: %w It has the following type: %s", err, imageType)
 	}
-	log.Println("Encoding the image of type: ", imageType, " to png")
 	return png.Encode(w, img)
 }

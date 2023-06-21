@@ -125,6 +125,18 @@ func (m *mockDomain) GetIcons(ctx context.Context, str string) ([]domain.Icon, e
 	return m.icons, nil
 }
 
-func (m *mockDomain) UploadIcon(ctx context.Context, imageData bytes.Buffer) (domain.Icon, error) {
+func (m *mockDomain) UploadIcon(ctx context.Context, imageData bytes.Buffer, icon domain.Icon) (domain.Icon, error) {
 	return domain.Icon{}, nil
+}
+
+func (m *mockDomain) DeleteIcon(ctx context.Context, str string) error {
+	return nil
+}
+
+func (m *mockDomain) GetIcon(ctx context.Context, str string) (domain.Icon, error) {
+	return m.icon, nil
+}
+
+func (m *mockDomain) GetEmojiIcons(ctx context.Context) ([]domain.Icon, error) {
+	return m.icons, nil
 }
