@@ -27,7 +27,7 @@ func Start(logger *zap.Logger, domain message) {
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
 
-	addr := os.Getenv("MESSAGE")
+	addr := os.Getenv("MESSAGESERVICE")
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)

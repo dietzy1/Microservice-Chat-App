@@ -20,6 +20,9 @@ service ChatroomService {
 
   //For internal use only
   rpc ForceAddUser(ForceAddUserRequest) returns (ForceAddUserResponse) {}
+
+  //Interacts alot with the icon service
+  rpc ChangeIcon(ChangeIconRequest) returns (ChangeIconResponse) {}
 }
 
 message CreateRoomRequest {
@@ -129,3 +132,15 @@ message ForceAddUserRequest {
 }
 
 message ForceAddUserResponse {}
+
+message ChangeIconRequest {
+  string chatroom_uuid = 1;
+  Icon icon = 2;
+}
+
+message ChangeIconResponse {}
+
+message Icon {
+  string link = 1;
+  string uuid = 2;
+}

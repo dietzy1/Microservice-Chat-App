@@ -2,58 +2,13 @@ package repository
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"os"
-	"time"
 
 	"github.com/dietzy1/chatapp/services/chatroom/domain"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
-
-type Db struct {
-	client *mongo.Client
-}
 
 const database = "Chatroom-Database"
 const collection = "Chatrooms"
-
-func New() *Db {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv(("DB_URI"))))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = client.Ping(ctx, readpref.Primary())
-	if err != nil {
-		log.Fatal(err)
-	}
-	a := &Db{client: client}
-	return a
-
-}
-
-func (a *Db) newIndex(database string, collectionName string, field string, unique bool) {
-	mod := mongo.IndexModel{
-		Keys:    bson.M{field: 1},
-		Options: options.Index().SetUnique(unique),
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	collection := a.client.Database(database).Collection(collectionName)
-
-	index, err := collection.Indexes().CreateOne(ctx, mod)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println("Created new index:", index)
-}
 
 func (a *Db) CreateChatroom(ctx context.Context, chatroom domain.Chatroom) error {
 	collection := a.client.Database(database).Collection(collection)
@@ -74,7 +29,6 @@ func (a *Db) DeleteChatroom(ctx context.Context, chatroomUuid string) error {
 }
 
 func (a *Db) GetChatroom(ctx context.Context, chatroomUuid string) (domain.Chatroom, error) {
-	log.Println(chatroomUuid)
 
 	collection := a.client.Database(database).Collection(collection)
 	var chatroom domain.Chatroom
@@ -177,6 +131,16 @@ func (a *Db) AddUser(ctx context.Context, chatroomUuid string, userUuid string) 
 func (a *Db) ForceAddUser(ctx context.Context, chatroomUuid string, userUuid string) error {
 	collection := a.client.Database(database).Collection(collection)
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": chatroomUuid}, bson.M{"$push": bson.M{"users": userUuid}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *Db) ChangeIcon(ctx context.Context, chatroomUuid string, chatroomIcon domain.Icon) error {
+	collection := a.client.Database(database).Collection(collection)
+	//Use the chatroomUuid to locate the objct we want to update and then insert the domain.Icon object
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": chatroomUuid}, bson.M{"$set": bson.M{"icon": chatroomIcon}})
 	if err != nil {
 		return err
 	}
