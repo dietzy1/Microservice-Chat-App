@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/dietzy1/chatapp/services/auth/domain"
@@ -22,24 +21,16 @@ type Auth interface {
 // Pass down the paramters to the interface functions
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 	//create a credentials struct
-	log.Println("LOGIN CALLED")
+
 	cred := domain.Credentials{
 		Username: req.Username,
 		Password: req.Password,
 	}
 
-	//Validate that the fields aren't empty
-	if req.Username == "" || req.Password == "" {
-		return &authv1.LoginResponse{
-			Session:  "",
-			UserUuid: "",
-		}, nil
-	}
-
 	//perform client side call to the authentication service
 	creds, err := s.auth.Login(ctx, cred)
 	if err != nil {
-		log.Println(err)
+
 		return &authv1.LoginResponse{
 			Session:  "",
 			UserUuid: "",
@@ -53,14 +44,9 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
-	if req.Session == "" || req.UserUuid == "" {
-		return &authv1.LogoutResponse{}, status.Errorf(http.StatusBadRequest, "session or user uuid is empty")
-	}
 
-	log.Println("Logout GRPC endpoint called")
 	err := s.auth.Logout(ctx, req.Session, req.UserUuid)
 	if err != nil {
-		log.Println(err)
 		return &authv1.LogoutResponse{}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 
@@ -68,19 +54,9 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 }
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
-	if req.Session == "" || req.UserUuid == "" {
-		log.Println("session is or user uuid is empty session: ", req.Session, "userID", req.UserUuid)
-		return &authv1.AuthenticateResponse{
-			Session:  "",
-			UserUuid: "",
-		}, nil
-	}
-
-	log.Println("session: ", req.Session, "userID", req.UserUuid)
 
 	creds, err := s.auth.Authenticate(ctx, req.Session, req.UserUuid)
 	if err != nil {
-		log.Println(err)
 		return &authv1.AuthenticateResponse{
 			Session:  "",
 			UserUuid: "",
@@ -94,13 +70,9 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 }
 
 func (s *server) Invalidate(ctx context.Context, req *authv1.InvalidateRequest) (*authv1.InvalidateResponse, error) {
-	if req.UserUuid == "" {
-		return &authv1.InvalidateResponse{}, status.Errorf(http.StatusBadRequest, "user uuid is empty")
-	}
 
 	err := s.auth.Invalidate(ctx, req.UserUuid)
 	if err != nil {
-		log.Println(err)
 		return &authv1.InvalidateResponse{}, status.Errorf(http.StatusBadRequest, err.Error())
 	}
 

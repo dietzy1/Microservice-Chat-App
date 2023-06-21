@@ -7,6 +7,7 @@ import (
 	"github.com/dietzy1/chatapp/pkg/hashing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.uber.org/zap"
 )
 
 type mockAuth struct {
@@ -53,10 +54,11 @@ func (m *mockCache) Delete(key string) error {
 }
 
 func TestLogin(t *testing.T) {
+	logger := zap.NewNop()
 	mockAuth := new(mockAuth)
 	mockCache := new(mockCache)
 
-	d := New(mockAuth, mockCache)
+	d := New(logger, mockAuth, mockCache)
 
 	ctx := context.Background()
 
@@ -89,10 +91,11 @@ func TestLogin(t *testing.T) {
 }
 
 func TestLogout(t *testing.T) {
+	logger := zap.NewNop()
 	mockAuth := new(mockAuth)
 	mockCache := new(mockCache)
 
-	d := New(mockAuth, mockCache)
+	d := New(logger, mockAuth, mockCache)
 
 	ctx := context.Background()
 

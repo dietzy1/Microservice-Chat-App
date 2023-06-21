@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
@@ -22,12 +23,12 @@ func newServer(auth Auth) *server {
 	return &server{auth: auth}
 }
 
-func Start(auth Auth) {
+func Start(logger *zap.Logger, auth Auth) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
 
-	addr := os.Getenv("AUTH")
+	addr := os.Getenv("AUTHSERVICE")
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -35,7 +36,7 @@ func Start(auth Auth) {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.LoggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware(logger)),
 	)
 
 	//Inject dependencies into the server

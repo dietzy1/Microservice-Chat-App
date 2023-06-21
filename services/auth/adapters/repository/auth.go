@@ -46,24 +46,6 @@ func (a *auth) Login(ctx context.Context, username string) (string, error) {
 	return cred.Password, nil
 }
 
-/* func (a *auth) Register(ctx context.Context, cred domain.Credentials) (string, error) {
-	collection := a.client.Database(database).Collection(collection)
-	_, err := collection.InsertOne(ctx, cred)
-	if err != nil {
-		return "", err
-	}
-	return cred.Session, nil
-} */
-
-/* func (a *auth) Unregister(ctx context.Context, userUuid string) error {
-	collection := a.client.Database(database).Collection(collection)
-	_, err := collection.DeleteOne(ctx, bson.M{"uuid": userUuid})
-	if err != nil {
-		return err
-	}
-	return nil
-} */
-
 // if logout is called, the token is invalidated and the user is logged out
 func (a *auth) Logout(ctx context.Context, userUuid string) error {
 	// perform update to the session token in the database
