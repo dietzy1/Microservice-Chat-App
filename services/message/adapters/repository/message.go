@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"log"
 
 	"github.com/dietzy1/chatapp/services/message/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,14 +15,10 @@ func (a *Db) GetMessages(ctx context.Context, chatroomUuid string, channelUuid s
 
 	messages := []domain.Message{}
 
-	//I need to look into the collection and find the latests messages that matches the channel uuid
-	log.Println("channelUuid: ", channelUuid)
-
 	//find 50 latests messages based on entry to database
 	//Use sort and setlimit operator
 	cursor, err := collection.Find(ctx, bson.M{"channeluuid": channelUuid}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(50))
 	if err != nil {
-
 		return messages, err
 	}
 
