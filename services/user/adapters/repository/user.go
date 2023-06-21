@@ -11,7 +11,7 @@ const userDatabase = "User-Database"
 const UserCollection = "Users"
 
 func (a *Db) AddUser(ctx context.Context, user domain.User) error {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	_, err := collection.InsertOne(ctx, user)
 	if err != nil {
 		return err
@@ -22,7 +22,7 @@ func (a *Db) AddUser(ctx context.Context, user domain.User) error {
 // TODO: verify that this works
 // Function that locates a user by uuid and then adds the serveruuid to the array of chatservers
 func (a *Db) AddChatServer(ctx context.Context, uuid string, serveruuid string) error {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$push": bson.M{"chatservers": serveruuid}})
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func (a *Db) AddChatServer(ctx context.Context, uuid string, serveruuid string) 
 // TODO: veryify that this works
 // Functuon that locates a user by uuid and then it removes the serveruuid from the array of chatservers
 func (a *Db) RemoveChatServer(ctx context.Context, uuid string, serveruuid string) error {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$pull": bson.M{"chatservers": serveruuid}})
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (a *Db) RemoveChatServer(ctx context.Context, uuid string, serveruuid strin
 
 // Function that locates a user by uuid and then it changes the description
 func (a *Db) EditDescription(ctx context.Context, uuid string, description string) error {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	_, err := collection.UpdateOne(ctx, bson.M{"uuid": uuid}, bson.M{"$set": bson.M{"description": description}})
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (a *Db) EditDescription(ctx context.Context, uuid string, description strin
 
 // Function that locates a user by uuid and then it returns the user struct
 func (a *Db) GetUser(ctx context.Context, uuid string) (domain.User, error) {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	user := domain.User{}
 
 	err := collection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&user)
@@ -64,7 +64,7 @@ func (a *Db) GetUser(ctx context.Context, uuid string) (domain.User, error) {
 }
 
 func (a *Db) GetUsers(ctx context.Context, uuids []string) ([]domain.User, error) {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 	users := []domain.User{}
 
 	cursor, err := collection.Find(ctx, bson.M{"uuid": bson.M{"$in": uuids}})
@@ -80,17 +80,11 @@ func (a *Db) GetUsers(ctx context.Context, uuids []string) ([]domain.User, error
 	return users, nil
 }
 
-func (a *Db) ChangeAvatar(ctx context.Context, userUuid string, avatarUuid string) error {
-	collection := a.mClient.Database(userDatabase).Collection(UserCollection)
-
-	//Retrieve the requested icon from the database
-	icon, err := a.GetIcon(ctx, avatarUuid)
-	if err != nil {
-		return err
-	}
+func (a *Db) ChangeAvatar(ctx context.Context, userUuid string, icon domain.Icon) error {
+	collection := a.client.Database(userDatabase).Collection(UserCollection)
 
 	// Go into the user and change the Icon object to the new icon
-	_, err = collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"icon": icon}})
+	_, err := collection.UpdateOne(ctx, bson.M{"uuid": userUuid}, bson.M{"$set": bson.M{"icon": icon}})
 	if err != nil {
 		return err
 	}

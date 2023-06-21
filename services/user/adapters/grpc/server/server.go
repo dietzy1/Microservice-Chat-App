@@ -5,10 +5,12 @@ import (
 	"net"
 	"os"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/dietzy1/chatapp/pkg/middleware"
 	userv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
 )
 
@@ -21,7 +23,7 @@ func newServer(user User) *server {
 	return &server{user: user}
 }
 
-func Start(user User) {
+func Start(logger *zap.Logger, user User) {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, io.Discard, io.Discard)
 	grpclog.SetLoggerV2(log)
@@ -33,7 +35,7 @@ func Start(user User) {
 	}
 
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(loggingMiddleware),
+		grpc.UnaryInterceptor(middleware.LoggingMiddleware(logger)),
 	)
 	//Inject dependencies into the server
 	dependencies := newServer(user)

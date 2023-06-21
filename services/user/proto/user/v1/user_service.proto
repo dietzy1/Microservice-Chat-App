@@ -80,24 +80,5 @@ message Icon {
   string uuid = 2;
 }
 
-message UploadAvatarRequest {
-  oneof data {
-    ImageInfo info = 1;
-    bytes chunk_data = 2;
-  }
-}
 
-message UploadAvatarResponse {
-  string link = 1;
-  string uuid = 2;
-}
 
-message ImageInfo {
-  string image_type = 1;
-}
-
-message GetAvatarsRequest {}
-
-message GetAvatarsResponse {
-  repeated Icon icons = 1;
-}

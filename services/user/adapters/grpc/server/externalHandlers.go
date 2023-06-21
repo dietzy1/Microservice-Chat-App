@@ -11,11 +11,6 @@ import (
 
 func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*userv1.GetUserResponse, error) {
 
-	//data validation
-	if req.UserUuid == "" {
-		return &userv1.GetUserResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
-	}
-
 	user, err := s.user.GetUser(ctx, req.UserUuid)
 	if err != nil {
 		return &userv1.GetUserResponse{}, status.Errorf(codes.Internal, "Error getting user: %v", err)
@@ -33,11 +28,6 @@ func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*user
 }
 
 func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*userv1.GetUsersResponse, error) {
-
-	//data validation
-	if req.UserUuids == nil {
-		return &userv1.GetUsersResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
-	}
 
 	users, err := s.user.GetUsers(ctx, req.UserUuids)
 	if err != nil {
@@ -64,11 +54,6 @@ func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*us
 
 func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptionRequest) (*userv1.EditDescriptionResponse, error) {
 
-	//data validation
-	if req.UserUuid == "" || req.Description == "" {
-		return &userv1.EditDescriptionResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
-	}
-
 	err := s.user.EditDescription(ctx, req.UserUuid, req.Description)
 	if err != nil {
 		return &userv1.EditDescriptionResponse{}, status.Errorf(codes.Internal, "Error editing description: %v", err)
@@ -78,11 +63,6 @@ func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptio
 }
 
 func (s *server) ChangeAvatar(ctx context.Context, req *userv1.ChangeAvatarRequest) (*userv1.ChangeAvatarResponse, error) {
-
-	//data validation
-	if req.UserUuid == "" || req.IconUuid == "" {
-		return &userv1.ChangeAvatarResponse{}, status.Errorf(codes.InvalidArgument, "Invalid arguments")
-	}
 
 	err := s.user.ChangeAvatar(ctx, req.UserUuid, req.IconUuid)
 	if err != nil {

@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,8 +13,7 @@ import (
 )
 
 type Db struct {
-	mClient *mongo.Client
-	rClient *redis.Client
+	client *mongo.Client
 }
 
 func New() (*Db, error) {
@@ -30,26 +28,8 @@ func New() (*Db, error) {
 		return nil, err
 	}
 
-	a := &Db{mClient: client}
+	a := &Db{client: client}
 	return a, nil
-}
-
-func NewRedis() (*Db, error) {
-	otps, err := redis.ParseURL(os.Getenv("REDIS_URL"))
-	if err != nil {
-		log.Println(err.Error())
-		return nil, err
-	}
-
-	redisClient := redis.NewClient(otps)
-
-	if _, err := redisClient.Ping(context.Background()).Result(); err != nil {
-		return nil, err
-	}
-
-	return &Db{
-		rClient: redisClient,
-	}, nil
 }
 
 func (a *Db) NewIndex(database string, collectionName string, field string, unique bool) {
@@ -60,7 +40,7 @@ func (a *Db) NewIndex(database string, collectionName string, field string, uniq
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	collection := a.mClient.Database(database).Collection(collectionName)
+	collection := a.client.Database(database).Collection(collectionName)
 
 	index, err := collection.Indexes().CreateOne(ctx, mod)
 	if err != nil {
