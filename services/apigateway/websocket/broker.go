@@ -38,6 +38,7 @@ func newBroker(logger *zap.Logger) *broker {
 
 	return &broker{
 		client: client,
+		logger: logger,
 	}
 }
 
@@ -53,6 +54,17 @@ func (b *broker) Subscribe(ctx context.Context, channel string) (*redis.PubSub, 
 	return pubsub, nil
 }
 
+func (b *broker) unsubscribe(ctx context.Context, pubsub *redis.PubSub) error {
+	err := pubsub.Unsubscribe(ctx)
+	if err != nil {
+		b.logger.Error("Failed to unsubscribe from channel")
+		return err
+	}
+
+	b.logger.Info("Unsubscribed from channel", zap.String("channel", pubsub.String()))
+	return nil
+}
+
 // Send message to channel
 func (b *broker) Publish(ctx context.Context, channel string, message []byte) error {
 	err := b.client.Publish(ctx, channel, message).Err()
@@ -61,15 +73,4 @@ func (b *broker) Publish(ctx context.Context, channel string, message []byte) er
 		return err
 	}
 	return nil
-}
-
-func (b *broker) unsubscribe(ctx context.Context, pubsub *redis.PubSub) error {
-	err := pubsub.Unsubscribe(ctx)
-	if err != nil {
-		b.logger.Error("Failed to unsubscribe from channel")
-		return err
-	}
-	b.logger.Info("Unsubscribed from channel", zap.String("channel", pubsub.String()))
-	return nil
-
 }

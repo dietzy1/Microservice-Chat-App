@@ -40,7 +40,8 @@ type conn struct {
 }
 
 type connOptions struct {
-	conn *websocket.Conn
+	conn   *websocket.Conn
+	logger *zap.Logger
 }
 
 func newConnection(o *connOptions) *conn {
@@ -52,6 +53,7 @@ func newConnection(o *connOptions) *conn {
 		heartbeatChannel: make(chan []byte, recieveBufferSize),
 		shutdown:         make(chan interface{}),
 		cleanupOnce:      &sync.Once{},
+		logger:           o.logger,
 	}
 }
 
@@ -228,15 +230,16 @@ func (c *conn) heartBeat() {
 }
 
 func (c *conn) cleanup() {
+	c.logger.Info("Cleaning up connection")
 
 	c.cleanupOnce.Do(func() {
 
-		c.activeChannel <- []string{}
+		//c.activeChannel <- []string{}
 		close(c.shutdown)
 		close(c.receiveChannel)
 		close(c.sendChannel)
 		//FIXME: maybe this
-		//close(c.activeChannel)
+		close(c.activeChannel)
 		close(c.heartbeatChannel)
 
 		// Close the underlying websocket connection.

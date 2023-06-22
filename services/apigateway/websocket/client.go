@@ -1,7 +1,9 @@
 package websocket
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
 
 	messagev1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 	"github.com/go-redis/redis/v8"
@@ -87,21 +89,22 @@ func (c *client) handleMessages(ch <-chan *redis.Message, activityCh <-chan *red
 			//convert msg.Payload to slice of bytes
 			c.conn.sendChannel <- []byte(msg.Payload)
 
-		case msg, ok := <-c.conn.activeChannel:
-			if !ok {
-				return
-			}
-			_ = msg
-			//convert []string to []byte
-			//c.broker.Publish(context.TODO(), c.id.chatroom, msg)
-
 		case msg, ok := <-activityCh:
 			if !ok {
 				return
 			}
+			c.logger.Info("Recieved activity message", zap.String("message", msg.Payload))
 
-			_ = msg
-			//c.conn.activeChannel <- []byte(msg.Payload)
+			buf := []byte(msg.Payload)
+
+			strs2 := []string{}
+			gob.NewDecoder(bytes.NewReader(buf)).Decode(&strs2)
+
+			c.logger.Info("Decoded activity message", zap.Strings("message", strs2))
+
+			c.conn.activeChannel <- strs2
+
+			//c.conn.activeChannel <- msg.PayloadSlice
 
 		}
 
@@ -109,10 +112,16 @@ func (c *client) handleMessages(ch <-chan *redis.Message, activityCh <-chan *red
 
 }
 
+// FIXME:
 func (c *client) updateClientActivity(chatroom string, active []string) {
 
 	c.logger.Info("Updating client activity", zap.String("chatroom", chatroom), zap.Strings("active", active))
-	c.conn.activeChannel <- active
+
+	//I need to find out how to convert from []string to []byte
+	buf := &bytes.Buffer{}
+	gob.NewEncoder(buf).Encode(active)
+
+	c.broker.Publish(context.TODO(), chatroom, buf.Bytes())
 
 }
 
@@ -144,6 +153,18 @@ func (c *client) run() {
 		c.logger.Error("Failed to unsubscribe from channel", zap.Error(err))
 		return
 	}
+	pubsub.Close()
+
+	err = c.broker.unsubscribe(context.TODO(), activityPubsub)
+	if err != nil {
+		c.logger.Error("Failed to unsubscribe from channel", zap.Error(err))
+		return
+	}
+	activityPubsub.Close()
+
+	c.logger.Info("Client unsubscribed from pubsub channels")
+	//list
+
 }
 
 //The way I think about activity is flawed

@@ -45,3 +45,15 @@ func marshalActivity(activity *chatroomv1.Activity) ([]byte, error) {
 	return msg, nil
 
 }
+
+func unmarshalActivity(msg []byte) (*chatroomv1.Activity, error) {
+
+	activity := &chatroomv1.Activity{}
+
+	err := proto.Unmarshal(msg, activity)
+	if err != nil {
+		zap.S().Errorf("Error unmarshalling activity: %v", err)
+		return nil, err
+	}
+	return activity, nil
+}

@@ -84,7 +84,7 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ws := newConnection(&connOptions{conn: conn})
+	ws := newConnection(&connOptions{conn: conn, logger: m.logger})
 
 	client := newClient(&clientOptions{
 		conn:          ws,
@@ -95,19 +95,22 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 	},
 	)
 
-	m.addClient(client, &id)
+	m.addClient(client, id)
 	client.updateClientActivity(id.chatroom, m.active[id.chatroom])
 	defer client.updateClientActivity(id.chatroom, m.active[id.chatroom])
-	defer m.removeClient(client, &id)
+	defer m.removeClient(client, id)
 
 	client.run()
 
 }
 
-func (m *manager) addClient(c *client, id *id) {
+//The issue is that I am trying to send on a closed channel
+
+
+func (m *manager) addClient(c *client, id id) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	log.Println(id)
+	m.logger.Info("Adding client to manager")
 
 	m.clients[id.user] = c
 
@@ -127,9 +130,10 @@ func (m *manager) addClient(c *client, id *id) {
 	log.Println("Active Users: ", m.active)
 }
 
-func (m *manager) removeClient(c *client, id *id) {
+func (m *manager) removeClient(c *client, id id) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	m.logger.Info("Removing client from manager")
 
 	delete(m.clients, id.user)
 
@@ -139,6 +143,7 @@ func (m *manager) removeClient(c *client, id *id) {
 	//TODO: veryfy that this logic works
 	for i, v := range ok {
 		if v == id.user {
+			m.logger.Warn("Removing user from active users", zap.String("user", id.user))
 			m.active[id.chatroom] = append(ok[:i], ok[i+1:]...)
 		}
 	}
