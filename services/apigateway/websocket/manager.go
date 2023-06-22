@@ -96,16 +96,15 @@ func (m *manager) upgradeHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	m.addClient(client, id)
-	client.updateClientActivity(id.chatroom, m.active[id.chatroom])
+	//client.updateClientActivity(id.chatroom, m.active[id.chatroom])
 	defer client.updateClientActivity(id.chatroom, m.active[id.chatroom])
 	defer m.removeClient(client, id)
 
-	client.run()
+	client.run(id.chatroom, m.active[id.chatroom])
 
 }
 
 //The issue is that I am trying to send on a closed channel
-
 
 func (m *manager) addClient(c *client, id id) {
 	m.mu.Lock()

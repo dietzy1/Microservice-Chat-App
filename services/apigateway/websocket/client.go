@@ -89,6 +89,7 @@ func (c *client) handleMessages(ch <-chan *redis.Message, activityCh <-chan *red
 			//convert msg.Payload to slice of bytes
 			c.conn.sendChannel <- []byte(msg.Payload)
 
+			//FIXME: this part here is not getting hit on connection
 		case msg, ok := <-activityCh:
 			if !ok {
 				return
@@ -122,10 +123,9 @@ func (c *client) updateClientActivity(chatroom string, active []string) {
 	gob.NewEncoder(buf).Encode(active)
 
 	c.broker.Publish(context.TODO(), chatroom, buf.Bytes())
-
 }
 
-func (c *client) run() {
+func (c *client) run(chatroom string, active []string) {
 	//Start read, write and heartbeat goroutines
 	c.conn.run()
 
@@ -141,6 +141,9 @@ func (c *client) run() {
 
 		return
 	}
+
+	//Send updated activity
+	c.updateClientActivity(c.id.chatroom, active)
 
 	//Blocking call to handle messages
 	c.handleMessages(pubsub.Channel(), activityPubsub.Channel())
