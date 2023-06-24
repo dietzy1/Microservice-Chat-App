@@ -2,15 +2,18 @@ package server
 
 import (
 	"context"
-	"fmt"
 
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	chatroomclientv1 "github.com/dietzy1/chatapp/services/chatroom/proto/chatroom/v1"
 	"google.golang.org/grpc/status"
 )
 
 // FIXME: This function currently has a bug where it doesn't contact the user service and adds the user to the newly created chatroom
 func (s *server) CreateRoom(ctx context.Context, req *chatroomv1.CreateRoomRequest) (*chatroomv1.CreateRoomResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.Name == "" || req.OwnerUuid == "" {
 		return &chatroomv1.CreateRoomResponse{}, status.Error(400, "Name cannot be empty")
@@ -51,7 +54,9 @@ func (s *server) DeleteRoom(ctx context.Context, req *chatroomv1.DeleteRoomReque
 }
 
 func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*chatroomv1.GetRoomResponse, error) {
-	fmt.Println("GetRoom")
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.ChatroomUuid == "" {
 		return &chatroomv1.GetRoomResponse{}, status.Error(400, "RoomUuid cannot be empty")
@@ -89,6 +94,8 @@ func (s *server) GetRoom(ctx context.Context, req *chatroomv1.GetRoomRequest) (*
 }
 
 func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) (*chatroomv1.GetRoomsResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
 
 	//Check if chatroomUuid is empty
 	if req.ChatroomUuids == nil {
@@ -133,6 +140,9 @@ func (s *server) GetRooms(ctx context.Context, req *chatroomv1.GetRoomsRequest) 
 // ------------------------------------------------------------------------------------------------------------------------------------
 
 func (s *server) CreateChannel(ctx context.Context, req *chatroomv1.CreateChannelRequest) (*chatroomv1.CreateChannelResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.Name == "" || req.OwnerUuid == "" || req.ChatroomUuid == "" {
 		return &chatroomv1.CreateChannelResponse{}, status.Error(400, "Name cannot be empty")
@@ -154,6 +164,9 @@ func (s *server) CreateChannel(ctx context.Context, req *chatroomv1.CreateChanne
 }
 
 func (s *server) DeleteChannel(ctx context.Context, req *chatroomv1.DeleteChannelRequest) (*chatroomv1.DeleteChannelResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.ChannelUuid == "" || req.OwnerUuid == "" || req.ChatroomUuid == "" {
 		return &chatroomv1.DeleteChannelResponse{}, status.Error(400, "ChannelUuid cannot be empty")
@@ -175,6 +188,9 @@ func (s *server) DeleteChannel(ctx context.Context, req *chatroomv1.DeleteChanne
 }
 
 func (s *server) GetChannel(ctx context.Context, req *chatroomv1.GetChannelRequest) (*chatroomv1.GetChannelResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.ChannelUuid == "" || req.ChatroomUuid == "" {
 		return &chatroomv1.GetChannelResponse{}, status.Error(400, "ChannelUuid cannot be empty")
@@ -203,6 +219,9 @@ func (s *server) GetChannel(ctx context.Context, req *chatroomv1.GetChannelReque
 // ------------------------------------------------------------------------------------------------------------------------------------
 
 func (s *server) InviteUser(ctx context.Context, req *chatroomv1.InviteUserRequest) (*chatroomv1.InviteUserResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.UserUuid == "" || req.OwnerUuid == "" || req.ChatroomUuid == "" {
 		return &chatroomv1.InviteUserResponse{}, status.Error(400, "UserUuid cannot be empty")
@@ -224,6 +243,9 @@ func (s *server) InviteUser(ctx context.Context, req *chatroomv1.InviteUserReque
 }
 
 func (s *server) RemoveUser(ctx context.Context, req *chatroomv1.RemoveUserRequest) (*chatroomv1.RemoveUserResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.UserUuid == "" || req.OwnerUuid == "" || req.ChatroomUuid == "" {
 		return &chatroomv1.RemoveUserResponse{}, status.Error(400, "UserUuid cannot be empty")
@@ -245,6 +267,9 @@ func (s *server) RemoveUser(ctx context.Context, req *chatroomv1.RemoveUserReque
 }
 
 func (s *server) AddUser(ctx context.Context, req *chatroomv1.AddUserRequest) (*chatroomv1.AddUserResponse, error) {
+
+	metrics.ChatroomRequestCounter.Inc()
+
 	// Check if name is empty
 	if req.UserUuid == "" || req.ChatroomUuid == "" || req.OwnerUuid == "" {
 		return &chatroomv1.AddUserResponse{}, status.Error(400, "UserUuid cannot be empty")

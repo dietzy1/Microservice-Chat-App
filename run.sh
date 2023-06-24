@@ -33,4 +33,5 @@ open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/auth/" "go ru
 open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/chatroom/" "go run main.go" "main"
 open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/message/" "go run main.go" "main"
 open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/account/" "go run main.go" "main"
+open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/icon/" "go run main.go" "main"
 open_window_and_run_command "go/src/github.com/dietzy1/chatapp/cmd/apigateway/" "go run main.go" "main"

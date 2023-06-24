@@ -5,6 +5,7 @@ import (
 	"log"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	authclientv1 "github.com/dietzy1/chatapp/services/auth/proto/auth/v1"
 	"google.golang.org/grpc"
 
@@ -19,6 +20,8 @@ type Cache interface {
 }
 
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
+
+	metrics.AuthRequestCounter.Inc()
 
 	creds := authclientv1.LoginRequest{
 		Username: req.Username,
@@ -46,6 +49,9 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
+
+	metrics.AuthRequestCounter.Inc()
+
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		log.Println("no metadata")
@@ -78,6 +84,9 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 }
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
+
+	metrics.AuthRequestCounter.Inc()
+
 	//implement whatever logic needs to be implemented
 	log.Println("Authenticate called")
 	md, ok := metadata.FromIncomingContext(ctx)

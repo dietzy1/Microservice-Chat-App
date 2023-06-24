@@ -1,6 +1,8 @@
 .env
 .dsstore
 .DS_STORE
+agent-config.yaml
+grafana-agent-darwin-amd64
 
 **/*.png
 **/*.jpg

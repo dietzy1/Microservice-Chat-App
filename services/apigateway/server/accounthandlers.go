@@ -11,9 +11,13 @@ import (
 
 	accountclientv1 "github.com/dietzy1/chatapp/services/account/proto/account/v1"
 	accountv1 "github.com/dietzy1/chatapp/services/apigateway/accountgateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 )
 
 func (s *server) ChangeUsername(ctx context.Context, req *accountv1.ChangeUsernameRequest) (*accountv1.ChangeUsernameResponse, error) {
+
+	metrics.AccountRequestCounter.Inc()
+
 	// Check if user_uuid and username is empty
 	if req.UserUuid == "" || req.Username == "" {
 		return &accountv1.ChangeUsernameResponse{}, status.Error(400, "UserUuid and Username cannot be empty")
@@ -34,6 +38,8 @@ func (s *server) ChangeUsername(ctx context.Context, req *accountv1.ChangeUserna
 }
 
 func (s *server) ChangePassword(ctx context.Context, req *accountv1.ChangePasswordRequest) (*accountv1.ChangePasswordResponse, error) {
+
+	metrics.AccountRequestCounter.Inc()
 	// Check if user_uuid and password is empty
 	if req.UserUuid == "" || req.Password == "" {
 		return &accountv1.ChangePasswordResponse{}, status.Error(400, "UserUuid and Password cannot be empty")
@@ -54,6 +60,8 @@ func (s *server) ChangePassword(ctx context.Context, req *accountv1.ChangePasswo
 }
 
 func (s *server) DeleteAccount(ctx context.Context, req *accountv1.DeleteAccountRequest) (*accountv1.DeleteAccountResponse, error) {
+
+	metrics.AccountRequestCounter.Inc()
 	// Check if user_uuid is empty
 	if req.UserUuid == "" {
 		return &accountv1.DeleteAccountResponse{}, status.Error(400, "UserUuid cannot be empty")
@@ -73,6 +81,8 @@ func (s *server) DeleteAccount(ctx context.Context, req *accountv1.DeleteAccount
 }
 
 func (s *server) RegisterAccount(ctx context.Context, req *accountv1.RegisterAccountRequest) (*accountv1.RegisterAccountResponse, error) {
+
+	metrics.AccountRequestCounter.Inc()
 
 	creds := accountclientv1.RegisterAccountRequest{
 		Username: req.Username,
@@ -97,6 +107,7 @@ func (s *server) RegisterAccount(ctx context.Context, req *accountv1.RegisterAcc
 
 func (s *server) DemoUserRegister(ctx context.Context, req *accountv1.DemoUserRegisterRequest) (*accountv1.DemoUserRegisterResponse, error) {
 
+	metrics.AccountRequestCounter.Inc()
 	//Reroute object
 	register, err := s.accountClient.DemoUserRegister(ctx, &accountclientv1.DemoUserRegisterRequest{})
 	if err != nil {
@@ -112,6 +123,7 @@ func (s *server) DemoUserRegister(ctx context.Context, req *accountv1.DemoUserRe
 
 func (s *server) UpgradeDemoUser(ctx context.Context, req *accountv1.UpgradeDemoUserRequest) (*accountv1.UpgradeDemoUserResponse, error) {
 
+	metrics.AccountRequestCounter.Inc()
 	//Reroute object
 	upgrade := &accountclientv1.UpgradeDemoUserRequest{
 		UserUuid: req.UserUuid,

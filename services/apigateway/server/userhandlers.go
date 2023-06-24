@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"log"
 
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	userv1 "github.com/dietzy1/chatapp/services/apigateway/usergateway/v1"
 	iconclientv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 	userclientv1 "github.com/dietzy1/chatapp/services/user/proto/user/v1"
@@ -12,6 +12,8 @@ import (
 )
 
 func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*userv1.GetUserResponse, error) {
+
+	metrics.UserRequestCounter.Inc()
 
 	user, err := s.userClient.GetUser(ctx, &userclientv1.GetUserRequest{
 		UserUuid: req.UserUuid,
@@ -36,7 +38,8 @@ func (s *server) GetUser(ctx context.Context, req *userv1.GetUserRequest) (*user
 }
 
 func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*userv1.GetUsersResponse, error) {
-	log.Println("GetUsers called")
+
+	metrics.UserRequestCounter.Inc()
 
 	users, err := s.userClient.GetUsers(ctx, &userclientv1.GetUsersRequest{
 		UserUuids: req.UserUuids,
@@ -68,6 +71,8 @@ func (s *server) GetUsers(ctx context.Context, req *userv1.GetUsersRequest) (*us
 
 func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptionRequest) (*userv1.EditDescriptionResponse, error) {
 
+	metrics.UserRequestCounter.Inc()
+
 	_, err := s.userClient.EditDescription(ctx, &userclientv1.EditDescriptionRequest{
 		UserUuid:    req.UserUuid,
 		Description: req.Description,
@@ -82,6 +87,8 @@ func (s *server) EditDescription(ctx context.Context, req *userv1.EditDescriptio
 
 func (s *server) ChangeAvatar(ctx context.Context, req *userv1.ChangeAvatarRequest) (*userv1.ChangeAvatarResponse, error) {
 
+	metrics.UserRequestCounter.Inc()
+
 	_, err := s.userClient.ChangeAvatar(ctx, &userclientv1.ChangeAvatarRequest{
 		UserUuid: req.UserUuid,
 		IconUuid: req.IconUuid,
@@ -95,6 +102,8 @@ func (s *server) ChangeAvatar(ctx context.Context, req *userv1.ChangeAvatarReque
 }
 
 func (s *server) GetAvatars(ctx context.Context, req *userv1.GetAvatarsRequest) (*userv1.GetAvatarsResponse, error) {
+
+	metrics.UserRequestCounter.Inc()
 
 	avatars, err := s.iconClient.GetIcons(ctx, &iconclientv1.GetIconsRequest{})
 	if err != nil {

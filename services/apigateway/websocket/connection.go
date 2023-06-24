@@ -6,6 +6,7 @@ import (
 	"time"
 
 	chatroomv1 "github.com/dietzy1/chatapp/services/apigateway/chatroomgateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 )
@@ -90,6 +91,7 @@ func (c *conn) writePump() {
 				return
 			}
 			c.logger.Info("Message sent")
+			metrics.MessageRequestCounter.Inc()
 
 		case active, ok := <-c.activeChannel:
 			if !ok {
@@ -159,6 +161,7 @@ func (c *conn) readPump() {
 			c.logger.Error("Failed to set read deadline", zap.Error(err))
 			c.cleanup()
 		}
+
 		return nil
 	})
 
@@ -220,6 +223,8 @@ func (c *conn) heartBeat() {
 		case <-ticker.C:
 			c.logger.Info("Sending heartbeat")
 			c.heartbeatChannel <- []byte{}
+			//Increment the ping counter
+			metrics.PingCounter.Inc()
 
 		case <-c.shutdown:
 
@@ -249,6 +254,7 @@ func (c *conn) cleanup() {
 			c.logger.Error("Failed to close connection", zap.Error(err))
 		}
 		c.logger.Info("Connection closed")
+		metrics.TotalConnections.Dec()
 	})
 
 }
@@ -259,5 +265,7 @@ func (c *conn) run() {
 	go c.readPump()
 	go c.writePump()
 	go c.heartBeat()
+
+	metrics.TotalConnections.Inc()
 
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	messagev1 "github.com/dietzy1/chatapp/services/apigateway/messagegateway/v1"
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	messageclientv1 "github.com/dietzy1/chatapp/services/message/proto/message/v1"
 
 	"google.golang.org/grpc/codes"
@@ -12,7 +13,7 @@ import (
 
 func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequest) (*messagev1.GetMessagesResponse, error) {
 
-	//call message service
+	metrics.MessageRequestCounter.Inc()
 
 	res, err := s.messageClient.GetMessages(ctx, &messageclientv1.GetMessagesRequest{
 		ChatRoomUuid: req.ChatRoomUuid,
@@ -45,6 +46,8 @@ func (s *server) GetMessages(ctx context.Context, req *messagev1.GetMessagesRequ
 
 func (s *server) EditMessage(ctx context.Context, req *messagev1.EditMessageRequest) (*messagev1.EditMessageResponse, error) {
 
+	metrics.MessageRequestCounter.Inc()
+
 	res, err := s.messageClient.EditMessage(ctx, &messageclientv1.EditMessageRequest{
 		ChatRoomUuid: req.ChatRoomUuid,
 		ChannelUuid:  req.ChannelUuid,
@@ -72,6 +75,8 @@ func (s *server) EditMessage(ctx context.Context, req *messagev1.EditMessageRequ
 }
 
 func (s *server) DeleteMessage(ctx context.Context, req *messagev1.DeleteMessageRequest) (*messagev1.DeleteMessageResponse, error) {
+
+	metrics.MessageRequestCounter.Inc()
 
 	_, err := s.messageClient.DeleteMessage(ctx, &messageclientv1.DeleteMessageRequest{
 		Author:       req.Author,

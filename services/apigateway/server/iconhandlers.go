@@ -9,11 +9,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dietzy1/chatapp/services/apigateway/metrics"
 	iconv1 "github.com/dietzy1/chatapp/services/icon/proto/icon/v1"
 )
 
 // REST endpoint which accepts an image and contacts the icon service to upload it
 func (s *server) uploadIconHandler(w http.ResponseWriter, r *http.Request) {
+
+	metrics.IconRequestCounter.Inc()
+
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
