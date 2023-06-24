@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"log"
+	"time"
 
 	authv1 "github.com/dietzy1/chatapp/services/apigateway/authgateway/v1"
 	"github.com/dietzy1/chatapp/services/apigateway/metrics"
@@ -21,6 +22,7 @@ type Cache interface {
 
 func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 
+	start := time.Now()
 	metrics.AuthRequestCounter.Inc()
 
 	creds := authclientv1.LoginRequest{
@@ -44,12 +46,16 @@ func (s *server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 	log.Println(md)
 	grpc.SendHeader(ctx, md)
 
+	roundtrip := time.Since(start).Milliseconds()
+	metrics.AuthRequestLatency.Observe(float64(roundtrip))
+
 	return &authv1.LoginResponse{}, nil
 
 }
 
 func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
 
+	start := time.Now()
 	metrics.AuthRequestCounter.Inc()
 
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -80,11 +86,15 @@ func (s *server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1
 	md = metadata.Pairs("session_token", "", "uuid_token", "")
 	grpc.SendHeader(ctx, md)
 
+	roundtrip := time.Since(start).Milliseconds()
+	metrics.AuthRequestLatency.Observe(float64(roundtrip))
+
 	return &authv1.LogoutResponse{}, nil
 }
 
 func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateRequest) (*authv1.AuthenticateResponse, error) {
 
+	start := time.Now()
 	metrics.AuthRequestCounter.Inc()
 
 	//implement whatever logic needs to be implemented
@@ -116,6 +126,9 @@ func (s *server) Authenticate(ctx context.Context, req *authv1.AuthenticateReque
 
 	}
 	log.Println(authenticate)
+
+	roundtrip := time.Since(start).Milliseconds()
+	metrics.AuthRequestLatency.Observe(float64(roundtrip))
 
 	return &authv1.AuthenticateResponse{}, nil
 }

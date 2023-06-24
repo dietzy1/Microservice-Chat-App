@@ -3,6 +3,7 @@
 .DS_STORE
 agent-config.yaml
 grafana-agent-darwin-amd64
+data-agent
 
 **/*.png
 **/*.jpg

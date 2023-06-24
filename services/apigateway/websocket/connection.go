@@ -129,11 +129,16 @@ func (c *conn) writePump() {
 				return
 			}
 
+			//FIXME:
+			start := time.Now()
 			log.Println("conn: ", c.conn.RemoteAddr().String())
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				c.logger.Error("Failed to write ping message", zap.Error(err))
 				return
 			}
+			metrics.PongCounter.Inc()
+			roundtrip := time.Since(start).Milliseconds()
+			metrics.PingPongLatency.Observe(float64(roundtrip))
 
 		}
 	}
